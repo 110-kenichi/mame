@@ -1570,7 +1570,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 //transferPcmOnlyDiffData(pcmData.ToArray(), null);
 
-                FormMain.OutputLog(this, Resources.UpdatingADPCM);
+                FormMain.OutputLog(this, Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")");
                 //if (Program.IsWriteLockHeld())
                 //{
                 try
@@ -1579,7 +1579,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     using (FormProgress f = new FormProgress())
                     {
                         f.StartPosition = FormStartPosition.CenterScreen;
-                        f.Message = Resources.UpdatingADPCM;
+                        f.Message = Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")";
                         f.Show();
                         transferPcmOnlyDiffData(pcmData.ToArray(), f);
                     }

@@ -19,7 +19,9 @@
         "gfxbase.h": "c",
         "custom.h": "c",
         "dosextens.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "gfxmacros.h": "c",
+        "intuition.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA"
 }

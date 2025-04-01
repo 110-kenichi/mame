@@ -1,23 +1,18 @@
 #include "support/gcc8_c_support.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
-#include <proto/graphics.h>
-#include <graphics/gfxbase.h>
-#include <graphics/view.h>
+
 #include <exec/execbase.h>
-#include <exec/io.h>
-#include <exec/types.h>
-#include <exec/memory.h>
-#include <graphics/gfxmacros.h>
 #include <hardware/custom.h>
 #include <hardware/dmabits.h>
 #include <hardware/intbits.h>
 #include <devices/serial.h>
-#include <exec/ports.h>
 #include <dos/dos.h>
-#include <dos/dosextens.h>
-#include <devices/audio.h>
 #include <dos/stdio.h>
+
+#include <workbench/startup.h>
+#include <proto/intuition.h>
+#include <intuition/intuition.h>
 
 //config
 //#define LOG
@@ -31,15 +26,29 @@
 #define INTENA_AUD_AGAIN(yy) INTF_AUD ## yy
 #define INTENA_AUD(y) INTENA_AUD_AGAIN(y)
 
-static UBYTE recvBuffer[SERIAL_BUFFER_SIZE] = {0};
+struct ExecBase *SysBase = NULL;
+struct DosLibrary *DOSBase = NULL;
+struct IntuitionBase *IntuitionBase = NULL;
 
-struct MsgPort *serialPort;
+//backup
+static UWORD SystemInts = 0;
+static UWORD SystemDMA = 0;
+static UWORD SystemADKCON = 0;
+static volatile APTR VBR = 0;
+static APTR SystemIrq = 0;
 
-struct IOExtSer *serialIO;
+static BOOL closeDev = FALSE;
+static BOOL deleteIo = FALSE;
+struct MsgPort *serialPort = NULL;
+struct IOExtSer *serialIO = NULL;
+volatile struct Custom *custom = NULL;
+static struct Window *mainWin = NULL;
 
-BYTE* SineData;
+UBYTE recvBuffer[SERIAL_BUFFER_SIZE] = {0};
 
-BYTE* StopData;
+static BYTE* SineData;
+
+static BYTE* StopData;
 
 struct PcmData
 {
@@ -57,20 +66,7 @@ struct PlayData
 	struct PcmData *pcm;
 };
 
-static volatile struct PlayData reqPlayData[4][256] = {0};
-
 static volatile struct PlayData curPlayData[4] = {0};
-
-struct ExecBase *SysBase;
-volatile struct Custom *custom;
-struct DosLibrary *DOSBase;
-
-//backup
-static UWORD SystemInts;
-static UWORD SystemDMA;
-static UWORD SystemADKCON;
-static volatile APTR VBR=0;
-static APTR SystemIrq;
 
 static APTR GetVBR(void) {
 	APTR vbr = 0;
@@ -85,23 +81,6 @@ static APTR GetVBR(void) {
 	return vbr;
 }
 
-void WaitVbl() {
-	debug_start_idle();
-	while (1) {
-		volatile ULONG vpos=*(volatile ULONG*)0xDFF004;
-		vpos&=0x1ff00;
-		if (vpos!=(311<<8))
-			break;
-	}
-	while (1) {
-		volatile ULONG vpos=*(volatile ULONG*)0xDFF004;
-		vpos&=0x1ff00;
-		if (vpos==(311<<8))
-			break;
-	}
-	debug_stop_idle();
-}
-
 // $64, 68, 6c, 70, 74, 78, 7c for level 1-7 interrupts
 // http://www.winnicki.net/amiga/memmap/MoreInts.html
 void SetAudioInterruptHandler(APTR interrupt) {
@@ -112,6 +91,8 @@ APTR GetAudioInterruptHandler() {
 	return *(volatile APTR*)(((UBYTE*)VBR)+0x70);
 }
 
+static __attribute__((interrupt)) void audioInterruptHandler();
+
 void TakeSystem() {
 	Forbid();
 	//Save current interrupts and DMA settings so we can restore them upon exit. 
@@ -121,37 +102,62 @@ void TakeSystem() {
 
 	//https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0203.html
 	//	Disable -- disable interrupt processing.
-	//Disable();
+	Disable();
 
 	//custom->intena=0x7fff;//disable all interrupts
 	//custom->intreq=0x7fff;//Clear any interrupts that were pending
+	custom->intena = INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
+	custom->intreq = INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
 
 	custom->dmacon = DMAF_AUDIO;
 	//custom->dmacon=0x7fff;//Clear all DMA channels
-#if 0
-	//set all colors black
-	for(int a=0;a<32;a++)
-		custom->color[a]=0;
-#endif	
-
-	//WaitVbl();
-	//WaitVbl();
 
 	VBR=GetVBR();
 	SystemIrq=GetAudioInterruptHandler(); //store interrupt register
+
+	//There is one int handler for all aud events
+	//but the interrupts for each audio ch can be ene/dis indivisually
+	SetAudioInterruptHandler((APTR)audioInterruptHandler);
+	custom->intena = INTF_SETCLR | INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
 }
 
 void FreeSystem() { 
 	//custom->intena=0x7fff;//disable all interrupts
-	custom->intena = INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3;
-	custom->intreq=0x7fff;//Clear any interrupts that were pending
+	custom->intena = INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
+	//custom->intreq=0x7fff;//Clear any interrupts that were pending
+	custom->intreq=INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
 	custom->dmacon = DMAF_AUDIO;
 	//custom->dmacon=0x7fff;//Clear all DMA channels
+
+	FreeMem(StopData, 4);
+
+	if(serialIO != NULL)
+	{
+		if(closeDev)
+		{
+			// Ask device to abort request, if pending
+			AbortIO((struct IORequest *)serialIO);
+			// Wait for abort, then clean up
+			WaitIO((struct IORequest *)serialIO);
+			// 8. デバイスを閉じる
+			CloseDevice((struct IORequest *)serialIO);
+		}
+		if(deleteIo)
+		{
+			// 9. I/O リクエストを解放
+			DeleteIORequest((struct IORequest *)serialIO);
+		}
+	}
+	if(serialPort != NULL)
+	{
+		// 10. メッセージポートを解放
+		DeleteMsgPort(serialPort);
+	}
 
 	//restore interrupts
 	SetAudioInterruptHandler(SystemIrq);
 
-	/*Restore all interrupts and DMA settings. */
+	//Restore all interrupts and DMA settings.
 	custom->intena=SystemInts|0x8000;
 	custom->dmacon=SystemDMA|0x8000;
 	custom->adkcon=SystemADKCON|0x8000;
@@ -162,9 +168,18 @@ void FreeSystem() {
 			FreeMem(pcmDataTable[i].dataPtr, pcmDataTable[i].length);
 	}
 
-	//Enable();
+	if(mainWin != NULL)
+		CloseWindow(mainWin);
 
+	if(IntuitionBase != NULL)
+		CloseLibrary((struct Library *)IntuitionBase);
+
+	if(DOSBase != NULL)
+		CloseLibrary((struct Library*)DOSBase);
+
+	Enable();
 	Permit();
+	Exit(0);
 }
 
 void aud_memcpy(volatile struct AudChannel *dest, volatile struct AudChannel *src) {
@@ -282,14 +297,36 @@ static __attribute__((interrupt)) void audioInterruptHandler() {
 int readCMD()
 {
 	int ret = -1;
-	int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
 	SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
 	while(1)
 	{
-		if (Wait(waitMask) & SIGBREAKF_CTRL_C)
-		{
-			ret = -2;
-			break;
+		if (mainWin) {
+			int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
+			ULONG wait = Wait(waitMask);
+			if (wait & SIGBREAKF_CTRL_C)
+			{
+				ret = -2;
+				break;
+			}
+			struct IntuiMessage *msg;
+			while ((msg = (struct IntuiMessage *)GetMsg(mainWin->UserPort))) {
+				if (msg->Class == IDCMP_CLOSEWINDOW)
+					ret = -2;
+				ReplyMsg((struct Message *)msg);
+			}
+			if (ret == -2)
+			{
+				CloseWindow(mainWin);
+				mainWin = NULL;
+				break;
+			}
+		}else{
+			int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
+			if (Wait(waitMask) & SIGBREAKF_CTRL_C)
+			{
+				ret = -2;
+				break;
+			}
 		}
 		// 受信待機
 		//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
@@ -318,18 +355,90 @@ int readArray(UBYTE* array, USHORT length)
 	return ret;
 }
 
-int main() {
+void showMessage(char *message)
+{
+	if(mainWin)
+	{
+		// ダイアログを表示（標準の警告ウィンドウ）
+		struct Window *dialog = OpenWindowTags(NULL,
+			WA_Width,  300,
+			WA_Height, 100,
+			WA_Left,   50,
+			WA_Top,    50,
+			WA_Title,  (ULONG)"Message",
+			WA_Flags,  WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET,
+			TAG_END);
+
+		if (dialog)
+		{
+			// メッセージテキスト（IntuiText）
+			const struct IntuiText body = {
+				1, // 前景色（1 = 白）
+				0, // 背景色（0 = 黒）
+				JAM2, // 描画モード（背景を塗りつぶす）
+				10, 10, // 左上座標
+				NULL, // フォント（NULL = デフォルト）
+				(UBYTE *)message, // 表示する文字列
+				NULL // 次のテキスト（NULL なら 1 行のみ）
+			};
+			// メッセージテキスト（IntuiText）
+			const struct IntuiText ok = {
+				1, // 前景色（1 = 白）
+				0, // 背景色（0 = 黒）
+				JAM2, // 描画モード（背景を塗りつぶす）
+				10, 10, // 左上座標
+				NULL, // フォント（NULL = デフォルト）
+				(UBYTE *)"OK", // 表示する文字列
+				NULL // 次のテキスト（NULL なら 1 行のみ）
+			};
+			AutoRequest(dialog, &body, &ok, NULL, 0, 0, 280, 60);
+			CloseWindow(dialog);
+		}
+	}else{
+		VWritef(message, NULL);
+	}
+}
+
+/*
+*/
+void main(int argc, char *argv[], struct WBStartup *wb)
+{
 	SysBase = *((struct ExecBase**)4UL);
 	custom = (struct Custom*)0xdff000;
+
+	TakeSystem();
 
 	// used for printing
 	DOSBase = (struct DosLibrary*)OpenLibrary((CONST_STRPTR)"dos.library", 0);
 	if (!DOSBase)
-		Exit(0);
+		FreeSystem();
+	
+	if (argc == 0) {
+		// Intuition ライブラリを開く
+		IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 37);
+		if (!IntuitionBase) {
+			FreeSystem();
+		}
 
-	VWritef("MAmi VSIF Driver\n", NULL);
+		// ウィンドウを開く
+		mainWin = OpenWindowTags(NULL,
+			WA_Width,  300,                 // ウィンドウの幅
+			WA_Height, 100,                 // ウィンドウの高さ
+			WA_Left,   50,                  // 画面左からの位置
+			WA_Top,    50,                  // 画面上からの位置
+			WA_Title,  (ULONG)"MAmi VSIF Driver", // ウィンドウタイトル
+			WA_Flags, WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET | WFLG_ACTIVATE, 
+			WA_IDCMP, IDCMP_CLOSEWINDOW,
+			TAG_END);
+		if (!mainWin)
+			FreeSystem();
 
-	TakeSystem();
+	}else
+	{
+        // CLI から実行された
+		showMessage("MAmi VSIF Driver\n");
+	}
+
 #ifdef LOG
 	VWritef("Completed take system.\n", NULL);
 #endif
@@ -342,11 +451,9 @@ int main() {
 	// 1. メッセージポートを作成
 	serialPort = CreateMsgPort();
 	if (!serialPort) {
-		Write(Output(), (APTR)"Failed to create Port!\n", strlen("Failed to create Port!\n"));
-		CloseLibrary((struct Library*)DOSBase);
-		Exit(0);
+		showMessage("Failed to create Port!\n");
+		FreeSystem();
 	}
-
 #ifdef LOG
 	//VWritef("Serial setting 2.\n", NULL);
 #endif
@@ -354,24 +461,19 @@ int main() {
 	// 2. I/O リクエストを作成
 	serialIO = (struct IOExtSer *)CreateIORequest(serialPort, sizeof(struct IOExtSer));
 	if (!serialIO) {
-		Write(Output(), (APTR)"Failed to create IO Request!\n", strlen("Failed to create IO Request!\n"));
-		DeleteMsgPort(serialPort);
-		CloseLibrary((struct Library*)DOSBase);
-		Exit(0);
+		showMessage("Failed to create IO Request!\n");
+		FreeSystem();
 	}
-
 #ifdef LOG
 	//VWritef("Serial setting 3.\n", NULL);
 #endif
 
 	// 3. serial.device を開く
 	if (OpenDevice("serial.device", 0, (struct IORequest *)serialIO, 0) != 0) {
-		Write(Output(), (APTR)"Failed to open serial.device!\n", strlen("Failed to open serial.device!\n"));
-		DeleteIORequest((struct IORequest *)serialIO);
-		DeleteMsgPort(serialPort);
-		CloseLibrary((struct Library*)DOSBase);
-		Exit(0);
+		showMessage("Failed to open serial.device!\n");
+		FreeSystem();
 	}
+	deleteIo = TRUE;
 
 #ifdef LOG
 	//VWritef("Serial setting 4.\n", NULL);
@@ -395,13 +497,10 @@ int main() {
 	// 5. 設定を適用
 	serialIO->IOSer.io_Command = SDCMD_SETPARAMS;
 	if (DoIO((struct IORequest *)serialIO) != 0) {
-		Write(Output(), (APTR)"Failed to set serial parameters!\n", strlen("Failed to set serial parameters!\n"));
-		CloseDevice((struct IORequest *)serialIO);
-		DeleteIORequest((struct IORequest *)serialIO);
-		DeleteMsgPort(serialPort);
-		CloseLibrary((struct Library*)DOSBase);
-		Exit(0);
+		showMessage("Failed to set serial parameters!\n");
+		FreeSystem();
 	}
+	closeDev = TRUE;
 #endif
 
 #ifdef LOG
@@ -414,11 +513,6 @@ int main() {
 		pcmDataTable[i].length = 0;
 		pcmDataTable[i].loop  = 0;
 	}
-
-	//There is one int handler for all aud events
-	//but the interrupts for each audio ch can be ene/dis indivisually
-	SetAudioInterruptHandler((APTR)audioInterruptHandler);
-	custom->intena = INTF_SETCLR | INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
 
 #ifdef LOG
 	VWritef("Completed init handler.\n", NULL);
@@ -488,20 +582,12 @@ int main() {
 		if (Wait(waitMask) & SIGBREAKF_CTRL_C)
 		{
 			// END
-			FreeSystem();
-
-			CloseLibrary((struct Library*)DOSBase);
-			//CloseLibrary((struct Library*)GfxBase);
-
 			VWritef("Exited.\n", NULL);
+			FreeSystem();
 			Exit(0);
-			return 0;
 		}
 	}
 #endif
-	
-	// for(int i=0;i<4;i++)
-	// 	reqStopPcm(i, FALSE);
 
 #ifdef SERIAL
 
@@ -512,7 +598,7 @@ int main() {
 	serialIO->IOSer.io_Length = 1;
 
 #endif
-	VWritef("Ready. Press Ctrl-C to exit.\n", NULL);
+	VWritef("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.\n", NULL);
 	int val = readCMD();
 	while(val >= 0)
 	{
@@ -621,7 +707,7 @@ int main() {
 				break;
 			case 99:
 				{
-					VWritef("PCM ", NULL);
+					VWritef("PCM Receiving...\n", NULL);
 
 					reqStopPcm(0, FALSE);
 					reqStopPcm(1, FALSE);
@@ -638,14 +724,10 @@ int main() {
 					UWORD loop = ((UWORD)dataPtr[3] << 8) + dataPtr[4];
 					if(loop >= len)
 						loop = 0xFFFF;
-
-					VWritef("Receiving... ", NULL);
 #ifdef LOG
 					ULONG arg[] = {id, len, loop};
 					VWritef(" %N %N %N", arg);
 #endif
-					VWritef("\n", NULL);
-
 					BYTE *oldPcm = pcmDataTable[id].dataPtr;
 					UWORD oldLen = pcmDataTable[id].length;
 					if(len != 0)
@@ -664,8 +746,7 @@ int main() {
 							UBYTE dataPtr[] = {0};
 							for(int i=0;i<len;i++)
 								val = readArray(dataPtr, 1);
-							VWritef("\n", NULL);
-							VWritef("No PCM memory.\n", NULL);
+							showMessage("No PCM memory!\n");
 							val = -1;
 							break;
 						}
@@ -712,34 +793,9 @@ int main() {
 	}
 	if(val == -2)
 		VWritef("Exited.\n", NULL);
-	else{
-		VWritef("Data transfer error.\n", NULL);
-		VWritef("Aborted.\n", NULL);
-	}
-
-#ifdef MUSIC
-	p61End();
-#endif
-
-	FreeMem(StopData, 4);
-
-	AbortIO((struct IORequest *)serialIO);
-	/* Ask device to abort request, if pending */
-	WaitIO((struct IORequest *)serialIO);
-	/* Wait for abort, then clean up */
-
-	// 8. デバイスを閉じる
-	CloseDevice((struct IORequest *)serialIO);
-	// 9. I/O リクエストを解放
-	DeleteIORequest((struct IORequest *)serialIO);
-	// 10. メッセージポートを解放
-	DeleteMsgPort(serialPort);
+	else
+		showMessage("Data transfer error. Aborted.\n");
 
 	// END
 	FreeSystem();
-
-	CloseLibrary((struct Library*)DOSBase);
-	//CloseLibrary((struct Library*)GfxBase);
-
-	Exit(0);
 }

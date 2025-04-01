@@ -135,22 +135,37 @@ void paula_8364_device::keyon(uint8_t ch, uint8_t id, uint8_t vol, uint16_t peri
 
 void paula_8364_device::keyoff(uint8_t ch)
 {
+	reg_w(REG_DMACON, chanelDMAF[ch]);
 	switch (ch)
 	{
 	case 0:
+		reg_w(REG_AUD0LCH, 0);
+		reg_w(REG_AUD0LCL, 0);
+		reg_w(REG_AUD0LEN, 0);
 		reg_w(REG_AUD0VOL, 0);
 		break;
 	case 1:
+		reg_w(REG_AUD1LCH, 0);
+		reg_w(REG_AUD1LCL, 0);
+		reg_w(REG_AUD1LEN, 0);
 		reg_w(REG_AUD1VOL, 0);
 		break;
 	case 2:
+		reg_w(REG_AUD2LCH, 0);
+		reg_w(REG_AUD2LCL, 0);
+		reg_w(REG_AUD2LEN, 0);
 		reg_w(REG_AUD2VOL, 0);
 		break;
 	case 3:
+		reg_w(REG_AUD3LCH, 0);
+		reg_w(REG_AUD3LCL, 0);
+		reg_w(REG_AUD3LEN, 0);
 		reg_w(REG_AUD3VOL, 0);
 		break;
 	}
-	reg_w(REG_DMACON, chanelDMAF[ch]); // Start DMA for AUD N ch
+	//HACK: this is a hack to stop the sound
+	audio_channel* chan = &m_channel[ch];
+	dma_reload(chan);
 }
 
 void paula_8364_device::reg_w(offs_t offset, uint16_t data)

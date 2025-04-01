@@ -38,6 +38,7 @@ using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static zanac.MAmidiMEmo.Instruments.Chips.Beep;
 using static zanac.MAmidiMEmo.Instruments.Chips.MultiPCM;
+using static zanac.MAmidiMEmo.Instruments.Chips.SIDBase;
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -288,7 +289,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private const float DEFAULT_GAIN = 2.5f;
+        private const float DEFAULT_GAIN = 1.0f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -348,7 +349,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             else if (CurrentSoundEngine != SoundEngineType.Software)
             {
                 if (timbre.PcmData.Length > 0)
-                    FormMain.OutputLog(this, Resources.UpdatingPCM);
+                    FormMain.OutputLog(this, Resources.UpdatingPCM + " (" + timbre.DisplayName + ")");
                 try
                 {
                     if (timbre.PcmData.Length > 0)
@@ -357,7 +358,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         using (FormProgress f = new FormProgress())
                         {
                             f.StartPosition = FormStartPosition.CenterScreen;
-                            f.Message = Resources.UpdatingPCM;
+                            f.Message = Resources.UpdatingPCM + " (" + timbre.DisplayName + ")";
                             f.Show();
                             transferPcmData(timbre, f);
                         }
@@ -420,11 +421,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             for (int i = 0; i < tim.PcmData.Length; i++)
                             {
                                 data.Add((byte)tim.PcmData[i]);
-                                if(data.Count >= 512)
+                                if (data.Count >= 512)
                                 {
                                     vsifClient.RawWriteData(data.ToArray(), null);
                                     data.Clear();
-                                    
+
                                     percentage = (100 * i) / tim.PcmData.Length;
                                     if (percentage != lastPercentage)
                                     {
@@ -450,6 +451,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        [DataMember]
+        [Category("General")]
+        [Description("Set LFO and Portament processing interval[ms]. If you use a real hardware, please increase to appropriate value.")]
+        [DefaultValue(10d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(1d, 50d, 1d)]
+        public override double ProcessingInterval
+        {
+            get
+            {
+                return base.ProcessingInterval;
+            }
+            set
+            {
+                base.ProcessingInterval = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -465,32 +487,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 case PAULA_CMD.Volume:
                     {
+                        byte ch = chConvert[address];
+
                         lock (sndEnginePtrLock)
                         {
                             switch (CurrentSoundEngine)
                             {
                                 case SoundEngineType.VSIF_AMIGA:
-                                    vsifClient.RawWriteData(new byte[] { 1, (byte)(address << 1), (byte)data }, null);
+                                    // ch, value
+                                    vsifClient.RawWriteData(new byte[] { 1, ch, (byte)data }, null);
                                     break;
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, address, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, ch, data);
                     }
                     break;
                 case PAULA_CMD.Pitch:
                     {
+                        byte ch = chConvert[address];
+
                         lock (sndEnginePtrLock)
                         {
                             switch (CurrentSoundEngine)
                             {
                                 case SoundEngineType.VSIF_AMIGA:
-                                    vsifClient.RawWriteData(new byte[] { 2, (byte)(address << 1), (byte)(data >> 8), (byte)data }, null);
+                                    // ch, value
+                                    vsifClient.RawWriteData(new byte[] { 2, ch, (byte)(data >> 8), (byte)data }, null);
                                     break;
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, address, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, ch, data);
                     }
                     break;
                 case PAULA_CMD.Filter:
@@ -499,6 +527,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (CurrentSoundEngine)
                         {
                             case SoundEngineType.VSIF_AMIGA:
+                                // value
                                 vsifClient.RawWriteData(new byte[] { 5, (byte)data }, null);
                                 break;
                         }
@@ -510,6 +539,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (CurrentSoundEngine)
                         {
                             case SoundEngineType.VSIF_AMIGA:
+                                // id, value
                                 vsifClient.RawWriteData(new byte[] { 100, (byte)address, (byte)(data >> 8), (byte)data }, null);
                                 break;
                         }
@@ -537,6 +567,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        private static byte[] chConvert = new byte[] { 0, 2, 1, 3 };
+
         /// <summary>
         /// 
         /// </summary>
@@ -551,8 +583,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void Paula8364Keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort length, ushort loop)
         {
+            ch = chConvert[ch];
             if (loop >= length)
                 loop = 0xffff;
+
             lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
@@ -588,6 +622,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void Paula8364Keyoff(uint unitNumber, byte ch)
         {
+            ch = chConvert[ch];
+
             lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
@@ -700,6 +736,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
+
+            ProcessingInterval = 8;
 
             readSoundFontForTimbre = new ToolStripMenuItem("Import PCM from SF2 for &Timbre...");
             readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
@@ -933,7 +971,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     PaulaTimbre timbre = (PaulaTimbre)bts[i];
 
                     tindex++;
-                    var emptySlot = searchEmptySlot(note);
+                    var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
@@ -968,9 +1006,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (PAULA_8364 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
+            private (PAULA_8364 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, PaulaTimbre timbre)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, PAULA_8364.MAX_VOICE);
+                var emptySlot = (parentModule, -1);
+
+                switch (timbre.PhysicalChannel)
+                {
+                    case PhysicalChannel.Indeterminatene:
+                        {
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 4);
+                            break;
+                        }
+
+                    case PhysicalChannel.IndeterminateneLeft:
+                        {
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 4, -1, 0);
+                            break;
+                        }
+                    case PhysicalChannel.IndeterminateneRight:
+                        {
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 4, -1, 2);
+                            break;
+                        }
+
+                    case PhysicalChannel.Ch1:
+                    case PhysicalChannel.Ch2:
+                    case PhysicalChannel.Ch3:
+                    case PhysicalChannel.Ch4:
+                        {
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 4, (int)timbre.PhysicalChannel - 3, 0);
+                            break;
+                        }
+                }
+                return emptySlot;
             }
 
             internal override void ProcessAllSoundOff()
@@ -1107,6 +1175,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
+            [Description("Physical Channel")]
+            [DefaultValue(PhysicalChannel.Indeterminatene)]
+            public PhysicalChannel PhysicalChannel
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Category("Sound")]
             [Description("Set PCM base frequency [Hz]")]
             [DefaultValue(typeof(double), "440")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
@@ -1202,7 +1280,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     bool forceClear = false;
-                    if(f_PcmData.Length != 0 && value.Length == 0)
+                    if (f_PcmData.Length != 0 && value.Length == 0)
                         forceClear = true;
                     f_PcmData = value;
 
@@ -1686,5 +1764,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         Filter = 5,
         PCM = 99,
         PCM_LOOP = 100,
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [TypeConverter(typeof(EnumConverter<PhysicalChannel>))]
+    public enum PhysicalChannel
+    {
+        Indeterminatene = 0,
+        IndeterminateneLeft = 1,
+        IndeterminateneRight = 2,
+        [Description("Ch1(Left)")]
+        Ch1 = 3,
+        [Description("Ch3(Left)")]
+        Ch3 = 4,
+        [Description("Ch2(Right)")]
+        Ch2 = 5,
+        [Description("Ch4(Right)")]
+        Ch4 = 6,
     }
 }

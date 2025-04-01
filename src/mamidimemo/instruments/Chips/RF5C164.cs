@@ -632,14 +632,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             if (pcmData.Count != 0)
             {
-                FormMain.OutputLog(this, Resources.UpdatingADPCM);
+                FormMain.OutputLog(this, Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")");
                 try
                 {
                     FormMain.AppliactionForm.Enabled = false;
                     using (FormProgress f = new FormProgress())
                     {
                         f.StartPosition = FormStartPosition.CenterScreen;
-                        f.Message = Resources.UpdatingADPCM;
+                        f.Message = Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")";
                         f.Show();
                         //transferPcmOnlyDiffData(pcmData.ToArray(), f);
                         sendPcmData(pcmData.ToArray(), 0, f);
