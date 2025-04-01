@@ -1111,6 +1111,22 @@ void md_base_state::md_ntsc(machine_config &config)
 		SAA1099(config, *m_saa1099[i], 8000000);
 		(*m_saa1099[i])->add_route(0, "lspeaker", 1.00);
 		(*m_saa1099[i])->add_route(1, "rspeaker", 1.00);
+
+		/*
+		static constexpr XTAL CLK_28M_PAL = XTAL(28'375'160);
+		static constexpr XTAL CLK_7M_PAL = CLK_28M_PAL / 4;
+		static constexpr XTAL CLK_C1_PAL = CLK_28M_PAL / 8;
+		static constexpr XTAL CLK_E_PAL = CLK_7M_PAL / 10;
+
+		static constexpr XTAL CLK_28M_NTSC = XTAL(28'636'363);
+		static constexpr XTAL CLK_7M_NTSC = CLK_28M_NTSC / 4;
+		static constexpr XTAL CLK_C1_NTSC = CLK_28M_NTSC / 8;
+		static constexpr XTAL CLK_E_NTSC = CLK_7M_NTSC / 10;
+		*/
+
+		PAULA_8364(config, *m_paula_8364[i], XTAL(28'375'160)/8);	//CLK_C1_PAL
+		(*m_paula_8364[i])->add_route(0, "lspeaker", 1.00);
+		(*m_paula_8364[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

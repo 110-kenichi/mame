@@ -34,6 +34,7 @@ paula_8364_device::paula_8364_device(const machine_config &mconfig, const char *
 	m_mem_r(*this), m_int_w(*this),
 	m_dmacon(0), m_adkcon(0),
 	m_stream(nullptr)
+	, m_callback(NULL)
 {
 }
 
@@ -55,10 +56,13 @@ void paula_8364_device::device_start()
 		m_channel[i].manualmode = false;
 		m_channel[i].curlocation = 0;
 		m_channel[i].irq_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(paula_8364_device::signal_irq), this));
+
+		m_channel[i].loop = 0;
+		m_channel[i].id = 0;
 	}
 
 	// create the stream
-	m_stream = machine().sound().stream_alloc(*this, 0, 4, clock() / CLOCK_DIVIDER);
+	m_stream = machine().sound().stream_alloc(*this, 0, 2, clock() / CLOCK_DIVIDER);
 }
 
 //-------------------------------------------------
@@ -87,6 +91,66 @@ READ16_MEMBER( paula_8364_device::reg_r )
 	}
 
 	return 0xffff;
+}
+
+void paula_8364_device::keyon(uint8_t ch, uint8_t id, uint8_t vol, uint16_t period, uint16_t length, uint16_t loop)
+{
+	switch (ch)
+	{
+		case 0:
+			m_channel[CHAN_0].id = id;
+			m_channel[CHAN_0].loc = 0;
+			reg_w(REG_AUD0LEN, length);
+			m_channel[CHAN_0].loop = loop;
+			reg_w(REG_AUD0PER, period);
+			reg_w(REG_AUD0VOL, vol);
+			break;
+		case 1:
+			m_channel[CHAN_1].id = id;
+			m_channel[CHAN_1].loc = 0;
+			reg_w(REG_AUD1LEN, length);
+			m_channel[CHAN_1].loop = loop;
+			reg_w(REG_AUD1PER, period);
+			reg_w(REG_AUD1VOL, vol);
+			break;
+		case 2:
+			m_channel[CHAN_2].id = id;
+			m_channel[CHAN_2].loc = 0;
+			reg_w(REG_AUD2LEN, length);
+			m_channel[CHAN_2].loop = loop;
+			reg_w(REG_AUD2PER, period);
+			reg_w(REG_AUD2VOL, vol);
+			break;
+		case 3:
+			m_channel[CHAN_3].id = id;
+			m_channel[CHAN_3].loc = 0;
+			reg_w(REG_AUD3LEN, length);
+			m_channel[CHAN_3].loop = loop;
+			reg_w(REG_AUD3PER, period);
+			reg_w(REG_AUD3VOL, vol);
+			break;
+	}
+	reg_w(REG_DMACON, DMAF_SETCLR | DMAF_MASTER | chanelDMAF[ch]); // Start DMA for AUD 3 ch
+}
+
+void paula_8364_device::keyoff(uint8_t ch)
+{
+	switch (ch)
+	{
+	case 0:
+		reg_w(REG_AUD0VOL, 0);
+		break;
+	case 1:
+		reg_w(REG_AUD1VOL, 0);
+		break;
+	case 2:
+		reg_w(REG_AUD2VOL, 0);
+		break;
+	case 3:
+		reg_w(REG_AUD3VOL, 0);
+		break;
+	}
+	reg_w(REG_DMACON, chanelDMAF[ch]); // Start DMA for AUD N ch
 }
 
 void paula_8364_device::reg_w(offs_t offset, uint16_t data)
@@ -166,6 +230,10 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 {
 	int channum, sampoffs = 0;
 
+	// clear the sample data to 0
+	memset(outputs[0], 0, sizeof(stream_sample_t) * samples);	//L
+	memset(outputs[1], 0, sizeof(stream_sample_t) * samples);	//R
+
 	// if all DMA off, disable all channels
 	if (BIT(m_dmacon, 9) == 0)
 	{
@@ -174,9 +242,6 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 		m_channel[2].dma_enabled =
 		m_channel[3].dma_enabled = false;
 
-		// clear the sample data to 0
-		for (channum = 0; channum < 4; channum++)
-			memset(outputs[channum], 0, sizeof(stream_sample_t) * samples);
 		return;
 	}
 
@@ -247,7 +312,24 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 
 			// fill the buffer with the sample
 			for (i = 0; i < ticks; i += CLOCK_DIVIDER)
-				outputs[channum][(sampoffs + i) / CLOCK_DIVIDER] = sample;
+			{
+				switch (channum)
+				{
+				case 0:
+					outputs[0][(sampoffs + i) / CLOCK_DIVIDER] += sample;
+					break;
+				case 1:
+					outputs[1][(sampoffs + i) / CLOCK_DIVIDER] += sample;
+					break;
+				case 2:
+					outputs[0][(sampoffs + i) / CLOCK_DIVIDER] += sample;
+					break;
+				case 3:
+					outputs[1][(sampoffs + i) / CLOCK_DIVIDER] += sample;
+					break;
+				}
+				//outputs[channum][(sampoffs + i) / CLOCK_DIVIDER] = sample;
+			}
 
 			// account for the ticks; if we hit 0, advance
 			chan->curticks -= ticks;
@@ -263,14 +345,24 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 					chan->curlocation++;
 				if (chan->dma_enabled && !(chan->curlocation & 1))
 				{
-					chan->dat = m_mem_r(chan->curlocation);
+					//mamidimemo
+					//chan->dat = m_mem_r(chan->curlocation);
+					if (m_callback != NULL)
+						chan->dat = m_callback(chan->id, chan->curlocation);
 
 					if (chan->curlength != 0)
 						chan->curlength--;
 
 					// if we run out of data, reload the dma
 					if (chan->curlength == 0)
-						dma_reload(chan);
+					{
+						//mamidimemo
+						if (chan->loop != 0xFFFF)
+						{
+							dma_reload(chan);
+							chan->curlocation = chan->loop;
+						}
+					}
 				}
 
 				// latch the next byte of the sample

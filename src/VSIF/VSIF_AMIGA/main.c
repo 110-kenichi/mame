@@ -59,13 +59,11 @@ struct PlayData
 
 static volatile struct PlayData reqPlayData[4][256] = {0};
 
-//static volatile struct PlayData *curPlayData[4] = {0};
 static volatile struct PlayData curPlayData[4] = {0};
 
 struct ExecBase *SysBase;
 volatile struct Custom *custom;
 struct DosLibrary *DOSBase;
-//struct GfxBase *GfxBase;
 
 //backup
 static UWORD SystemInts;
@@ -121,22 +119,6 @@ void TakeSystem() {
 	SystemInts=custom->intenar;
 	SystemDMA=custom->dmaconr;
 
-	//ActiView=GfxBase->ActiView; //store current view
-	//https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_2._guide/node0459.html
-	//https://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0333.html
-	//LoadView(0);
-	//Wait for the top of the next video frame.
-	//http://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_2._guide/node048A.html
-	//WaitTOF();
-	//WaitTOF();
-
-	//WaitVbl();
-	//WaitVbl();
-
-	//https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node030C.html
-	//get the blitter for private usage
-	//OwnBlitter();
-	//WaitBlit();	
 	//https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0203.html
 	//	Disable -- disable interrupt processing.
 	//Disable();
@@ -160,21 +142,14 @@ void TakeSystem() {
 }
 
 void FreeSystem() { 
-	//WaitVbl();
-	//WaitBlit();
-	custom->intena=0x7fff;//disable all interrupts
-	//custom->intena = INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3;
+	//custom->intena=0x7fff;//disable all interrupts
+	custom->intena = INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3;
 	custom->intreq=0x7fff;//Clear any interrupts that were pending
-	//custom->dmacon = DMAF_AUDIO;
-	custom->dmacon=0x7fff;//Clear all DMA channels
+	custom->dmacon = DMAF_AUDIO;
+	//custom->dmacon=0x7fff;//Clear all DMA channels
 
 	//restore interrupts
 	SetAudioInterruptHandler(SystemIrq);
-
-	/*Restore system copper list(s). */
-	//custom->cop1lc=(ULONG)GfxBase->copinit;
-	//custom->cop2lc=(ULONG)GfxBase->LOFlist;
-	//custom->copjmp1=0x7fff; //start coppper
 
 	/*Restore all interrupts and DMA settings. */
 	custom->intena=SystemInts|0x8000;
@@ -187,13 +162,7 @@ void FreeSystem() {
 			FreeMem(pcmDataTable[i].dataPtr, pcmDataTable[i].length);
 	}
 
-	//WaitBlit();	
-	//DisownBlitter();
-	Enable();
-
-	//LoadView(ActiView);
-	//WaitTOF();
-	//WaitTOF();
+	//Enable();
 
 	Permit();
 }
@@ -247,12 +216,6 @@ void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period)
 	custom->aud[ch].ac_vol = 0;
 	custom->aud[ch].ac_per = 1;
 
-	//wait_next_scanline(); wait_next_scanline();
-	//aud_memcpy(&custom->aud[ch], aud);
-	// custom->aud[ch].ac_ptr = (UWORD*)StopData;
-	// custom->aud[ch].ac_len = 4;
-	// custom->aud[ch].ac_per = 1;
-	//custom->aud[ch].ac_per = aud->ac_per;
 	curPlayData[ch] = pd;
 
 	//custom->intena = INTF_SETCLR | (INTF_AUD0 << ch); // Start INT for AUD
@@ -270,8 +233,6 @@ void reqStopPcm(int ch, BOOL init)
 	custom->aud[ch].ac_ptr = (UWORD*)StopData;
 	custom->aud[ch].ac_vol = 0;
 	custom->aud[ch].ac_per = 1;
-	// wait_next_scanline(); wait_next_scanline();
-	// custom->aud[ch].ac_len = 4;
 }
 
 //https://www.youtube.com/watch?v=EDVRdlnHyoE
@@ -345,84 +306,12 @@ int readCMD()
 int readArray(UBYTE* array, USHORT length)
 {
 	int ret = -1;
-	//int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
-
-	// if(length > SERIAL_BUFFER_SIZE)
-	// {
-	// 	serialIO->IOSer.io_Data = (APTR)array;
-	// 	serialIO->IOSer.io_Length = SERIAL_BUFFER_SIZE;
-	// 	array += SERIAL_BUFFER_SIZE;
-	// 	length -= SERIAL_BUFFER_SIZE;
-	// }else{
-	// 	serialIO->IOSer.io_Data = (APTR)array;
-	// 	serialIO->IOSer.io_Data = (APTR)array;
-	// 	serialIO->IOSer.io_Length = length;
-	// 	length -= length;
-	// }
-	//SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
-
-	//while(1)
 	{
-		// if (Wait(waitMask) & SIGBREAKF_CTRL_C)
-		// {
-		// 	ret = -2;
-		// 	break;
-		// }
-		/*
-		if(length > SERIAL_BUFFER_SIZE)
-		{
-			serialIO->IOSer.io_Data = (APTR)array;
-			serialIO->IOSer.io_Length = SERIAL_BUFFER_SIZE;
-			array += SERIAL_BUFFER_SIZE;
-			length -= SERIAL_BUFFER_SIZE;
-		}else{
-			serialIO->IOSer.io_Data = (APTR)array;
-			serialIO->IOSer.io_Data = (APTR)array;
-			serialIO->IOSer.io_Length = length;
-			length -= length;
-		}*/
 		serialIO->IOSer.io_Data = (APTR)array;
 		serialIO->IOSer.io_Data = (APTR)array;
 		serialIO->IOSer.io_Length = length;
 		if(DoIO((struct IORequest *)serialIO) == 0)
-		{
 			ret = 0;
-			//break;
-		}
-		// if(length == 0)
-		// {
-		// 	ret = 0;
-		// 	break;
-		// }
-
-		// 受信待機
-		//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-		// if(CheckIO((struct IORequest *)serialIO))
-		// {
-		// 	if(WaitIO((struct IORequest *)serialIO))
-		// 	{
-		// 		ret = -1;
-		// 		break;
-		// 	}
-		// 	if(length == 0)
-		// 	{
-		// 		ret = 0;
-		// 		break;
-		// 	}
-		// 	if(length > SERIAL_BUFFER_SIZE)
-		// 	{
-		// 		serialIO->IOSer.io_Data = (APTR)array;
-		// 		serialIO->IOSer.io_Length = SERIAL_BUFFER_SIZE;
-		// 		array += SERIAL_BUFFER_SIZE;
-		// 		length -= SERIAL_BUFFER_SIZE;
-		// 	}else{
-		// 		serialIO->IOSer.io_Data = (APTR)array;
-		// 		serialIO->IOSer.io_Data = (APTR)array;
-		// 		serialIO->IOSer.io_Length = length;
-		// 		length -= length;
-		// 	}
-		// 	SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
-		// }
 	}
 	serialIO->IOSer.io_Data = (APTR)recvBuffer;
 	serialIO->IOSer.io_Length = 1;
@@ -432,13 +321,6 @@ int readArray(UBYTE* array, USHORT length)
 int main() {
 	SysBase = *((struct ExecBase**)4UL);
 	custom = (struct Custom*)0xdff000;
-
-	// We will use the graphics library only to locate and restore the system copper list once we are through.
-	/*
-	GfxBase = (struct GfxBase *)OpenLibrary((CONST_STRPTR)"graphics.library",0);
-	if (!GfxBase)
-		Exit(0);
-	*/
 
 	// used for printing
 	DOSBase = (struct DosLibrary*)OpenLibrary((CONST_STRPTR)"dos.library", 0);
@@ -568,24 +450,24 @@ int main() {
 	for(int i=0;i<12 * (100);i++)
 		SineData[12 + i] = SineData[i];
 
-	// SineData[12 * 100 - 12] = -125;
-	// SineData[12 * 100 - 11] = -100;
-	// SineData[12 * 100 - 10] = -75;
-	// SineData[12 * 100 - 9] = -50;
-	// SineData[12 * 100 - 8] = -25;
-	// SineData[12 * 100 - 7] = 0;
+	SineData[12 * 100 - 12] = -125;
+	SineData[12 * 100 - 11] = -100;
+	SineData[12 * 100 - 10] = -75;
+	SineData[12 * 100 - 9] = -50;
+	SineData[12 * 100 - 8] = -25;
+	SineData[12 * 100 - 7] = 0;
 
-	// SineData[12 * 100 - 6] = 25;
-	// SineData[12 * 100 - 5] = 50;
-	// SineData[12 * 100 - 4] = 75;
-	// SineData[12 * 100 - 3] = 100;
-	// SineData[12 * 100 - 2] = 125;
-	// SineData[12 * 100 - 1] = 127;
+	SineData[12 * 100 - 6] = 25;
+	SineData[12 * 100 - 5] = 50;
+	SineData[12 * 100 - 4] = 75;
+	SineData[12 * 100 - 3] = 100;
+	SineData[12 * 100 - 2] = 125;
+	SineData[12 * 100 - 1] = 127;
 
 	pcmDataTable[0].dataPtr = SineData;
 	pcmDataTable[0].length = 12 * 100;
-	//pcmDataTable[0].loop  = 12*100 - 12;
-	pcmDataTable[0].loop  = 0;
+	pcmDataTable[0].loop  = 12*100 - 12;
+	//pcmDataTable[0].loop  = 0;
 
 	// PLAY SOUND
 	//playPcm(0, 0, 64, 3546895 / (12 * 1000));
@@ -622,16 +504,6 @@ int main() {
 	// 	reqStopPcm(i, FALSE);
 
 #ifdef SERIAL
-
-	// // 6. データを送信
-	// char *message = "Hello, Amiga!\n";
-	// serialIO->IOSer.io_Command = CMD_WRITE;
-	// serialIO->IOSer.io_Data = (APTR)message;
-	// serialIO->IOSer.io_Length = strlen(message);
-	//serialIO->IOSer.io_Flags |= IOF_QUICK;  /* Set QuickIO Flag */
-
-	// DoIO((struct IORequest *)serialIO); // 送信完了を待つ
-	// Write(Output(), (APTR)"Sent data: %s\n", message);
 
 	// 7. データを受信 (最大 255 バイト)
 	serialIO->IOSer.io_Command = CMD_READ;

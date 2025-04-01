@@ -206,6 +206,7 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.pAULA8364ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1540,7 +1541,8 @@
             this.extendC140ToolStripMenuItem,
             this.extendSPC700ToolStripMenuItem,
             this.multiPCMToolStripMenuItem,
-            this.rF5C164ToolStripMenuItem});
+            this.rF5C164ToolStripMenuItem,
+            this.pAULA8364ToolStripMenuItem});
             this.pCMToolStripMenuItem.Name = "pCMToolStripMenuItem";
             resources.ApplyResources(this.pCMToolStripMenuItem, "pCMToolStripMenuItem");
             // 
@@ -1868,6 +1870,12 @@
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
+            // pAULA8364ToolStripMenuItem
+            // 
+            this.pAULA8364ToolStripMenuItem.Name = "pAULA8364ToolStripMenuItem";
+            resources.ApplyResources(this.pAULA8364ToolStripMenuItem, "pAULA8364ToolStripMenuItem");
+            this.pAULA8364ToolStripMenuItem.Click += new System.EventHandler(this.pAULA8364ToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -2083,6 +2091,7 @@
         private System.Windows.Forms.ToolStripMenuItem rF5C164ToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButtonXGM2;
         private System.Windows.Forms.ToolStripMenuItem sA1099ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pAULA8364ToolStripMenuItem;
     }
 }
 

@@ -1,0 +1,1690 @@
+﻿// copyright-holders:K.Ito
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing.Design;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Markup;
+using System.Xml.Linq;
+using FM_SoundConvertor;
+using Kermalis.SoundFont2;
+using Melanchall.DryWetMidi.Common;
+using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.MusicTheory;
+using NAudio.Wave;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Omu.ValueInjecter;
+using Omu.ValueInjecter.Injections;
+using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
+using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
+using zanac.MAmidiMEmo.Mame;
+using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.Util;
+using zanac.MAmidiMEmo.VSIF;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static zanac.MAmidiMEmo.Instruments.Chips.Beep;
+using static zanac.MAmidiMEmo.Instruments.Chips.MultiPCM;
+
+namespace zanac.MAmidiMEmo.Instruments.Chips
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [DataContract]
+    [InstLock]
+    public class PAULA_8364 : InstrumentBase
+    {
+        public override string Name => "PAULA_8364";
+
+        public override string Group => "PCM";
+
+        public override InstrumentType InstrumentType => InstrumentType.PAULA_8364;
+
+        [Browsable(false)]
+        public override string ImageKey => "PAULA_8364";
+
+        private const int MAX_VOICE = 1;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        protected override string SoundInterfaceTagNamePrefix => "paula_8364_";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Category("MIDI")]
+        [Description("MIDI Device ID")]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override uint DeviceID
+        {
+            get
+            {
+                return 34;
+            }
+        }
+
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set COM Port No for \"VSIF - AMIGA\"\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        private object sndEnginePtrLock = new object();
+
+        private VsifClient vsifClient;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports Software and VSIF.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                    setSoundEngine(value);
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeSPFM : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_AMIGA,
+                });
+
+                return sc;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_AMIGA:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.AMIGA, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private PAULA_8364_Clock f_MasterClock = PAULA_8364_Clock.PAL;
+
+        [DataMember]
+        [Category("Chip")]
+        [Description("Set PAULA clock.")]
+        [DefaultValue(PAULA_8364_Clock.PAL)]
+        public PAULA_8364_Clock MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+
+                    SetClock(UnitNumber, (uint)f_MasterClock);
+                }
+            }
+        }
+
+        private bool f_FilterEnable;
+
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Filter settings. Available for real machine only.")]
+        [DefaultValue(false)]
+        public bool FilterEnable
+        {
+            get
+            {
+                return f_FilterEnable;
+            }
+            set
+            {
+                if (f_FilterEnable != value)
+                {
+                    f_FilterEnable = value;
+                    Paula8364Write(UnitNumber, PAULA_CMD.Filter, 0, (ushort)(f_FilterEnable ? 0x1 : 0x0), true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override TimbreBase[] BaseTimbres
+        {
+            get
+            {
+                return Timbres;
+            }
+            set
+            {
+                Timbres = (PaulaTimbre[])value;
+            }
+        }
+
+        private PaulaTimbre[] f_Timbres;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category(" Timbres")]
+        [Description("Timbres")]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public PaulaTimbre[] Timbres
+        {
+            get
+            {
+                return f_Timbres;
+            }
+            set
+            {
+                f_Timbres = value;
+            }
+        }
+
+        private const float DEFAULT_GAIN = 2.5f;
+
+        public override bool ShouldSerializeGainLeft()
+        {
+            return GainLeft != DEFAULT_GAIN;
+        }
+
+        public override void ResetGainLeft()
+        {
+            GainLeft = DEFAULT_GAIN;
+        }
+
+        public override bool ShouldSerializeGainRight()
+        {
+            return GainRight != DEFAULT_GAIN;
+        }
+
+        public override void ResetGainRight()
+        {
+            GainRight = DEFAULT_GAIN;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serializeData"></param>
+        public override void RestoreFrom(string serializeData)
+        {
+            try
+            {
+                using (var obj = JsonConvert.DeserializeObject<PAULA_8364>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
+                Paula8364SetCallback(UnitNumber, f_read_byte_callback);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void updatePcmData(PaulaTimbre timbre, bool forceClear)
+        {
+            if (timbre == null)
+            {
+                for (int i = 0; i < Timbres.Length; i++)
+                    updatePcmData(Timbres[i], forceClear);
+            }
+            else if (CurrentSoundEngine != SoundEngineType.Software)
+            {
+                if (timbre.PcmData.Length > 0)
+                    FormMain.OutputLog(this, Resources.UpdatingPCM);
+                try
+                {
+                    if (timbre.PcmData.Length > 0)
+                    {
+                        FormMain.AppliactionForm.Enabled = false;
+                        using (FormProgress f = new FormProgress())
+                        {
+                            f.StartPosition = FormStartPosition.CenterScreen;
+                            f.Message = Resources.UpdatingPCM;
+                            f.Show();
+                            transferPcmData(timbre, f);
+                        }
+                    }
+                    else
+                    {
+                        if (forceClear)
+                            transferPcmData(timbre, null);
+                    }
+                }
+                finally
+                {
+                    if (timbre.PcmData.Length > 0)
+                        FormMain.AppliactionForm.Enabled = true;
+                }
+                FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, timbre.PcmData.Length / 1024));
+            }
+        }
+
+        private void transferPcmData(PaulaTimbre tim, FormProgress fp)
+        {
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_AMIGA:
+                        {
+                            if (tim.Instrument == null)
+                                tim.Instrument = this;
+                            tim.Instrument = this;
+                            // id, len, loop, data...
+                            List<byte> data = new List<byte>
+                            {
+                                //CMD
+                                99,
+                                //ID
+                                (byte)tim.Index,
+                                //Length
+                                (byte)(tim.PcmData.Length >> 8),
+                                (byte)tim.PcmData.Length
+                            };
+                            //Loop
+                            if (tim.LoopEnable && tim.LoopPoint < tim.PcmData.Length)
+                            {
+                                data.Add((byte)(tim.LoopPoint >> 8));
+                                data.Add((byte)tim.LoopPoint);
+                            }
+                            else
+                            {
+                                data.Add((byte)0xff);
+                                data.Add((byte)0xff);
+                            }
+                            //Send params
+                            vsifClient.RawWriteData(data.ToArray(), null);
+                            data.Clear();
+
+                            //Send pcm
+                            int percentage = 0;
+                            int lastPercentage = 0;
+                            for (int i = 0; i < tim.PcmData.Length; i++)
+                            {
+                                data.Add((byte)tim.PcmData[i]);
+                                if(data.Count >= 512)
+                                {
+                                    vsifClient.RawWriteData(data.ToArray(), null);
+                                    data.Clear();
+                                    
+                                    percentage = (100 * i) / tim.PcmData.Length;
+                                    if (percentage != lastPercentage)
+                                    {
+                                        if (fp != null)
+                                        {
+                                            fp.Percentage = percentage;
+                                        }
+                                    }
+                                    Application.DoEvents();
+                                    lastPercentage = percentage;
+                                }
+                            }
+                            if (data.Count >= 0)
+                                vsifClient.RawWriteData(data.ToArray(), null);
+                            fp.Percentage = 100;
+                            Application.DoEvents();
+                        }
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_paula_8364_write(uint unitNumber, uint address, ushort data);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void Paula8364Write(uint unitNumber, PAULA_CMD type, uint address, ushort data, bool vsifOnly)
+        {
+            switch (type)
+            {
+                case PAULA_CMD.Volume:
+                    {
+                        lock (sndEnginePtrLock)
+                        {
+                            switch (CurrentSoundEngine)
+                            {
+                                case SoundEngineType.VSIF_AMIGA:
+                                    vsifClient.RawWriteData(new byte[] { 1, (byte)(address << 1), (byte)data }, null);
+                                    break;
+                            }
+                        }
+                        if (!vsifOnly)
+                            DeferredWriteData(paula_8364_write, unitNumber, address, data);
+                    }
+                    break;
+                case PAULA_CMD.Pitch:
+                    {
+                        lock (sndEnginePtrLock)
+                        {
+                            switch (CurrentSoundEngine)
+                            {
+                                case SoundEngineType.VSIF_AMIGA:
+                                    vsifClient.RawWriteData(new byte[] { 2, (byte)(address << 1), (byte)(data >> 8), (byte)data }, null);
+                                    break;
+                            }
+                        }
+                        if (!vsifOnly)
+                            DeferredWriteData(paula_8364_write, unitNumber, address, data);
+                    }
+                    break;
+                case PAULA_CMD.Filter:
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.VSIF_AMIGA:
+                                vsifClient.RawWriteData(new byte[] { 5, (byte)data }, null);
+                                break;
+                        }
+                    }
+                    break;
+                case PAULA_CMD.PCM_LOOP:
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.VSIF_AMIGA:
+                                vsifClient.RawWriteData(new byte[] { 100, (byte)address, (byte)(data >> 8), (byte)data }, null);
+                                break;
+                        }
+                    }
+                    break;
+            }
+            /*
+            try
+            {
+                Program.SoundUpdating();
+                c140_w(unitNumber, address, data);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }*/
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_paula_8364_write paula_8364_write
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_paula_8364_keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort length, ushort loop);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void Paula8364Keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort length, ushort loop)
+        {
+            if (loop >= length)
+                loop = 0xffff;
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_AMIGA:
+                        vsifClient.RawWriteData(new byte[] { 3, ch, id, vol, (byte)(period >> 8), (byte)period }, null);
+                        break;
+                }
+            }
+            DeferredWriteData(paula_8364_keyon, unitNumber, ch, id, vol, period, length, loop);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_paula_8364_keyon paula_8364_keyon
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_paula_8364_keyoff(uint unitNumber, byte ch);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void Paula8364Keyoff(uint unitNumber, byte ch)
+        {
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_AMIGA:
+                        vsifClient.RawWriteData(new byte[] { 4, ch }, null);
+                        break;
+                }
+            }
+            DeferredWriteData(paula_8364_keyoff, unitNumber, ch);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_paula_8364_keyoff paula_8364_keyoff
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int delg_callback(byte pn, int pos);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_set_callback(uint unitNumber, delg_callback callback);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void Paula8364SetCallback(uint unitNumber, delg_callback callback)
+        {
+            DeferredWriteData(set_callback, unitNumber, callback);
+            /*
+            try
+            {
+                Program.SoundUpdating();
+                set_callback(unitNumber, callback);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }*/
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_set_callback set_callback
+        {
+            get;
+            set;
+        }
+
+        private Dictionary<int, sbyte[]> tmpPcmDataTable = new Dictionary<int, sbyte[]>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static PAULA_8364()
+        {
+            IntPtr funcPtr = MameIF.GetProcAddress("paula_8364_write");
+            if (funcPtr != IntPtr.Zero)
+                paula_8364_write = (delegate_paula_8364_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_paula_8364_write));
+
+            funcPtr = MameIF.GetProcAddress("paula_8364_keyon");
+            if (funcPtr != IntPtr.Zero)
+                paula_8364_keyon = (delegate_paula_8364_keyon)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_paula_8364_keyon));
+
+            funcPtr = MameIF.GetProcAddress("paula_8364_keyoff");
+            if (funcPtr != IntPtr.Zero)
+                paula_8364_keyoff = (delegate_paula_8364_keyoff)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_paula_8364_keyoff));
+
+            funcPtr = MameIF.GetProcAddress("paula_8364_set_callback");
+            if (funcPtr != IntPtr.Zero)
+                set_callback = (delegate_set_callback)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_set_callback));
+        }
+
+        private PAULA_8364SoundManager soundManager;
+
+        private delg_callback f_read_byte_callback;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public PAULA_8364(uint unitNumber) : base(unitNumber)
+        {
+            Timbres = new PaulaTimbre[256];
+            for (int i = 0; i < 256; i++)
+                Timbres[i] = new PaulaTimbre();
+
+            setPresetInstruments();
+
+            this.soundManager = new PAULA_8364SoundManager(this);
+
+            f_read_byte_callback = new delg_callback(read_byte_callback);
+            Paula8364SetCallback(UnitNumber, f_read_byte_callback);
+
+            GainLeft = DEFAULT_GAIN;
+            GainRight = DEFAULT_GAIN;
+
+            readSoundFontForTimbre = new ToolStripMenuItem("Import PCM from SF2 for &Timbre...");
+            readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
+
+            readSoundFontForDrumTimbre = new ToolStripMenuItem("Import PCM from SF2 for &DrumTimbre...");
+            readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
+        }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // 重複する呼び出しを検出するには
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    //マネージ状態を破棄します (マネージ オブジェクト)。
+                    soundManager?.Dispose();
+
+                    readSoundFontForTimbre?.Dispose();
+                    readSoundFontForTimbre = null;
+
+                    readSoundFontForDrumTimbre?.Dispose();
+                    readSoundFontForDrumTimbre = null;
+                }
+
+                lock (sndEnginePtrLock)
+                {
+                    if (vsifClient != null)
+                        vsifClient.Dispose();
+                }
+
+                // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
+                // TODO: 大きなフィールドを null に設定します。
+                Paula8364SetCallback(UnitNumber, null);
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
+        ~PAULA_8364()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(false);
+        }
+
+        // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
+        public override void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(true);
+            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        private bool ignoreUpdatePcmData;
+
+        private void initGlobalRegisters()
+        {
+            Paula8364Write(UnitNumber, PAULA_CMD.Filter, 0, (ushort)(f_FilterEnable ? 0x1 : 0x0), true);
+
+            if (!IsDisposing && !ignoreUpdatePcmData)
+                updatePcmData(null, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void setPresetInstruments()
+        {
+
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pn"></param>
+        /// <param name="pos"></param>
+        private int read_byte_callback(byte pn, int pos)
+        {
+            lock (tmpPcmDataTable)
+            {
+                if (tmpPcmDataTable.ContainsKey(pn))
+                {
+                    //HACK: Thread UNSAFE
+                    sbyte[] pd = tmpPcmDataTable[pn];
+                    if (pd != null && pd.Length != 0 && pos < pd.Length)
+                        return pd[pos];
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
+        {
+            soundManager.ProcessKeyOn(midiEvent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
+        protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
+        {
+            soundManager.ProcessKeyOff(midiEvent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
+        protected override void OnControlChangeEvent(ControlChangeEvent midiEvent)
+        {
+            base.OnControlChangeEvent(midiEvent);
+
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
+        protected override void OnPitchBendEvent(PitchBendEvent midiEvent)
+        {
+            base.OnPitchBendEvent(midiEvent);
+
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
+        }
+
+        internal override void ResetAll()
+        {
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PAULA_8364SoundManager : SoundManagerBase
+        {
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<PAULA_8364Sound> instOnSounds = new SoundList<PAULA_8364Sound>(MAX_VOICE);
+
+            private PAULA_8364 parentModule;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="parent"></param>
+            public PAULA_8364SoundManager(PAULA_8364 parent) : base(parent)
+            {
+                this.parentModule = parent;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="note"></param>
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
+            {
+                List<SoundBase> rv = new List<SoundBase>();
+
+                var bts = parentModule.GetBaseTimbres(note);
+                var ids = parentModule.GetBaseTimbreIndexes(note);
+                int tindex = 0;
+                for (int i = 0; i < bts.Length; i++)
+                {
+                    PaulaTimbre timbre = (PaulaTimbre)bts[i];
+
+                    tindex++;
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
+                        continue;
+
+                    PAULA_8364Sound snd = new PAULA_8364Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot, (byte)ids[i]);
+                    instOnSounds.Add(snd);
+
+                    //HACK: store pcm data to local buffer to avoid "thread lock"
+                    lock (parentModule.tmpPcmDataTable)
+                        parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
+
+                    FormMain.OutputDebugLog(parentModule, "KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        ProcessKeyOn(snd);
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            private (PAULA_8364 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
+            {
+                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, PAULA_8364.MAX_VOICE);
+            }
+
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < PAULA_8364.MAX_VOICE; i++)
+                    paula_8364_keyoff(parentModule.UnitNumber, (byte)i);
+            }
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PAULA_8364Sound : SoundBase
+        {
+
+            private PAULA_8364 parentModule;
+
+            private byte timbreIndex;
+
+            private PaulaTimbre timbre;
+
+            private double baseFreq;
+
+            private uint sampleRate;
+
+            private ushort loopPoint;
+
+            private bool loopEn;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="parentModule"></param>
+            /// <param name="noteOnEvent"></param>
+            /// <param name="programNumber"></param>
+            /// <param name="slot"></param>
+            public PAULA_8364Sound(PAULA_8364 parentModule, PAULA_8364SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
+            {
+                this.parentModule = parentModule;
+                this.timbreIndex = timbreIndex;
+                this.timbre = (PaulaTimbre)timbre;
+
+                baseFreq = this.timbre.BaseFreqency;
+                sampleRate = this.timbre.SampleRate;
+                loopPoint = this.timbre.LoopPoint;
+                loopEn = this.timbre.LoopEnable;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void KeyOn()
+            {
+                base.KeyOn();
+
+                var vol = (ushort)(CalcCurrentVolume() * 64);
+                uint freq = 0;
+                //freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 32768 * sampleRate / (double)parentModule.MasterClock);
+                freq = (uint)Math.Round((double)parentModule.MasterClock / (2 * (CalcCurrentFrequency() / baseFreq) * sampleRate));
+                if (freq > 0xffff)
+                    freq = 0xffff;
+
+                ushort loop = loopEn ? loopPoint : (ushort)0xffff;
+                parentModule.Paula8364Keyon(parentModule.UnitNumber,
+                    (byte)Slot, timbreIndex, (byte)vol, (ushort)freq, (ushort)timbre.PcmData.Length, loop);
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void OnVolumeUpdated()
+            {
+                var vol = CalcCurrentVolume();
+
+                parentModule.Paula8364Write(parentModule.UnitNumber, PAULA_CMD.Volume, (uint)Slot, (ushort)(vol * 64), false);
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="slot"></param>
+            public override void OnPitchUpdated()
+            {
+                uint freq = 0;
+                freq = (uint)Math.Round((double)parentModule.MasterClock / (2 * (CalcCurrentFrequency() / baseFreq) * sampleRate));
+                if (freq > 0xffff)
+                    freq = 0xffff;
+                else if (freq == 0)
+                    freq = 1;
+
+                parentModule.Paula8364Write(parentModule.UnitNumber, PAULA_CMD.Pitch, (uint)Slot, (ushort)freq, false);
+
+                base.OnPitchUpdated();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void SoundOff()
+            {
+                base.SoundOff();
+
+                parentModule.Paula8364Keyoff(parentModule.UnitNumber, (byte)Slot);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<PaulaTimbre>))]
+        [DataContract]
+        [InstLock]
+        public class PaulaTimbre : TimbreBase
+        {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "440")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 440;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "16000")]
+            [SlideParametersAttribute(4000, 44100)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 16000;
+
+            private bool f_LoopEnable;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Loop point enable")]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(false)]
+            public bool LoopEnable
+            {
+                get
+                {
+                    return f_LoopEnable;
+                }
+                set
+                {
+                    if (f_LoopEnable != value)
+                    {
+                        f_LoopEnable = value;
+                        if (Instrument != null)
+                        {
+                            ((PAULA_8364)Instrument).
+                                Paula8364Write(Instrument.UnitNumber, PAULA_CMD.PCM_LOOP, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
+                        }
+                    }
+                }
+            }
+
+            private ushort f_LoopPoint;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set loop point (0 - 65534) (65535 is loop off)")]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 65534)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ushort LoopPoint
+            {
+                get
+                {
+                    return f_LoopPoint;
+                }
+                set
+                {
+                    if (f_LoopPoint != value)
+                    {
+                        f_LoopPoint = value;
+                        if (Instrument != null)
+                        {
+                            ((PAULA_8364)Instrument).
+                            Paula8364Write(Instrument.UnitNumber, PAULA_CMD.PCM_LOOP, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
+                        }
+                    }
+                }
+            }
+
+            private sbyte[] f_PcmData = new sbyte[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch)\r\n" +
+                "Need to increase the Gain value to sound 8bit PCM data.")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
+            public sbyte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    bool forceClear = false;
+                    if(f_PcmData.Length != 0 && value.Length == 0)
+                        forceClear = true;
+                    f_PcmData = value;
+
+                    var inst = (PAULA_8364)this.Instrument;
+                    if (inst != null)
+                        inst.updatePcmData(this, forceClear);
+                }
+            }
+
+            public bool ShouldSerializePcmData()
+            {
+                return PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                PcmData = new sbyte[0];
+            }
+
+            private String pcmDataInfo;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return pcmDataInfo;
+                }
+                set
+                {
+                    pcmDataInfo = value;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PaulaTimbre()
+            {
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="serializeData"></param>
+            public override void RestoreFrom(string serializeData)
+            {
+                try
+                {
+                    var obj = JsonConvert.DeserializeObject<PaulaTimbre>(serializeData);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+
+                    System.Windows.Forms.MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataContract]
+        [InstLock]
+        public class PAULA_8364PcmSoundTable : PcmTimbreTableBase
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PAULA_8364PcmSoundTable()
+            {
+                for (int i = 0; i < 128; i++)
+                {
+                    var pt = new PAULA_8364PcmTimbre(i);
+                    PcmTimbres[i] = pt;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataContract]
+        [InstLock]
+        public class PAULA_8364PcmTimbre : PcmTimbreBase
+        {
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "440")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 440;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "16000")]
+            [SlideParametersAttribute(4000, 44100)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 16000;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set loop point (0 - 65534) (65535 is loop off)")]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 65534)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ushort LoopPoint
+            {
+                get;
+                set;
+            }
+
+            private bool f_LoopEnable;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Loop point enable")]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(false)]
+            public bool LoopEnable
+            {
+                get
+                {
+                    return f_LoopEnable;
+                }
+                set
+                {
+                    f_LoopEnable = value;
+                }
+            }
+
+            private byte[] f_PcmData;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Browsable(false)]
+            public override byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    if (value != null)
+                    {
+                        if (value[0] == 'R' && value[1] == 'I' && value[2] == 'F' && value[3] == 'F')
+                        {
+                            using (var dstream = new MemoryStream(value))
+                            using (var reader = new NAudio.Wave.WaveFileReader(dstream))
+                            {
+                                var wf = reader.WaveFormat;
+
+                                byte[] data = null;
+
+                                if (8 != wf.BitsPerSample || 1 != wf.Channels)
+                                {
+                                    /*
+                                    var r = MessageBox.Show(null,
+                                        $"Incorrect wave format(Expected Ch=1 Bit=8)\r\n" +
+                                        "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                    if (r == DialogResult.Cancel)
+                                    {
+                                        throw new FileLoadException(
+                                        string.Format($"Incorrect wave format(Expected Ch=1 Bit=8)"));
+                                    }
+                                    */
+                                    int bits = 8;
+                                    int rate = wf.SampleRate;
+                                    int ch = 1;
+
+                                    WaveFormat format = new WaveFormat(rate, bits, ch);
+                                    using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
+                                    {
+                                        using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
+                                        {
+                                            var tmpdata = new byte[converter.Length];
+                                            int rd = stream.Read(tmpdata, 0, tmpdata.Length);
+                                            data = new byte[rd];
+                                            Array.Copy(tmpdata, data, rd);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    data = new byte[reader.Length];
+                                    reader.Read(data, 0, data.Length);
+                                }
+
+                                List<byte> al = new List<byte>(data);
+                                //Max 64k
+                                if (al.Count > 65535)
+                                    al.RemoveRange(65535, al.Count - 65535);
+
+                                f_PcmData = al.ToArray();
+
+                                sbyte[] sbuf = new sbyte[f_PcmData.Length];
+                                for (int i = 0; i < f_PcmData.Length; i++)
+                                    sbuf[i] = (sbyte)(f_PcmData[i] - 0x80);
+                                f_PAULA_8364PcmData = sbuf;
+                            }
+                        }
+                        else
+                        {
+                            f_PcmData = value;
+                            sbyte[] sbuf = new sbyte[f_PcmData.Length];
+                            for (int i = 0; i < f_PcmData.Length; i++)
+                                sbuf[i] = (sbyte)(f_PcmData[i] - 0x80);
+                            f_PAULA_8364PcmData = sbuf;
+                        }
+                    }
+                }
+            }
+
+            private sbyte[] f_PAULA_8364PcmData = new sbyte[0];
+
+            [Browsable(false)]
+            public sbyte[] PAULA_8364PcmData
+            {
+                get
+                {
+                    return f_PAULA_8364PcmData;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="noteNumber"></param>
+            public PAULA_8364PcmTimbre(int noteNumber) : base(noteNumber)
+            {
+            }
+        }
+
+        #region MENU
+
+        private ToolStripMenuItem readSoundFontForTimbre;
+
+        private ToolStripMenuItem readSoundFontForDrumTimbre;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
+        {
+            List<ToolStripMenuItem> menus = new System.Collections.Generic.List<ToolStripMenuItem>(base.GetInstrumentMenus());
+
+            menus.AddRange(new ToolStripMenuItem[] {
+                readSoundFontForTimbre,
+                readSoundFontForDrumTimbre
+            });
+
+            return menus.ToArray();
+        }
+
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 0;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadPcm(offset, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForDrumTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 128;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadPcm(offset, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        private void loadPcm(int offset, bool drum)
+        {
+            var sf2 = new SF2(openFileDialog.FileName);
+
+            var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
+            int tn = 0;
+            int num = 0;
+            foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
+            {
+                if (s.SampleType == SF2SampleLink.MonoSample ||
+                    s.SampleType == SF2SampleLink.LeftSample)
+                {
+                    var tim = new PaulaTimbre();
+
+
+                    double baseFreq = 440.0 * Math.Pow(2.0, (((double)s.OriginalKey - 69.0) / 12.0) + (double)(s.PitchCorrection / 100));
+                    tim.BaseFreqency = baseFreq;
+                    tim.SampleRate = s.SampleRate;
+
+                    uint start = s.Start;
+                    uint end = s.End;
+                    if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
+                        end = s.LoopEnd;
+
+                    uint len = end - start + 1;
+                    if (len > 65535)
+                        len = 65535;
+                    uint loopP = s.LoopStart - s.Start;
+                    if (loopP > 65535)
+                        loopP = 65535;
+
+                    sbyte[] samples = new sbyte[len];
+                    for (uint i = 0; i < len; i++)
+                        samples[i] = (sbyte)(spl[start + i] >> 8);
+
+                    tim.PcmData = samples;
+                    tim.LoopPoint = (ushort)loopP;
+                    tim.LoopEnable = s.LoopStart < s.LoopEnd;
+
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        tim.SDS.ADSR.Enable = true;
+                        tim.SDS.ADSR.DR = 80;
+                        tim.SDS.ADSR.SL = 127;
+                    }
+                    if (drum)
+                    {
+                        DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
+                        DrumTimbres[tn].BaseNote =
+                            (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
+                    }
+
+                    Timbres[tn + offset] = tim;
+                    num++;
+
+                    var nidx = s.SampleName.IndexOf('\0');
+                    if (nidx >= 0)
+                        tim.TimbreName = s.SampleName.Substring(0, nidx);
+                    else
+                        tim.TimbreName = s.SampleName;
+
+                    tn++;
+                    if (tn == 128)
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
+        private static readonly PAULA_8364_Reg[] REG_VOLS = new PAULA_8364_Reg[] {
+            PAULA_8364_Reg.REG_AUD0VOL,
+            PAULA_8364_Reg.REG_AUD1VOL,
+            PAULA_8364_Reg.REG_AUD2VOL,
+            PAULA_8364_Reg.REG_AUD3VOL };
+
+        private static readonly PAULA_8364_Reg[] REG_PERS = new PAULA_8364_Reg[] {
+            PAULA_8364_Reg.REG_AUD0PER,
+            PAULA_8364_Reg.REG_AUD1PER,
+            PAULA_8364_Reg.REG_AUD2PER,
+            PAULA_8364_Reg.REG_AUD3PER };
+    }
+
+    public enum PAULA_8364_Reg
+    {
+        REG_DMACONR = 0x02 / 2,
+        REG_ADKCONR = 0x10 / 2,
+        REG_DMACON = 0x96 / 2,
+        REG_INTREQ = 0x9c / 2,
+        REG_ADKCON = 0x9e / 2,
+        REG_AUD0LCH = 0xa0 / 2,  // to be moved, not part of paula
+        REG_AUD0LCL = 0xa2 / 2,  // to be moved, not part of paula
+        REG_AUD0LEN = 0xa4 / 2,
+        REG_AUD0PER = 0xa6 / 2,
+        REG_AUD0VOL = 0xa8 / 2,
+        REG_AUD0DAT = 0xaa / 2,
+        REG_AUD1LCH = 0xb0 / 2,  // to be moved, not part of paula
+        REG_AUD1LCL = 0xb2 / 2,  // to be moved, not part of paula
+        REG_AUD1LEN = 0xb4 / 2,
+        REG_AUD1PER = 0xb6 / 2,
+        REG_AUD1VOL = 0xb8 / 2,
+        REG_AUD1DAT = 0xba / 2,
+        REG_AUD2LCH = 0xc0 / 2,  // to be moved, not part of paula
+        REG_AUD2LCL = 0xc2 / 2,  // to be moved, not part of paula
+        REG_AUD2LEN = 0xc4 / 2,
+        REG_AUD2PER = 0xc6 / 2,
+        REG_AUD2VOL = 0xc8 / 2,
+        REG_AUD2DAT = 0xca / 2,
+        REG_AUD3LCH = 0xd0 / 2,  // to be moved, not part of paula
+        REG_AUD3LCL = 0xd2 / 2,  // to be moved, not part of paula
+        REG_AUD3LEN = 0xd4 / 2,
+        REG_AUD3PER = 0xd6 / 2,
+        REG_AUD3VOL = 0xd8 / 2,
+        REG_AUD3DAT = 0xda / 2
+    };
+
+    public enum PAULA_8364_Clock
+    {
+        PAL = 3546895,
+        NTSC = 3579545,
+    }
+
+    public enum PAULA_CMD
+    {
+        Default = 0,
+        Volume = 1,
+        Pitch = 2,
+        Filter = 5,
+        PCM = 99,
+        PCM_LOOP = 100,
+    }
+}

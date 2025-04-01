@@ -18,7 +18,7 @@ namespace zanac.MAmidiMEmo.Instruments
         Software,
         [Description("Real(SPFM)")]
         SPFM,
-        [Description("Real(VSIF SMS(UART 115200bps)")]
+        [Description("Real(VSIF SMS(UART)")]
         VSIF_SMS,
         [Description("Real(VSIF Genesis(UART 163840bps)")]
         VSIF_Genesis,
@@ -52,5 +52,7 @@ namespace zanac.MAmidiMEmo.Instruments
         VSIF_PCE_TurboEverDrive,
         [Description("Real(NanoDrive)")]
         NanoDrive,
+        [Description("Real(VSIF AMIGA(UART)")]
+        VSIF_AMIGA,
     }
 }

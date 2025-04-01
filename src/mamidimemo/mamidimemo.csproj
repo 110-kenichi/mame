@@ -212,6 +212,7 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Instruments\Chips\PAULA_8364.cs" />
     <Compile Include="Instruments\FmToneImporter.cs" />
     <Compile Include="Instruments\CustomToneImporter.cs" />
     <Compile Include="Gui\FormInputNumberScc.cs">
@@ -696,6 +697,11 @@
     <Compile Include="Instruments\SlotAssignmentType.cs" />
     <Compile Include="Instruments\MidiDriverSettings.cs" />
     <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Scci\NativeScciWrapper.cs" />
     <Compile Include="TurboLink\Edio.cs" />
     <Compile Include="TurboLink\TurboEvedriveManager.cs" />
@@ -710,6 +716,7 @@
     <Compile Include="Util\XGMWriter.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterC64.cs" />
+    <Compile Include="VSIF\PortWriterAMIGA.cs" />
     <Compile Include="VSIF\PortWriterSms.cs" />
     <Compile Include="VSIF\PortWriterPC88.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
@@ -1200,14 +1207,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="..\..\README.md">
       <Link>README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1508,6 +1510,7 @@
     <None Include="Resources\MultiPCM.png" />
     <None Include="Resources\RF5C164.png" />
     <None Include="Resources\SAA1099.png" />
+    <Content Include="Resources\PAULA.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

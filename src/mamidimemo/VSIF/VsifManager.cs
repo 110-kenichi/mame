@@ -346,6 +346,25 @@ namespace zanac.MAmidiMEmo.VSIF
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.AMIGA:
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 500;
+                                sp.ReadTimeout = 500;
+                                sp.DtrEnable = true;
+                                sp.RtsEnable = true;
+                                sp.BaudRate = 19200;
+                                sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.RequestToSend;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriterAMIGA(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -398,6 +417,7 @@ namespace zanac.MAmidiMEmo.VSIF
         TurboR_FTDI,
         TurboEverDrive,
         NanoDrive,
+        AMIGA,
     }
 
 

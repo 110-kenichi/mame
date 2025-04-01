@@ -49,6 +49,16 @@
 
 // ======================> paula_8364_device
 
+typedef s32(*PAULA_CALLBACK)(u8 id, uint32_t pos);
+
+#define DMAF_MASTER  0x0200
+#define DMAF_SETCLR  0x8000
+#define DMAF_AUDIO   0x000F   /* 4 bit mask */
+#define DMAF_AUD0    0x0001
+#define DMAF_AUD1    0x0002
+#define DMAF_AUD2    0x0004
+#define DMAF_AUD3    0x0008
+
 class paula_8364_device : public device_t, public device_sound_interface
 {
 public:
@@ -63,6 +73,11 @@ public:
 
 	void update();
 
+	//mamidimemo
+	void set_callback(PAULA_CALLBACK callback) { m_callback = callback; };
+	void keyon(uint8_t ch, uint8_t id, uint8_t vol, uint16_t period, uint16_t length, uint16_t loop);
+	void keyoff(uint8_t ch);
+
 protected:
 	// device-level overrides
 	virtual void device_start() override;
@@ -70,7 +85,11 @@ protected:
 	// sound stream update overrides
 	virtual void sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples) override;
 
+	PAULA_CALLBACK m_callback;
+
 private:
+	int chanelDMAF[4] = { DMAF_AUD0, DMAF_AUD1, DMAF_AUD2, DMAF_AUD3 };
+
 	enum
 	{
 		CHAN_0 = 0,
@@ -131,6 +150,10 @@ private:
 		uint16_t per;
 		uint16_t vol;
 		uint16_t dat;
+
+		//mamidimemo
+		uint16_t loop;
+		uint8_t  id;
 	};
 
 	void dma_reload(audio_channel *chan);

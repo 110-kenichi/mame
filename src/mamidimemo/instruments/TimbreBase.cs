@@ -34,6 +34,25 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public abstract class TimbreBase : ContextBoundObject, ISerializeDataSaveLoad, IDisplayName
     {
+        private int f_index = - 1;
+
+        [Browsable(false)]
+        public int Index
+        {
+            get
+            {
+                if(f_index < 0)
+                {
+                    f_index = InstrumentManager.FindInstrumentIndex(Instrument, this);
+                }
+                return f_index;
+            }
+            internal set
+            {
+                f_index = value;
+            }
+        }
+
         private InstrumentBase f_Instrument;
 
         /// <summary>
@@ -49,6 +68,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_Instrument = InstrumentManager.FindParentInstrument(this);
                 }
                 return f_Instrument;
+            }
+            internal set
+            {
+                f_Instrument = value;
             }
         }
 

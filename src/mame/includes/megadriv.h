@@ -44,6 +44,7 @@
 #include "sound/ymfm/src/ymfm_opl.h"
 #include "sound/ymfm/src/ymfm_opq.h"
 #include "sound/saa1099.h"
+#include "machine/8364_paula.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -230,10 +231,14 @@ public:
 			strcpy(device_names[didx][i], (std::string("saa1099_") + num).c_str());
 			m_saa1099[i] = new optional_device<saa1099_device>(*this, device_names[didx][i]);
 			didx++;
+			//paula_8364
+			strcpy(device_names[didx][i], (std::string("paula_8364_") + num).c_str());
+			m_paula_8364[i] = new optional_device<paula_8364_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 33 ][8][100];
+	char device_names[ 34 ][8][100];
 	optional_device<ymfm_opm_device> *m_ym2151[8];	//1
 	optional_device<ymfm_opn2_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -267,6 +272,7 @@ public:
 	optional_device<multipcm_device>* m_multipcm[8];	//31
 	optional_device<rf5c164_device>* m_rf5c68[8];	//32
 	optional_device<saa1099_device>* m_saa1099[8];	//33
+	optional_device<paula_8364_device>* m_paula_8364[8];	//34
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

@@ -45,5 +45,6 @@ namespace zanac.MAmidiMEmo.Instruments
         MultiPCM,     //31
         RF5C164,    //32
         SAA1099,    //33
+        PAULA_8364, //34
     }
 }

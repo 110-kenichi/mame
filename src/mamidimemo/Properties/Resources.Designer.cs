@@ -739,6 +739,16 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PAULA_8364 {
+            get {
+                object obj = ResourceManager.GetObject("PAULA_8364", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap Pause {
             get {
                 object obj = ResourceManager.GetObject("Pause", resourceCulture);
@@ -1025,6 +1035,15 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string UpdatingDPCM {
             get {
                 return ResourceManager.GetString("UpdatingDPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updating PCM data... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UpdatingPCM {
+            get {
+                return ResourceManager.GetString("UpdatingPCM", resourceCulture);
             }
         }
         

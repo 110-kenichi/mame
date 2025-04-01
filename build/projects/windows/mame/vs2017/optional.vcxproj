@@ -218,6 +218,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\src\devices\machine\8364_paula.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\gew.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\multipcm.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\rf5c68.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\cpu\z80\z80.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\imagedev\cassette.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\imagedev\floppy.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\machine\8364_paula.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\bcreader.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\i2cmem.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\nvram.cpp" />

@@ -239,6 +239,12 @@ namespace zanac.MAmidiMEmo.Instruments
             return inst;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instrument"></param>
+        /// <param name="timbre"></param>
+        /// <returns></returns>
         public static int FindInstrumentIndex(InstrumentBase instrument, TimbreBase timbre)
         {
             var index = -1;

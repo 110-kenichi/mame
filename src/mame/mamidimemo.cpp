@@ -45,6 +45,7 @@
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
 #include "..\devices\sound\ymfm\src\ymfm_opq.h"
 #include "..\devices\sound\saa1099.h"
+#include ".\machine\8364_paula.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2187,11 +2188,11 @@ extern "C"
 		multipcm_device_devices[unitNumber]->write_byte(address, data);
 	}
 
-	rf5c68_device* rf5c68_device_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	rf5c68_device* rf5c68_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void rf5c68_device_mem_w(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
-		if (rf5c68_device_devices[unitNumber] == NULL)
+		if (rf5c68_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -2201,18 +2202,18 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			rf5c68_device* multipcm = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
-			if (multipcm == nullptr)
+			rf5c68_device* rf5c68 = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
+			if (rf5c68 == nullptr)
 				return;
 
-			rf5c68_device_devices[unitNumber] = multipcm;
+			rf5c68_devices[unitNumber] = rf5c68;
 		}
-		rf5c68_device_devices[unitNumber]->rf5c68_mem_w(address, data);
+		rf5c68_devices[unitNumber]->rf5c68_mem_w(address, data);
 	}
 
 	DllExport void rf5c68_device_w(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
-		if (rf5c68_device_devices[unitNumber] == NULL)
+		if (rf5c68_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -2222,20 +2223,20 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			rf5c68_device* multipcm = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
-			if (multipcm == nullptr)
+			rf5c68_device* rf5c68 = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
+			if (rf5c68 == nullptr)
 				return;
 
-			rf5c68_device_devices[unitNumber] = multipcm;
+			rf5c68_devices[unitNumber] = rf5c68;
 		}
-		rf5c68_device_devices[unitNumber]->rf5c68_w(address, data);
+		rf5c68_devices[unitNumber]->rf5c68_w(address, data);
 	}
 
-	saa1099_device* saa1099_device_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	saa1099_device* saa1099_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void saa1099_device_write(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
-		if (saa1099_device_devices[unitNumber] == NULL)
+		if (saa1099_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -2245,12 +2246,99 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			saa1099_device* multipcm = dynamic_cast<saa1099_device*>(rm->device((std::string("saa1099_") + num).c_str()));
-			if (multipcm == nullptr)
+			saa1099_device* saa1099 = dynamic_cast<saa1099_device*>(rm->device((std::string("saa1099_") + num).c_str()));
+			if (saa1099 == nullptr)
 				return;
 
-			saa1099_device_devices[unitNumber] = multipcm;
+			saa1099_devices[unitNumber] = saa1099;
 		}
-		saa1099_device_devices[unitNumber]->write(address, data);
+		saa1099_devices[unitNumber]->write(address, data);
 	}
+
+	paula_8364_device* paula_8364_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void paula_8364_write(unsigned int unitNumber, unsigned int address, unsigned short data)
+	{
+		if (paula_8364_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			paula_8364_device* paula = dynamic_cast<paula_8364_device*>(rm->device((std::string("paula_8364_") + num).c_str()));
+			if (paula == nullptr)
+				return;
+
+			paula_8364_devices[unitNumber] = paula;
+		}
+		paula_8364_devices[unitNumber]->reg_w(address, data);
+	}
+
+	DllExport void paula_8364_keyon(unsigned int unitNumber, uint8_t ch, uint8_t id, uint8_t vol, uint16_t period, uint16_t length, uint16_t loop)
+	{
+		if (paula_8364_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			paula_8364_device* paula = dynamic_cast<paula_8364_device*>(rm->device((std::string("paula_8364_") + num).c_str()));
+			if (paula == nullptr)
+				return;
+
+			paula_8364_devices[unitNumber] = paula;
+		}
+		paula_8364_devices[unitNumber]->keyon(ch, id, vol, period, length, loop);
+	}
+
+	DllExport void paula_8364_keyoff(unsigned int unitNumber, uint8_t ch)
+	{
+		if (paula_8364_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			paula_8364_device* paula = dynamic_cast<paula_8364_device*>(rm->device((std::string("paula_8364_") + num).c_str()));
+			if (paula == nullptr)
+				return;
+
+			paula_8364_devices[unitNumber] = paula;
+		}
+		paula_8364_devices[unitNumber]->keyoff(ch);
+	}
+
+	DllExport void paula_8364_set_callback(unsigned int unitNumber, PAULA_CALLBACK callback)
+	{
+		if (paula_8364_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			paula_8364_device* paula = dynamic_cast<paula_8364_device*>(rm->device((std::string("paula_8364_") + num).c_str()));
+			if (paula == nullptr)
+				return;
+
+			paula_8364_devices[unitNumber] = paula;
+		}
+		paula_8364_devices[unitNumber]->set_callback(callback);
+	}
+
 }
