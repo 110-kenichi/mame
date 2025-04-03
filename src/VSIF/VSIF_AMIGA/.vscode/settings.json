@@ -21,7 +21,8 @@
         "dosextens.h": "c",
         "stdio.h": "c",
         "gfxmacros.h": "c",
-        "intuition.h": "c"
+        "intuition.h": "c",
+        "startup.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA"
 }

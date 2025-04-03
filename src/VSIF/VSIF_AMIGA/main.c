@@ -15,7 +15,8 @@
 #include <intuition/intuition.h>
 
 //config
-//#define LOG
+//#define NOGUI
+#define LOG
 #define SERIAL
 #define SERIAL_BUFFER_SIZE 256
 #define SAMPLE_PCM
@@ -239,7 +240,7 @@ void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period)
 
 /*
 */
-void reqStopPcm(int ch, BOOL init)
+void reqStopPcm(int ch)
 {
 	// custom->intena = (INTF_AUD0 << ch);
 	// custom->intreq = (INTF_AUD0 << ch); custom->intreq = (INTF_AUD0 << ch);
@@ -257,6 +258,7 @@ static __attribute__((interrupt)) void audioInterruptHandler() {
 	
 	volatile struct PlayData *cpd = curPlayData;
 	volatile struct AudChannel *aud = custom->aud;
+	//int ch = 0;
 	for(int ch=0;ch<4; ch++)
 	{
 		if(intreqr & (INTF_AUD0 << ch))
@@ -296,6 +298,8 @@ static __attribute__((interrupt)) void audioInterruptHandler() {
 
 int readCMD()
 {
+	serialIO->IOSer.io_Data = (APTR)recvBuffer;
+	serialIO->IOSer.io_Length = 1;
 	int ret = -1;
 	SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
 	while(1)
@@ -345,13 +349,10 @@ int readArray(UBYTE* array, USHORT length)
 	int ret = -1;
 	{
 		serialIO->IOSer.io_Data = (APTR)array;
-		serialIO->IOSer.io_Data = (APTR)array;
 		serialIO->IOSer.io_Length = length;
 		if(DoIO((struct IORequest *)serialIO) == 0)
 			ret = 0;
 	}
-	serialIO->IOSer.io_Data = (APTR)recvBuffer;
-	serialIO->IOSer.io_Length = 1;
 	return ret;
 }
 
@@ -366,7 +367,8 @@ void showMessage(char *message)
 			WA_Left,   50,
 			WA_Top,    50,
 			WA_Title,  (ULONG)"Message",
-			WA_Flags,  WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET,
+			WA_Flags, WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET | WFLG_ACTIVATE, 
+			WA_IDCMP, IDCMP_CLOSEWINDOW,
 			TAG_END);
 
 		if (dialog)
@@ -394,14 +396,38 @@ void showMessage(char *message)
 			AutoRequest(dialog, &body, &ok, NULL, 0, 0, 280, 60);
 			CloseWindow(dialog);
 		}
+#ifdef LOG
+		VWritef(message, NULL);
+		VWritef("\n", NULL);
+#endif
 	}else{
 		VWritef(message, NULL);
+		VWritef("\n", NULL);
+	}
+}
+
+void printText(char* message)
+{
+	if(mainWin)
+	{
+		int clientWidth = mainWin->Width - mainWin->BorderLeft - mainWin->BorderRight;
+		int clientHeight = mainWin->Height - mainWin->BorderTop - mainWin->BorderBottom;
+		int text_x = mainWin->BorderLeft;
+		int text_y = mainWin->BorderTop;
+		struct IntuiText label = {
+			1, 0, JAM2, text_x, text_y, NULL, (UBYTE *)message, NULL
+		};
+		
+		PrintIText(mainWin->RPort, &label, 0, 0);  // ウィンドウにラベルを描画
+	}else{
+		VWritef(message, NULL);
+		VWritef("\n", NULL);
 	}
 }
 
 /*
 */
-void main(int argc, char *argv[], struct WBStartup *wb)
+void main(struct WBStartup *wb)
 {
 	SysBase = *((struct ExecBase**)4UL);
 	custom = (struct Custom*)0xdff000;
@@ -412,8 +438,10 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	DOSBase = (struct DosLibrary*)OpenLibrary((CONST_STRPTR)"dos.library", 0);
 	if (!DOSBase)
 		FreeSystem();
-	
-	if (argc == 0) {
+#ifdef NOGUI
+	wb = NULL;
+#endif
+	if (wb) {
 		// Intuition ライブラリを開く
 		IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 37);
 		if (!IntuitionBase) {
@@ -436,7 +464,7 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	}else
 	{
         // CLI から実行された
-		showMessage("MAmi VSIF Driver\n");
+		showMessage("MAmi VSIF Driver");
 	}
 
 #ifdef LOG
@@ -451,7 +479,7 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	// 1. メッセージポートを作成
 	serialPort = CreateMsgPort();
 	if (!serialPort) {
-		showMessage("Failed to create Port!\n");
+		showMessage("Failed to create Port!");
 		FreeSystem();
 	}
 #ifdef LOG
@@ -461,7 +489,7 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	// 2. I/O リクエストを作成
 	serialIO = (struct IOExtSer *)CreateIORequest(serialPort, sizeof(struct IOExtSer));
 	if (!serialIO) {
-		showMessage("Failed to create IO Request!\n");
+		showMessage("Failed to create IO Request!");
 		FreeSystem();
 	}
 #ifdef LOG
@@ -470,7 +498,7 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 
 	// 3. serial.device を開く
 	if (OpenDevice("serial.device", 0, (struct IORequest *)serialIO, 0) != 0) {
-		showMessage("Failed to open serial.device!\n");
+		showMessage("Failed to open serial.device!");
 		FreeSystem();
 	}
 	deleteIo = TRUE;
@@ -497,7 +525,7 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	// 5. 設定を適用
 	serialIO->IOSer.io_Command = SDCMD_SETPARAMS;
 	if (DoIO((struct IORequest *)serialIO) != 0) {
-		showMessage("Failed to set serial parameters!\n");
+		showMessage("Failed to set serial parameters!");
 		FreeSystem();
 	}
 	closeDev = TRUE;
@@ -596,9 +624,12 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 	serialIO->IOSer.io_Data = (APTR)recvBuffer;
 	//serialIO->IOSer.io_Length = SERIAL_BUFFER_SIZE;
 	serialIO->IOSer.io_Length = 1;
-
+	
 #endif
-	VWritef("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.\n", NULL);
+	if(mainWin)	
+		printText("MAmi VSIF driver ready.");
+	else
+		printText("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.");
 	int val = readCMD();
 	while(val >= 0)
 	{
@@ -606,13 +637,13 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 		{
 			case 1:	// Volume
 				{
-					UBYTE dataPtr[] = {0, 0};
-					val = readArray(dataPtr, 2);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 2);
 					if(val < 0)
 						break;
 
-					UBYTE ch = dataPtr[0];
-					UWORD vol = dataPtr[1];
+					UBYTE ch = *dataBufPtr++;
+					UWORD vol = *dataBufPtr;
 					curPlayData[ch].aud.ac_vol = vol;
 					custom->aud[ch].ac_vol = vol;
 #ifdef LOG
@@ -622,13 +653,13 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 				break;
 			case 2:	// Pitch
 				{
-					UBYTE dataPtr[] = {0, 0, 0};
-					val = readArray(dataPtr, 3);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 3);
 					if(val < 0)
 						break;
 
-					UBYTE ch = dataPtr[0];
-					UWORD per = ((UWORD)dataPtr[1] << 8) + dataPtr[2];
+					UBYTE ch = *dataBufPtr++;
+					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 					curPlayData[ch].aud.ac_per = per;
 					custom->aud[ch].ac_per = per;
 #ifdef LOG
@@ -638,19 +669,19 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 				break;
 			case 3:	//KEY ON
 				{
-					UBYTE dataPtr[] = {0, 0, 0, 0, 0};
-					val = readArray(dataPtr, 5);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 5);
 					if(val < 0)
 						break;
-
+						
 					// ch 0 - 3
-					UBYTE ch = dataPtr[0];
+					UBYTE ch = *dataBufPtr++;
 					// inst id 0 - 255
-					UBYTE id = dataPtr[1];
+					UBYTE id = *dataBufPtr++;
 					// vol 0 - 64;
-					UWORD vol = dataPtr[2];
+					UWORD vol = *dataBufPtr++;
 					// period 0 - 65535
-					UWORD per = ((UWORD)dataPtr[3] << 8) + dataPtr[4];
+					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 
 					reqPlayPcm(ch, id, vol, per);
 #ifdef LOG
@@ -661,24 +692,27 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 				break;
 			case 4: //KEY OFF
 				{
-					// ch 0 -3
-					UBYTE dataPtr[] = {0};
-					val = readArray(dataPtr, 1);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 1);
 					if(val < 0)
 						break;
-					reqStopPcm(dataPtr[0], FALSE);
+
+					// ch 0 -3
+					UBYTE ch = *dataBufPtr;
+					reqStopPcm(ch);
 #ifdef LOG
-					VWritef("KOFF\n", NULL);
+					ULONG arg[] = {ch};
+					VWritef("KOFF %N\n", arg);
 #endif
 				}
 				break;
 			case 5: //Filter ON/OFF
 				{
-					UBYTE dataPtr[] = {0};
-					val = readArray(dataPtr, 1);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 1);
 					if(val < 0)
 						break;
-					if(dataPtr[0] == 0)
+					if(*dataBufPtr == 0)
 					{
 						//Filter off
 						__asm volatile (
@@ -707,29 +741,31 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 				break;
 			case 99:
 				{
+#ifdef LOG
 					VWritef("PCM Receiving...\n", NULL);
+#endif
+					reqStopPcm(0);
+					reqStopPcm(1);
+					reqStopPcm(2);
+					reqStopPcm(3);
 
-					reqStopPcm(0, FALSE);
-					reqStopPcm(1, FALSE);
-					reqStopPcm(2, FALSE);
-					reqStopPcm(3, FALSE);
-
-					UBYTE dataPtr[] = {0, 0, 0, 0, 0};
-					val = readArray(dataPtr, 5);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 5);
 					if(val < 0)
 						break;
 						
-					UBYTE id = dataPtr[0];
-					UWORD len = ((UWORD)dataPtr[1] << 8) + dataPtr[2];
-					UWORD loop = ((UWORD)dataPtr[3] << 8) + dataPtr[4];
+					UBYTE id = *dataBufPtr++;
+					UWORD len = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr++;
+					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 					if(loop >= len)
 						loop = 0xFFFF;
 #ifdef LOG
 					ULONG arg[] = {id, len, loop};
-					VWritef(" %N %N %N", arg);
+					VWritef("%N %N %N\n", arg);
 #endif
-					BYTE *oldPcm = pcmDataTable[id].dataPtr;
-					UWORD oldLen = pcmDataTable[id].length;
+					struct PcmData *pdt = &pcmDataTable[id];
+					BYTE *oldPcm = pdt->dataPtr;
+					UWORD oldLen = pdt->length;
 					if(len != 0)
 					{
 						BYTE* pcmDataPtr = (BYTE*)AllocMem(len, MEMF_CHIP);
@@ -746,34 +782,36 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 							UBYTE dataPtr[] = {0};
 							for(int i=0;i<len;i++)
 								val = readArray(dataPtr, 1);
-							showMessage("No PCM memory!\n");
+							showMessage("No PCM memory!");
 							val = -1;
 							break;
 						}
 
-						pcmDataTable[id].dataPtr = pcmDataPtr;
-						pcmDataTable[id].length = len;
-						pcmDataTable[id].loop  = loop;
+						pdt->dataPtr = pcmDataPtr;
+						pdt->length = len;
+						pdt->loop  = loop;
 					}else{
-						pcmDataTable[id].dataPtr = NULL;
-						pcmDataTable[id].length = 0;
-						pcmDataTable[id].loop  = 0;
+						pdt->dataPtr = NULL;
+						pdt->length = 0;
+						pdt->loop  = 0;
 					}
 					if(oldPcm != NULL)
 						FreeMem(oldPcm, oldLen);
 
+#ifdef LOG
 					VWritef("PCM Received\n", NULL);
+#endif
 				}
 				break;
 			case 100:	// PCM Loop
 				{
-					UBYTE dataPtr[] = {0, 0, 0};
-					val = readArray(dataPtr, 3);
+					UBYTE *dataBufPtr = recvBuffer;
+					val = readArray(dataBufPtr, 3);
 					if(val < 0)
 						break;
 						
-					UBYTE id = dataPtr[0];
-					UWORD loop = ((UWORD)dataPtr[1] << 8) + dataPtr[2];
+					UBYTE id = *dataBufPtr++;
+					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 					UWORD len = pcmDataTable[id].length;
 					if(loop >= len)
 						loop = 0xFFFF;
@@ -785,16 +823,19 @@ void main(int argc, char *argv[], struct WBStartup *wb)
 				}
 				break;
 			default:
+				val = -1;
 				break;
 		}
 		if(val < 0)
 			break;
 		val = readCMD();
 	}
-	if(val == -2)
-		VWritef("Exited.\n", NULL);
-	else
-		showMessage("Data transfer error. Aborted.\n");
+	if(val == -2){
+		if (!wb)
+			printText("Exited");
+	}else{
+		showMessage("Aborted by transfer error!");
+	}
 
 	// END
 	FreeSystem();
