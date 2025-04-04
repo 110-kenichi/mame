@@ -343,6 +343,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             if (timbre == null)
             {
+                AllSoundOff();
                 for (int i = 0; i < Timbres.Length; i++)
                     updatePcmData(Timbres[i], forceClear);
             }
@@ -392,8 +393,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             // id, len, loop, data...
                             List<byte> data = new List<byte>
                             {
-                                //CMD
-                                99,
+                                (byte)PAULA_CMD.PCM,
                                 //ID
                                 (byte)tim.Index,
                                 //Length
@@ -421,7 +421,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             for (int i = 0; i < tim.PcmData.Length; i++)
                             {
                                 data.Add((byte)tim.PcmData[i]);
-                                if (data.Count >= 512)
+                                if (data.Count >= 256)
                                 {
                                     vsifClient.RawWriteData(data.ToArray(), null);
                                     data.Clear();
@@ -495,7 +495,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { 1, ch, (byte)data }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)type, ch, (byte)data, 0, 0, 0 }, null);
                                     break;
                             }
                         }
@@ -513,7 +513,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { 2, ch, (byte)(data >> 8), (byte)data }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)type, ch, (byte)(data >> 8), (byte)data, 0, 0 }, null);
                                     break;
                             }
                         }
@@ -528,7 +528,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.VSIF_AMIGA:
                                 // value
-                                vsifClient.RawWriteData(new byte[] { 5, (byte)data }, null);
+                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)data, 0, 0, 0, 0 }, null);
                                 break;
                         }
                     }
@@ -540,7 +540,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.VSIF_AMIGA:
                                 // id, value
-                                vsifClient.RawWriteData(new byte[] { 100, (byte)address, (byte)(data >> 8), (byte)data }, null);
+                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)address, (byte)(data >> 8), (byte)data, 0, 0 }, null);
                                 break;
                         }
                     }
@@ -592,7 +592,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_AMIGA:
-                        vsifClient.RawWriteData(new byte[] { 3, ch, id, vol, (byte)(period >> 8), (byte)period }, null);
+                        vsifClient.RawWriteData(new byte[] { (byte)PAULA_CMD.KeyOn, ch, id, vol, (byte)(period >> 8), (byte)period }, null);
                         break;
                 }
             }
@@ -629,7 +629,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_AMIGA:
-                        vsifClient.RawWriteData(new byte[] { 4, ch }, null);
+                        vsifClient.RawWriteData(new byte[] { (byte)PAULA_CMD.KeyOff, ch, 0, 0, 0, 0 }, null);
                         break;
                 }
             }
@@ -1286,7 +1286,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     var inst = (PAULA_8364)this.Instrument;
                     if (inst != null)
+                    {
+                        inst.AllSoundOff();
                         inst.updatePcmData(this, forceClear);
+                    }
                 }
             }
 
@@ -1761,6 +1764,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         Default = 0,
         Volume = 1,
         Pitch = 2,
+        KeyOn = 3,
+        KeyOff = 4,
         Filter = 5,
         PCM = 99,
         PCM_LOOP = 100,

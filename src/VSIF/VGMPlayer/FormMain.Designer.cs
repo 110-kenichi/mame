@@ -3241,7 +3241,8 @@ namespace zanac.VGMPlayer
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player",
             "G.I.M.I.C",
-            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)",
+            "VSIF - X68000(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPM.Location = new System.Drawing.Point(3, 3);
             this.comboBoxOPM.Name = "comboBoxOPM";
             this.comboBoxOPM.Size = new System.Drawing.Size(205, 20);

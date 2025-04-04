@@ -22,7 +22,16 @@
         "stdio.h": "c",
         "gfxmacros.h": "c",
         "intuition.h": "c",
-        "startup.h": "c"
+        "startup.h": "c",
+        "intbits.h": "c",
+        "camd.h": "c",
+        "camdbase.h": "c",
+        "libraries.h": "c",
+        "dos.h": "c"
     },
-    "amiga.program": "out/VSIF_AMIGA"
+    "amiga.program": "out/VSIF_AMIGA",
+    "m68k.includePaths": [
+        "c:\\Users\\zanac2\\.vscode\\extensions\\bartmanabyss.amiga-debug-1.7.9\\bin\\win32\\opt\\m68k-amiga-elf\\sys-include"
+    ],
+    "m68k.vasm.provideDiagnostics": false
 }
