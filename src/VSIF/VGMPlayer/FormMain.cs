@@ -1490,10 +1490,6 @@ namespace zanac.VGMPlayer
                         if (comPortOPM != null)
                             comPortOPM.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPM);
                         break;
-                    case 5:
-                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.X68K_FTDI,
-                            (PortId)Settings.Default.OPM_Port, (int)Settings.Default.OPMDiv, false);
-                        break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
                 comboBoxOPM.Enabled = comPortOPM == null;

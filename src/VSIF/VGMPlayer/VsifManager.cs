@@ -39,8 +39,6 @@ namespace zanac.VGMPlayer
 
         public const int FTDI_BAUDRATE_88 = 12;
 
-        public const int FTDI_BAUDRATE_X68K = 12;
-
         private static object lockObject = new object();
 
         private static List<VsifClient> vsifClients = new List<VsifClient>();
@@ -402,30 +400,6 @@ namespace zanac.VGMPlayer
                                 vsifClients.Add(client);
                                 return client;
                             }
-                        case VsifSoundModuleType.X68K_FTDI:
-                            {
-                                var ftdi = new FTD2XX_NET.FTDI();
-                                var stat = ftdi.OpenByIndex((uint)comPort);
-                                if (stat == FTDI.FT_STATUS.FT_OK)
-                                {
-                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
-                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    var ofst = FTDI_BAUDRATE_X68K + offset;
-                                    if (ofst < 0)
-                                        ofst = 0;
-                                    ftdi.SetBaudRate((uint)(3000000 / (ofst + 0.5)));
-                                    ftdi.SetTimeouts(500, 500);
-                                    ftdi.SetLatency(0);
-
-                                    var client = new VsifClient(soundModule, new PortWriterX68k(ftdi, comPort));
-                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
-
-                                    client.Disposed += Client_Disposed;
-                                    vsifClients.Add(client);
-                                    return client;
-                                }
-                            }
-                            break;
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -480,7 +454,6 @@ namespace zanac.VGMPlayer
         TurboR_FTDI,
         TurboEverDrive,
         NanoDrive,
-        X68K_FTDI,
     }
 
 

@@ -176,7 +176,6 @@
     <Compile Include="FormWeb.Designer.cs">
       <DependentUpon>FormWeb.cs</DependentUpon>
     </Compile>
-    <Compile Include="PortWriterX68k.cs" />
     <Compile Include="PortWriterNanoDrive.cs" />
     <Compile Include="TurboLink\TurboEvedriveManager.cs" />
     <Compile Include="Gimic\GimicManager.cs" />

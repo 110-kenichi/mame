@@ -1747,23 +1747,6 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortOPM;
                         }
                         break;
-                    case 5:
-                        if (comPortOPM == null)
-                        {
-                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.X68K_FTDI,
-                               (PortId)Program.Default.OPM_Port);
-                            if (comPortOPM != null)
-                            {
-                                comPortOPM.ChipClockHz["OPM"] = 4000000;
-                                comPortOPM.ChipClockHz["OPM_org"] = 4000000;
-                                UseChipInformation += "OPM@4MHz ";
-                                CanLoadCoverArt = false;    //TODO:
-                                comPortOPM.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPM");
-                            }
-                            if (comPortTurboRProxy == null && comPortOPM != null)
-                                comPortTurboRProxy = comPortOPM;
-                        }
-                        break;
                 }
                 if (comPortOPM != null)
                 {
@@ -5447,9 +5430,6 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.Gimic:
                     comPortOPM.WriteData(0x2, (byte)adrs, (byte)dt, 0);
-                    break;
-                case VsifSoundModuleType.X68K_FTDI:
-                    comPortOPM.WriteData(0x1, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPM);
                     break;
             }
         }
