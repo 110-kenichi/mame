@@ -27,7 +27,8 @@
         "camd.h": "c",
         "camdbase.h": "c",
         "libraries.h": "c",
-        "dos.h": "c"
+        "dos.h": "c",
+        "midiprefs.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA",
     "m68k.includePaths": [

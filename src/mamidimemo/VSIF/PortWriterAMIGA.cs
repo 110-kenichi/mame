@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.TurboLink;
@@ -64,6 +65,37 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        /*
+        // 1. Set to RTS "High" and 2. Wait for CTS to go "High".
+        public bool RtsCtsFlowCtrl(uint timeout)
+        {
+            bool result = true;
+            // 1. Set to RTS "High"
+            SerialPort.RtsEnable = true;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            // 2. Wait for CTS to go "High".
+            while (true)
+            {
+                Thread.Sleep(0);
+                if (SerialPort.CtsHolding) break;
+                if (0 < timeout && timeout <= sw.ElapsedMilliseconds)
+                {
+                    result = false;
+                    break;
+                }
+            }
+            sw.Stop();
+            return result;
+        }
+
+        // 4. Set to RTS "Low"
+        public void RtsOff()
+        {
+            SerialPort.RtsEnable = false;
+        }
+        */
+
         /// <summary>
         /// 
         /// </summary>
@@ -75,11 +107,14 @@ namespace zanac.MAmidiMEmo.VSIF
             {
                 lock (LockObject)
                 {
-                    SerialPort?.Write(data, 0, data.Length);
-                    /*
+                    //for (int i = 0; i < data.Length; i++)
+                    //{
+                    //    RtsCtsFlowCtrl(0);
+                    //    SerialPort.Write(data, i, 1);
+                    //    RtsOff();
+                    //}
                     for (int i = 0; i < data.Length; i++)
                         SerialPort?.Write(data, i, 1);
-                    */
                 }
             }
             catch (Exception ex)

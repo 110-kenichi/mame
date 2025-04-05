@@ -23,10 +23,12 @@
 
 
 //config
-//#define NOGUI
-#define LOG
-//#define NO_INT
+#define NOGUI
+//#define LOG
+#define NO_INT
 #define SERIAL
+//#define MIDI
+#define SER_BPS 31250
 #define SERIAL_BUFFER_SIZE 256
 #define SAMPLE_PCM
 
@@ -36,12 +38,18 @@
 #define INTENA_AUD_AGAIN(yy) INTF_AUD ## yy
 #define INTENA_AUD(y) INTENA_AUD_AGAIN(y)
 
+#define XON 0x11
+#define XOFF 0x13
+
 struct ExecBase *SysBase = NULL;
 struct DosLibrary *DOSBase = NULL;
 struct IntuitionBase *IntuitionBase = NULL;
+
+#ifdef MIDI
 struct MidiNode *midiNode = NULL;
 struct MidiLink *midiLink = NULL;
 struct Library *CamdBase = NULL;
+#endif 
 
 //backup
 static UWORD SystemInts = 0;
@@ -57,7 +65,8 @@ struct IOExtSer *serialIO = NULL;
 volatile struct Custom *custom = NULL;
 static struct Window *mainWin = NULL;
 
-UBYTE recvBuffer[SERIAL_BUFFER_SIZE] = {0};
+UBYTE recvBufferId = 0;
+UBYTE recvBuffer[2][SERIAL_BUFFER_SIZE] = {0};
 
 static BYTE* SineData = NULL;
 
@@ -186,12 +195,14 @@ void FreeSystem() {
 			FreeMem(pcmDataTable[i].dataPtr, pcmDataTable[i].length);
 	}
 
+#ifdef MIDI
 	if (midiLink)
 		RemoveMidiLink(midiLink);
 	if (midiNode)
 		DeleteMidi(midiNode);
 	if(CamdBase != NULL)
 		CloseLibrary((struct Library *)CamdBase);
+#endif
 
 	if(mainWin != NULL)
 		CloseWindow(mainWin);
@@ -234,34 +245,62 @@ void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period)
 {
 	if(pcmDataTable[id].dataPtr == 0)
 		return;
-	struct PcmData *pcm = &pcmDataTable[id];
-	struct PlayData pd = {0};
-	volatile struct AudChannel *aud = &pd.aud;
-	aud->ac_ptr = (UWORD*)pcm->dataPtr;
-	aud->ac_len = pcm->length >> 1;
-	aud->ac_per = period;
-	aud->ac_vol = volume; //64:MAX
-	pd.pcm = pcm;
-	//pd.playCount = 0;
 
-#ifdef LOG
-	ULONG arg[] = {pcm->length, pcm->loop};
-	VWritef("PCM %N %N\n", arg);
-#endif
+	{
+		custom->dmacon = (DMAF_AUD0 << ch); // Stop DMA for AUD
 
-	// custom->intena = (INTF_AUD0 << ch); // Stop INT for AUD
-	// custom->intreq = (INTF_AUD0 << ch); custom->intreq = (INTF_AUD0 << ch);
-	custom->dmacon = (DMAF_AUD0 << ch); // Stop DMA for AUD
-	//aud_memcpy(&custom->aud[ch], aud);
-	custom->aud[ch].ac_len = 2;
-	custom->aud[ch].ac_ptr = (UWORD*)StopData;
-	custom->aud[ch].ac_vol = 0;
-	custom->aud[ch].ac_per = 1;
+		// volatile UWORD *ac_ptr; /* ptr to start of waveform data */
+		// volatile UWORD ac_len;	/* length of waveform in words */
+		// volatile UWORD ac_per;	/* sample period */
+		// volatile UWORD ac_vol;	/* volume */
+		struct PcmData *pcm = &pcmDataTable[id];
 
-	curPlayData[ch] = pd;
+		// volatile struct AudChannel *aud = &custom->aud[ch];
+		// aud->ac_ptr = (UWORD*)pcm->dataPtr;
+		// aud->ac_len = pcm->length >> 1;
+		// aud->ac_per = period;
+		// aud->ac_vol = volume;
 
-	//custom->intena = INTF_SETCLR | (INTF_AUD0 << ch); // Start INT for AUD
-	custom->dmacon = DMAF_SETCLR | (DMAF_AUD0 << ch); // Start DMA for AUD
+		ULONG *audl = (ULONG *)&custom->aud[ch];
+		*audl++ = (ULONG)pcm->dataPtr;
+		UWORD *aud = (UWORD *)audl;
+		*aud++ = pcm->length >> 1;
+		*aud++ = period;
+		*aud = volume;
+
+		custom->dmacon = DMAF_SETCLR | (DMAF_AUD0 << ch); // Start DMA for AUD
+	}
+	return;
+	{
+		struct PcmData *pcm = &pcmDataTable[id];
+		struct PlayData pd = {0};
+		volatile struct AudChannel *aud = &pd.aud;
+		aud->ac_ptr = (UWORD*)pcm->dataPtr;
+		aud->ac_len = pcm->length >> 1;
+		aud->ac_per = period;
+		aud->ac_vol = volume; //64:MAX
+		pd.pcm = pcm;
+		//pd.playCount = 0;
+
+	#ifdef LOG
+		ULONG arg[] = {pcm->length, pcm->loop};
+		VWritef("PCM %N %N\n", arg);
+	#endif
+
+		// custom->intena = (INTF_AUD0 << ch); // Stop INT for AUD
+		// custom->intreq = (INTF_AUD0 << ch); custom->intreq = (INTF_AUD0 << ch);
+		custom->dmacon = (DMAF_AUD0 << ch); // Stop DMA for AUD
+		//aud_memcpy(&custom->aud[ch], aud);
+		custom->aud[ch].ac_len = 2;
+		custom->aud[ch].ac_ptr = (UWORD*)StopData;
+		custom->aud[ch].ac_vol = 0;
+		custom->aud[ch].ac_per = 1;
+
+		curPlayData[ch] = pd;
+
+		//custom->intena = INTF_SETCLR | (INTF_AUD0 << ch); // Start INT for AUD
+		custom->dmacon = DMAF_SETCLR | (DMAF_AUD0 << ch); // Start DMA for AUD
+	}
 }
 
 /*
@@ -322,110 +361,142 @@ static __attribute__((interrupt)) void audioInterruptHandler() {
 	custom->intreq = intreq; custom->intreq = intreq; //twice for a4000 bug.
 }
 
-int readCMD()
+
+BYTE writeArray(UBYTE *buffptr,ULONG length)
 {
-	//serialIO->IOSer.io_Data = (APTR)recvBuffer;
-	serialIO->IOSer.io_Length = 1;
-	int ret = -1;
+	serialIO->IOSer.io_Command = CMD_WRITE;
+	serialIO->IOSer.io_Data = buffptr;
+	serialIO->IOSer.io_Length = length;
+	recvBufferId = (recvBufferId + 1) & 1;
+	BYTE error = DoIO((struct IORequest *)serialIO);
+	serialIO->IOSer.io_Command = CMD_READ;
+
+	return error;
+}
+
+void requestSerial(ULONG length)
+{
+	serialIO->IOSer.io_Data = (APTR)recvBuffer[recvBufferId];
+	serialIO->IOSer.io_Length = length;
 	SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
+	recvBufferId = (recvBufferId + 1) & 1;
+}
+UBYTE * waitSerialData()
+{
+	//while(1)
+#ifndef NOGUI 
 	while(1)
 	{
-		if (mainWin) {
-			int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
-			ULONG wait = Wait(waitMask);
-			if (wait & SIGBREAKF_CTRL_C)
-			{
-				ret = -2;
-				break;
-			}
+		int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
+		if (waitMask & SIGBREAKF_CTRL_C)
+			return NULL;
+		if(waitMask & (1L << mainWin->UserPort->mp_SigBit))
+		{
 			struct IntuiMessage *msg;
+			int close = 0;
 			while ((msg = (struct IntuiMessage *)GetMsg(mainWin->UserPort))) {
 				if (msg->Class == IDCMP_CLOSEWINDOW)
-					ret = -2;
+					close = 1;
 				ReplyMsg((struct Message *)msg);
 			}
-			if (ret == -2)
+			if (close == 1)
 			{
 				CloseWindow(mainWin);
 				mainWin = NULL;
-				break;
-			}
-		}else{
-			int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
-			if (Wait(waitMask) & SIGBREAKF_CTRL_C)
-			{
-				ret = -2;
-				break;
+				return NULL;
 			}
 		}
-		// 受信待機
-		//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-		if(CheckIO((struct IORequest *)serialIO))
+		if (waitMask & (1L << serialPort->mp_SigBit))
 		{
-			if(!WaitIO((struct IORequest *)serialIO))
-				ret = recvBuffer[0];
-			break;
+			// 受信待機
+			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
+			if(CheckIO((struct IORequest *)serialIO))
+				if(!WaitIO((struct IORequest *)serialIO))
+					return serialIO->IOSer.io_Data;
 		}
 	}
-	return ret;
+#endif
+#ifdef NOGUI
+	//while(1){
+		ULONG waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
+		waitMask = Wait(waitMask);
+		if (waitMask & (1L << serialPort->mp_SigBit))
+		{
+			// 受信待機
+			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
+			if(CheckIO((struct IORequest *)serialIO))
+				if(!WaitIO((struct IORequest *)serialIO))
+					return serialIO->IOSer.io_Data;
+		}else if (waitMask & SIGBREAKF_CTRL_C)
+		{
+			return NULL;
+		}
+	//}
+	#endif
+	return NULL;
 }
 
-APTR* readArray(ULONG length)
+UBYTE *readArray(UBYTE *buffptr,ULONG length)
 {
+	serialIO->IOSer.io_Data = buffptr;
 	serialIO->IOSer.io_Length = length;
+	recvBufferId = (recvBufferId + 1) & 1;
 	if(DoIO((struct IORequest *)serialIO) == 0)
-		return serialIO->IOSer.io_Data;
+		return (UBYTE *)serialIO->IOSer.io_Data;
 	return NULL;
 }
 
 void showMessage(char *message)
 {
-	if(mainWin)
-	{
-		// ダイアログを表示（標準の警告ウィンドウ）
-		struct Window *dialog = OpenWindowTags(NULL,
-			WA_Width,  300,
-			WA_Height, 100,
-			WA_Left,   50,
-			WA_Top,    50,
-			WA_Title,  (ULONG)"Message",
-			WA_Flags, WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET | WFLG_ACTIVATE, 
-			WA_IDCMP, IDCMP_CLOSEWINDOW,
-			TAG_END);
+	VWritef(message, NULL);
+	VWritef("\n", NULL);
 
-		if (dialog)
-		{
-			// メッセージテキスト（IntuiText）
-			const struct IntuiText body = {
-				1, // 前景色（1 = 白）
-				0, // 背景色（0 = 黒）
-				JAM2, // 描画モード（背景を塗りつぶす）
-				10, 10, // 左上座標
-				NULL, // フォント（NULL = デフォルト）
-				(UBYTE *)message, // 表示する文字列
-				NULL // 次のテキスト（NULL なら 1 行のみ）
-			};
-			// メッセージテキスト（IntuiText）
-			const struct IntuiText ok = {
-				1, // 前景色（1 = 白）
-				0, // 背景色（0 = 黒）
-				JAM2, // 描画モード（背景を塗りつぶす）
-				10, 10, // 左上座標
-				NULL, // フォント（NULL = デフォルト）
-				(UBYTE *)"OK", // 表示する文字列
-				NULL // 次のテキスト（NULL なら 1 行のみ）
-			};
-			AutoRequest(dialog, &body, &ok, NULL, 0, 0, 280, 60);
-			CloseWindow(dialog);
-		}
-#ifdef LOG
-		VWritef(message, NULL);
-		VWritef("\n", NULL);
-#endif
-	}else{
-		VWritef(message, NULL);
-		VWritef("\n", NULL);
-	}
+// 	if(mainWin)
+// 	{
+// 		// ダイアログを表示（標準の警告ウィンドウ）
+// 		struct Window *dialog = OpenWindowTags(NULL,
+// 			WA_Width,  300,
+// 			WA_Height, 100,
+// 			WA_Left,   50,
+// 			WA_Top,    50,
+// 			WA_Title,  (ULONG)"Message",
+// 			WA_Flags, WFLG_CLOSEGADGET | WFLG_DRAGBAR | WFLG_DEPTHGADGET | WFLG_ACTIVATE, 
+// 			WA_IDCMP, IDCMP_CLOSEWINDOW,
+// 			TAG_END);
+
+// 		if (dialog)
+// 		{
+// 			// メッセージテキスト（IntuiText）
+// 			const struct IntuiText body = {
+// 				1, // 前景色（1 = 白）
+// 				0, // 背景色（0 = 黒）
+// 				JAM2, // 描画モード（背景を塗りつぶす）
+// 				10, 10, // 左上座標
+// 				NULL, // フォント（NULL = デフォルト）
+// 				(UBYTE *)message, // 表示する文字列
+// 				NULL // 次のテキスト（NULL なら 1 行のみ）
+// 			};
+// 			// メッセージテキスト（IntuiText）
+// 			const struct IntuiText ok = {
+// 				1, // 前景色（1 = 白）
+// 				0, // 背景色（0 = 黒）
+// 				JAM2, // 描画モード（背景を塗りつぶす）
+// 				10, 10, // 左上座標
+// 				NULL, // フォント（NULL = デフォルト）
+// 				(UBYTE *)"OK", // 表示する文字列
+// 				NULL // 次のテキスト（NULL なら 1 行のみ）
+// 			};
+// 			AutoRequest(dialog, &body, &ok, NULL, 0, 0, 280, 60);
+// 			CloseWindow(dialog);
+// 		}
+// #ifdef LOG
+// 		VWritef(message, NULL);
+// 		VWritef("\n", NULL);
+// #endif
+// 	}else{
+// 		VWritef(message, NULL);
+// 		VWritef("\n", NULL);
+// 	}
 }
 
 void printText(char* message)
@@ -462,33 +533,6 @@ void InitHook(struct Hook *hook, ULONG (*c_function)(), APTR userdata)
 	hook->h_Entry	= hookEntry;
     hook->h_SubEntry = c_function;
     hook->h_Data	= userdata;
-}
-
-int base64_decode_char(char c) {
-    if ('A' <= c && c <= 'Z') return c - 'A';
-    if ('a' <= c && c <= 'z') return c - 'a' + 26;
-    if ('0' <= c && c <= '9') return c - '0' + 52;
-    if (c == '+') return 62;
-    if (c == '/') return 63;
-    return -1;
-}
-
-void base64_decode(const char *input, unsigned char *output, int *out_len) {
-    int i, j;
-    int length = strlen(input);
-    int pad = (input[length - 1] == '=') + (input[length - 2] == '=');
-    *out_len = (length / 4) * 3 - pad;
-
-    for (i = 0, j = 0; i < length; i += 4, j += 3) {
-        int val = (base64_decode_char(input[i]) << 18) |
-                  (base64_decode_char(input[i + 1]) << 12) |
-                  (base64_decode_char(input[i + 2]) << 6) |
-                  (base64_decode_char(input[i + 3]));
-
-        output[j] = (val >> 16) & 0xFF;
-        if (input[i + 2] != '=') output[j + 1] = (val >> 8) & 0xFF;
-        if (input[i + 3] != '=') output[j + 2] = val & 0xFF;
-    }
 }
 
 /*
@@ -533,10 +577,12 @@ void main(struct WBStartup *wb)
 		showMessage("MAmi VSIF Driver");
 	}
 
+#ifdef MIDI
 	CamdBase = OpenLibrary((CONST_STRPTR)"camd.library", 0);
 	if (!CamdBase) {
 		FreeSystem();
 	}
+#endif
 
 #ifdef LOG
 	VWritef("Completed take system.\n", NULL);
@@ -568,7 +614,17 @@ void main(struct WBStartup *wb)
 #endif
 
 	// 3. serial.device を開く
-	if (OpenDevice("serial.device", 0, (struct IORequest *)serialIO, SERF_7WIRE | SERF_RAD_BOOGIE | SERF_XDISABLED) != 0) {
+	serialIO->io_Baud = SER_BPS;              // 9600bps
+	serialIO->io_ReadLen = 8;              // データ長: 8bit
+	serialIO->io_WriteLen = 8;
+	serialIO->io_StopBits = 1;             // ストップビット: 1
+	serialIO->io_RBufLen = 8192;
+	serialIO->io_SerFlags = 0;
+	serialIO->io_SerFlags &= ~SERF_PARTY_ON;  // パリティなし
+	serialIO->io_SerFlags |= SERF_XDISABLED;
+	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
+	serialIO->io_SerFlags |= SERF_7WIRE;
+	if (OpenDevice("serial.device", 0, (struct IORequest *)serialIO, 0) != 0) {
 		showMessage("Failed to open serial.device!");
 		FreeSystem();
 	}
@@ -579,21 +635,16 @@ void main(struct WBStartup *wb)
 #endif
 
 	// 4. シリアル通信の設定 (9600bps, 8N1)
-	serialIO->io_Baud = 19200;              // 9600bps
+	serialIO->io_Baud = SER_BPS;              // 9600bps
 	serialIO->io_ReadLen = 8;              // データ長: 8bit
 	serialIO->io_WriteLen = 8;
 	serialIO->io_StopBits = 1;             // ストップビット: 1
+	serialIO->io_RBufLen = 8192;
 	serialIO->io_SerFlags = 0;
 	serialIO->io_SerFlags &= ~SERF_PARTY_ON;  // パリティなし
 	serialIO->io_SerFlags |= SERF_XDISABLED;
 	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
 	serialIO->io_SerFlags |= SERF_7WIRE;
-	
-#ifdef LOG
-	//VWritef("Serial setting 5.\n", NULL);
-#endif
-
-	// 5. 設定を適用
 	serialIO->IOSer.io_Command = SDCMD_SETPARAMS;
 	if (DoIO((struct IORequest *)serialIO) != 0) {
 		showMessage("Failed to set serial parameters!");
@@ -601,6 +652,8 @@ void main(struct WBStartup *wb)
 	}
 	closeDev = TRUE;
 
+	// 5. データを受信 (最大 255 バイト)
+	serialIO->IOSer.io_Command = CMD_READ;
 #ifdef LOG
 VWritef("Completed serial setting.\n", NULL);
 #endif
@@ -671,7 +724,7 @@ VWritef("Completed serial setting.\n", NULL);
 	//reqPlayDummyPcm(3, TRUE);
 #endif
 
-#ifndef SERIAL
+#ifdef MIDI
 
     // MIDIポートを作成
 	BYTE midisig = AllocSignal(-1);
@@ -725,7 +778,50 @@ VWritef("Completed serial setting.\n", NULL);
 		}
 		//VWritef("MIDI No", NULL);
 	}
+#endif
 
+#ifdef SERIAL
+	/*
+	{
+		requestSerial(1);
+		UBYTE *dataBufPtr = waitSerialData();
+		while(dataBufPtr != NULL)
+		{
+			ULONG arg[] = {*dataBufPtr};
+			VWritef("%X2", arg);
+			// char arg[] = {*dataBufPtr , 0};
+			// VWritef(arg, NULL);
+			requestSerial(1);
+			dataBufPtr = waitSerialData();
+		}
+		VWritef("\nExited\n", NULL);
+		FreeSystem();
+	}
+	//*/
+	/*
+	while(1)
+	{
+		{
+			char xon[] = {(char)XON, 0};
+			writeArray(xon, 2);
+		}
+		BYTE *dataBufPtr = readArray(recvBuffer[recvBufferId], 1);
+		{
+			char xof[] = {(char)XOFF, 0};
+			writeArray(xof, 2);
+		}
+		if(dataBufPtr == NULL)
+			break;
+		char arg[] = {*dataBufPtr , 0};
+		VWritef(arg, NULL);
+		// ULONG args[] = {*dataBufPtr};
+		// VWritef("%X2 ", args);
+	}
+	VWritef("\nExited\n", NULL);
+	FreeSystem();
+	//*/
+
+/*
 	//reqPlayPcm(0, 0, 64, 3546895 / (12 * 500));
 	int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F;
 	while(1)
@@ -735,16 +831,12 @@ VWritef("Completed serial setting.\n", NULL);
 			FreeSystem();
 		}
 	}
-#endif
-
-#ifdef SERIAL
-
-	// 7. データを受信 (最大 255 バイト)
-	serialIO->IOSer.io_Command = CMD_READ;
-	serialIO->IOSer.io_Data = (APTR)recvBuffer;
+*/
+/*
+	serialIO->IOSer.io_Data = (APTR)recvBuffer[recvBufferId++];
 	//serialIO->IOSer.io_Length = SERIAL_BUFFER_SIZE;
 	//serialIO->IOSer.io_Length = 1;
-/*
+
 	while(1){
 		ULONG arg[] = {0};
 		int v = readCMD();
@@ -778,20 +870,16 @@ VWritef("Completed serial setting.\n", NULL);
 		printText("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.");
 	//int val = readCMD();
 	int error = 0;
-	UBYTE *dataBufPtr = (UBYTE *)readArray(6);
-	//while(val >= 0)
+	//UBYTE *dataBufPtr = (UBYTE *)readArray(6);
+	requestSerial(6);
+	UBYTE *dataBufPtr = waitSerialData();
 	while(dataBufPtr != NULL)
 	{
 		switch(*dataBufPtr++)
 		{
 			case 1:	// Volume
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(2);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
+					requestSerial(6);
 
 					UBYTE ch = *dataBufPtr++;
 					UWORD vol = *dataBufPtr;
@@ -804,12 +892,7 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 2:	// Pitch
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(3);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
+					requestSerial(6);
 
 					UBYTE ch = *dataBufPtr++;
 					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
@@ -822,13 +905,8 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 3:	//KEY ON
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(5);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
-						
+					requestSerial(6);
+
 					// ch 0 - 3
 					UBYTE ch = *dataBufPtr++;
 					// inst id 0 - 255
@@ -847,12 +925,7 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 4: //KEY OFF
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(1);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
+					requestSerial(6);
 
 					// ch 0 -3
 					UBYTE ch = *dataBufPtr;
@@ -865,12 +938,7 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 5: //Filter ON/OFF
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(1);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
+					requestSerial(6);
 
 					if(*dataBufPtr == 0)
 					{
@@ -908,13 +976,6 @@ VWritef("Completed serial setting.\n", NULL);
 					// reqStopPcm(1);
 					// reqStopPcm(2);
 					// reqStopPcm(3);
-
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(5);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
 						
 					UBYTE id = *dataBufPtr++;
 					UWORD len = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr++;
@@ -933,9 +994,7 @@ VWritef("Completed serial setting.\n", NULL);
 						BYTE* pcmDataPtr = (BYTE*)AllocMem(len, MEMF_CHIP);
 						if(pcmDataPtr != NULL)
 						{
-							serialIO->IOSer.io_Data = pcmDataPtr;
-							UBYTE *pcmptr = (UBYTE *)readArray(len);
-							serialIO->IOSer.io_Data = recvBuffer;
+							UBYTE *pcmptr = (UBYTE *)readArray(pcmDataPtr, len);
 							if(pcmptr == NULL)
 							{
 								error = -1;
@@ -944,16 +1003,14 @@ VWritef("Completed serial setting.\n", NULL);
 							}
 						}else
 						{
-							serialIO->IOSer.io_Data = pcmDataPtr;
 							UWORD received = 0;
 							UWORD chunk_size;
 							while (received < len) {
 								// 256バイト単位で受信（最後のブロックは余りを処理）
 								chunk_size = (len - received >= SERIAL_BUFFER_SIZE) ? SERIAL_BUFFER_SIZE : (len - received);
-								readArray(chunk_size);
+								readArray(recvBuffer[recvBufferId], chunk_size);
 								received += chunk_size;
 							}
-							serialIO->IOSer.io_Data = recvBuffer;
 							showMessage("No PCM memory!");
 							error = -1;
 							break;
@@ -967,6 +1024,8 @@ VWritef("Completed serial setting.\n", NULL);
 						pdt->length = 0;
 						pdt->loop  = 0;
 					}
+					requestSerial(6);
+
 					if(oldPcm != NULL)
 						FreeMem(oldPcm, oldLen);
 
@@ -977,13 +1036,8 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 100:	// PCM Loop
 				{
-					// UBYTE *dataBufPtr = (UBYTE *)readArray(3);
-					// if(dataBufPtr == NULL)
-					// {
-					// 	val = -1;
-					// 	break;
-					// }
-						
+					requestSerial(6);
+
 					UBYTE id = *dataBufPtr++;
 					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 					UWORD len = pcmDataTable[id].length;
@@ -1007,13 +1061,16 @@ VWritef("Completed serial setting.\n", NULL);
 			break;
 		val = readCMD();
 		*/
-		dataBufPtr = (UBYTE *)readArray(6);
+		//dataBufPtr = (UBYTE *)readArray(6);
+		dataBufPtr = (UBYTE *)waitSerialData();
 	}
 	if(error == 0){
-		if (!wb)
-			printText("Exited");
+		//if (!wb)
+			//printText("Exited");
+		VWritef("Exited\n", NULL);
 	}else{
-		showMessage("Aborted by transfer error!");
+		VWritef("Aborted by transfer error!\n", NULL);
+		//showMessage("Aborted by transfer error!");
 	}
 
 	// END

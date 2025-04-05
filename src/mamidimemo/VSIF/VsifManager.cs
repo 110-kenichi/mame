@@ -352,9 +352,9 @@ namespace zanac.MAmidiMEmo.VSIF
                                 sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.WriteTimeout = 500;
                                 sp.ReadTimeout = 500;
-                                sp.DtrEnable = true;
-                                sp.RtsEnable = true;
-                                sp.BaudRate = 19200;
+                                //sp.DtrEnable = true;
+                                //sp.RtsEnable = true;
+                                sp.BaudRate = 31250;
                                 sp.StopBits = StopBits.One;
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;

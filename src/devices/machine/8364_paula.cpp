@@ -165,7 +165,9 @@ void paula_8364_device::keyoff(uint8_t ch)
 	}
 	//HACK: this is a hack to stop the sound
 	audio_channel* chan = &m_channel[ch];
-	dma_reload(chan);
+	chan->curlocation = chan->loc;
+	chan->curlength = chan->len;
+	//dma_reload(chan);
 }
 
 void paula_8364_device::reg_w(offs_t offset, uint16_t data)

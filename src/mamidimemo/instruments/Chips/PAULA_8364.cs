@@ -430,9 +430,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     if (percentage != lastPercentage)
                                     {
                                         if (fp != null)
-                                        {
                                             fp.Percentage = percentage;
-                                        }
                                     }
                                     Application.DoEvents();
                                     lastPercentage = percentage;
@@ -440,7 +438,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             if (data.Count >= 0)
                                 vsifClient.RawWriteData(data.ToArray(), null);
-                            fp.Percentage = 100;
+                            if (fp != null)
+                                fp.Percentage = 100;
                             Application.DoEvents();
                         }
                         break;
