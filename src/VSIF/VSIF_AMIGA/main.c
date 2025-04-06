@@ -116,12 +116,14 @@ APTR GetAudioInterruptHandler() {
 static __attribute__((interrupt)) void audioInterruptHandler();
 
 void TakeSystem() {
-#ifndef NO_INT
+	SystemDMA=custom->dmaconr;
+
 	Forbid();
+
+#ifndef NO_INT
 	//Save current interrupts and DMA settings so we can restore them upon exit. 
 	SystemADKCON=custom->adkconr;
 	SystemInts=custom->intenar;
-	SystemDMA=custom->dmaconr;
 
 	//https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0203.html
 	//	Disable -- disable interrupt processing.
@@ -186,9 +188,10 @@ void FreeSystem() {
 
 	//Restore all interrupts and DMA settings.
 	custom->intena=SystemInts|0x8000;
-	custom->dmacon=SystemDMA|0x8000;
 	custom->adkcon=SystemADKCON|0x8000;
 #endif
+	custom->dmacon=SystemDMA|0x8000;
+
 	for(int i=0; i<256; i++)
 	{
 		if(pcmDataTable[i].dataPtr != NULL)
@@ -215,8 +218,9 @@ void FreeSystem() {
 
 #ifndef NO_INT
 	Enable();
-	Permit();
 #endif
+	Permit();
+
 	Exit(0);
 }
 
@@ -500,14 +504,14 @@ void showMessage(char *message)
 // 	}
 }
 
-void printText(char* message)
+void printText(char* message, int ofst_x, int ofst_y)
 {
 	if(mainWin)
 	{
 		int clientWidth = mainWin->Width - mainWin->BorderLeft - mainWin->BorderRight;
 		int clientHeight = mainWin->Height - mainWin->BorderTop - mainWin->BorderBottom;
-		int text_x = mainWin->BorderLeft;
-		int text_y = mainWin->BorderTop;
+		int text_x = mainWin->BorderLeft + ofst_x;
+		int text_y = mainWin->BorderTop + ofst_y;
 		struct IntuiText label = {
 			1, 0, JAM2, text_x, text_y, NULL, (UBYTE *)message, NULL
 		};
@@ -536,26 +540,21 @@ void InitHook(struct Hook *hook, ULONG (*c_function)(), APTR userdata)
     hook->h_Data	= userdata;
 }
 
-/*
-*/
-void main(struct WBStartup *wb)
+int WBmain(struct WBStartup *wb)
 {
 	SysBase = *((struct ExecBase**)4UL);
 	custom = (struct Custom*)0xdff000;
-
-	TakeSystem();
 
 	// used for printing
 	DOSBase = (struct DosLibrary*)OpenLibrary((CONST_STRPTR)"dos.library", 0);
 	if (!DOSBase)
 		FreeSystem();
-		
-#ifdef NOGUI
-	wb = NULL;
-#endif
+	
+	TakeSystem();
+
 	if (wb) {
 		// Intuition ライブラリを開く
-		IntuitionBase = (struct IntuitionBase *)OpenLibrary((CONST_STRPTR)"intuition.library", 37);
+		IntuitionBase = (struct IntuitionBase *)OpenLibrary((CONST_STRPTR)"intuition.library", 0);
 		if (!IntuitionBase) {
 			showMessage("Failed to load GUI!");
 			FreeSystem();
@@ -701,7 +700,7 @@ VWritef("Completed serial setting.\n", NULL);
 
 	for(int i=0;i<12 * (100);i++)
 		SineData[12 + i] = SineData[i];
-
+/*
 	SineData[12 * 100 - 12] = -125;
 	SineData[12 * 100 - 11] = -100;
 	SineData[12 * 100 - 10] = -75;
@@ -715,10 +714,10 @@ VWritef("Completed serial setting.\n", NULL);
 	SineData[12 * 100 - 3] = 100;
 	SineData[12 * 100 - 2] = 125;
 	SineData[12 * 100 - 1] = 127;
-
+*/
 	pcmDataTable[0].dataPtr = SineData;
 	pcmDataTable[0].length = 12 * 100;
-	pcmDataTable[0].loop  = 12*100 - 12;
+	//pcmDataTable[0].loop  = 12*100 - 12;
 	//pcmDataTable[0].loop  = 0;
 
 	// PLAY SOUND
@@ -869,10 +868,12 @@ VWritef("Completed serial setting.\n", NULL);
 */
 
 #endif
-	if(mainWin)	
-		printText("MAmi VSIF driver ready.");
-	else
-		printText("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.");
+	if(mainWin)
+	{
+		printText("MAmi VSIF driver ready.", 0, 0);
+		printText("DO NOT touch mouse/key while sounding!", 0, 16);
+	}else
+		printText("Ready.\n**Press Ctrl-C** to exit. If not, System may crash.", 0, 0);
 	//int val = readCMD();
 	int error = 0;
 	//UBYTE *dataBufPtr = (UBYTE *)readArray(6);
@@ -1074,4 +1075,20 @@ VWritef("Completed serial setting.\n", NULL);
 
 	// END
 	FreeSystem();
+}
+
+/*
+*/
+/* 通常のmain関数：CLIまたはWorkbench起動両方をここから呼ぶ */
+int main(int argc, char **argv) {
+	struct WBStartup *wb = (struct WBStartup *)argv;
+    if (argc == 0) {
+        // GUIから起動された
+    } else {
+        // CLIから起動された
+    }
+#ifdef NOGUI
+	wb = NULL;
+#endif
+	WBmain(wb);
 }

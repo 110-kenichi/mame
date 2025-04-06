@@ -1,4 +1,4 @@
-MAmidiMEmo 5.9.1.0 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.0.0.0 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.0.0.0 Supported PAULA_8364(AMIGA).
 - 5.9.1.0 Supported 2nd PSG for MSX for VGMPlyer.
 - 5.9.0.0 Supported NanoDrive 6 UART for OPN2, DCSG.
 - 5.8.2.0 Added Push/Pop Tone button on the FM Timbre Editor.
