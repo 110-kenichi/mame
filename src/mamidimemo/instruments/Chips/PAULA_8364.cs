@@ -1,4 +1,5 @@
-﻿// copyright-holders:K.Ito
+﻿//#define USE_PCM_LOOP
+// copyright-holders:K.Ito
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
+using NAudio.SoundFont;
 using NAudio.Wave;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -401,17 +403,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 (byte)tim.PcmData.Length
                             };
                             //Loop
-                            if (tim.LoopEnable && tim.LoopPoint < tim.PcmData.Length)
-                            {
-                                data.Add((byte)(tim.LoopPoint >> 8));
-                                data.Add((byte)tim.LoopPoint);
-                            }
-                            else
-                            {
-                                data.Add((byte)0xff);
-                                data.Add((byte)0xff);
-                            }
+                            //if (tim.LoopEnable && tim.LoopPoint < tim.PcmData.Length)
+                            //{
+                            //    data.Add((byte)(tim.LoopPoint >> 8));
+                            //    data.Add((byte)tim.LoopPoint);
+                            //}
+                            //else
+                            //{
+                            //    data.Add((byte)0xff);
+                            //    data.Add((byte)0xff);
+                            //}
                             //Send params
+                            data.Add(0x00);
                             vsifClient.RawWriteData(data.ToArray(), null);
                             data.Clear();
 
@@ -441,6 +444,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (fp != null)
                                 fp.Percentage = 100;
                             Application.DoEvents();
+#if USE_PCM_LOOP
+                            Paula8364Write(UnitNumber, PAULA_CMD.PCM_LOOP, (uint)tim.Index, (ushort)(tim.LoopEnable ? tim.LoopPoint : 0xFFFF), true);
+#endif
                         }
                         break;
                 }
@@ -494,12 +500,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { (byte)type, ch, (byte)data, 0, 0, 0 }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)), (byte)data, 0, 0, 0 }, null);
                                     break;
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, ch, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, (uint)ch, data);
                     }
                     break;
                 case PAULA_CMD.Pitch:
@@ -512,12 +518,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { (byte)type, ch, (byte)(data >> 8), (byte)data, 0, 0 }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)), (byte)(data >> 8), (byte)data, 0, 0 }, null);
                                     break;
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, ch, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, (uint)ch, data);
                     }
                     break;
                 case PAULA_CMD.Filter:
@@ -527,7 +533,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.VSIF_AMIGA:
                                 // value
-                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)data, 0, 0, 0, 0 }, null);
+                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)data, 0, 0, 0 }, null);
                                 break;
                         }
                     }
@@ -539,7 +545,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.VSIF_AMIGA:
                                 // id, value
-                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)address, (byte)(data >> 8), (byte)data, 0, 0 }, null);
+                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)address, (byte)(data >> 8), (byte)data, 0 }, null);
                                 break;
                         }
                     }
@@ -591,7 +597,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_AMIGA:
-                        vsifClient.RawWriteData(new byte[] { (byte)PAULA_CMD.KeyOn, ch, id, vol, (byte)(period >> 8), (byte)period }, null);
+                        vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.KeyOn | ch << 4), id, vol, (byte)(period >> 8), (byte)period }, null);
                         break;
                 }
             }
@@ -628,7 +634,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_AMIGA:
-                        vsifClient.RawWriteData(new byte[] { (byte)PAULA_CMD.KeyOff, ch, 0, 0, 0, 0 }, null);
+                        vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.KeyOff | ch << 4), 0, 0, 0, 0 }, null);
                         break;
                 }
             }
@@ -1197,14 +1203,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Set PCM samplerate [Hz]")]
-            [DefaultValue(typeof(uint), "16000")]
+            [DefaultValue(typeof(uint), "14000")]
             [SlideParametersAttribute(4000, 44100)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 16000;
+            } = 14000;
 
             private bool f_LoopEnable;
 
@@ -1213,6 +1219,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Loop point enable")]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
+#if USE_PCM_LOOP
+            [Browsable(false)]
+#endif
             public bool LoopEnable
             {
                 get
@@ -1241,6 +1250,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+#if USE_PCM_LOOP
+            [Browsable(false)]
+#endif
             public ushort LoopPoint
             {
                 get
@@ -1766,8 +1778,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         KeyOn = 3,
         KeyOff = 4,
         Filter = 5,
-        PCM = 99,
-        PCM_LOOP = 100,
+        PCM = 6,
+        PCM_LOOP = 7,
     }
 
 

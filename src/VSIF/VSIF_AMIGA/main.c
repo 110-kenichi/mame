@@ -23,7 +23,7 @@
 
 
 //config
-#define NOGUI
+//#define NOGUI
 //#define LOG
 #define NO_INT
 #define SERIAL
@@ -385,12 +385,21 @@ UBYTE * waitSerialData()
 {
 	//while(1)
 #ifndef NOGUI 
-	while(1)
+	//while(1)
 	{
 		int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
-		if (waitMask & SIGBREAKF_CTRL_C)
+		waitMask = Wait(waitMask);
+		if (waitMask & (1L << serialPort->mp_SigBit))
+		{
+			// 受信待機
+			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
+			if(CheckIO((struct IORequest *)serialIO))
+				if(!WaitIO((struct IORequest *)serialIO))
+					return serialIO->IOSer.io_Data;
+		}else if (waitMask & SIGBREAKF_CTRL_C)
+		{
 			return NULL;
-		if(waitMask & (1L << mainWin->UserPort->mp_SigBit))
+		}else if(waitMask & (1L << mainWin->UserPort->mp_SigBit))
 		{
 			struct IntuiMessage *msg;
 			int close = 0;
@@ -405,14 +414,6 @@ UBYTE * waitSerialData()
 				mainWin = NULL;
 				return NULL;
 			}
-		}
-		if (waitMask & (1L << serialPort->mp_SigBit))
-		{
-			// 受信待機
-			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-			if(CheckIO((struct IORequest *)serialIO))
-				if(!WaitIO((struct IORequest *)serialIO))
-					return serialIO->IOSer.io_Data;
 		}
 	}
 #endif
@@ -548,6 +549,7 @@ void main(struct WBStartup *wb)
 	DOSBase = (struct DosLibrary*)OpenLibrary((CONST_STRPTR)"dos.library", 0);
 	if (!DOSBase)
 		FreeSystem();
+		
 #ifdef NOGUI
 	wb = NULL;
 #endif
@@ -555,6 +557,7 @@ void main(struct WBStartup *wb)
 		// Intuition ライブラリを開く
 		IntuitionBase = (struct IntuitionBase *)OpenLibrary((CONST_STRPTR)"intuition.library", 37);
 		if (!IntuitionBase) {
+			showMessage("Failed to load GUI!");
 			FreeSystem();
 		}
 
@@ -569,8 +572,10 @@ void main(struct WBStartup *wb)
 			WA_IDCMP, IDCMP_CLOSEWINDOW,
 			TAG_END);
 		if (!mainWin)
+		{
+			showMessage("Failed to create GUI!");
 			FreeSystem();
-
+		}
 	}else
 	{
         // CLI から実行された
@@ -871,17 +876,19 @@ VWritef("Completed serial setting.\n", NULL);
 	//int val = readCMD();
 	int error = 0;
 	//UBYTE *dataBufPtr = (UBYTE *)readArray(6);
-	requestSerial(6);
+	requestSerial(5);
 	UBYTE *dataBufPtr = waitSerialData();
 	while(dataBufPtr != NULL)
 	{
-		switch(*dataBufPtr++)
+		UBYTE type = *dataBufPtr++;
+		UBYTE ch = type >> 4;
+		type = type & 0xf;
+		switch(type)
 		{
 			case 1:	// Volume
 				{
-					requestSerial(6);
+					requestSerial(5);
 
-					UBYTE ch = *dataBufPtr++;
 					UWORD vol = *dataBufPtr;
 					curPlayData[ch].aud.ac_vol = vol;
 					custom->aud[ch].ac_vol = vol;
@@ -892,9 +899,8 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 2:	// Pitch
 				{
-					requestSerial(6);
+					requestSerial(5);
 
-					UBYTE ch = *dataBufPtr++;
 					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
 					curPlayData[ch].aud.ac_per = per;
 					custom->aud[ch].ac_per = per;
@@ -905,10 +911,8 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 3:	//KEY ON
 				{
-					requestSerial(6);
+					requestSerial(5);
 
-					// ch 0 - 3
-					UBYTE ch = *dataBufPtr++;
 					// inst id 0 - 255
 					UBYTE id = *dataBufPtr++;
 					// vol 0 - 64;
@@ -925,10 +929,8 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 4: //KEY OFF
 				{
-					requestSerial(6);
+					requestSerial(5);
 
-					// ch 0 -3
-					UBYTE ch = *dataBufPtr;
 					reqStopPcm(ch);
 #ifdef LOG
 					ULONG arg[] = {ch};
@@ -938,7 +940,7 @@ VWritef("Completed serial setting.\n", NULL);
 				break;
 			case 5: //Filter ON/OFF
 				{
-					requestSerial(6);
+					requestSerial(5);
 
 					if(*dataBufPtr == 0)
 					{
@@ -967,21 +969,18 @@ VWritef("Completed serial setting.\n", NULL);
 					}
 				}
 				break;
-			case 99:
+			case 6:
 				{
 #ifdef LOG
 					VWritef("PCM Receiving...\n", NULL);
 #endif
-					// reqStopPcm(0);
-					// reqStopPcm(1);
-					// reqStopPcm(2);
-					// reqStopPcm(3);
 						
 					UBYTE id = *dataBufPtr++;
 					UWORD len = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr++;
-					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
-					if(loop >= len)
-						loop = 0xFFFF;
+					//UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
+					//if(loop >= len)
+					//	loop = 0xFFFF;
+					UWORD loop = 0;
 #ifdef LOG
 					ULONG arg[] = {id, len, loop};
 					VWritef("%N %N %N\n", arg);
@@ -1024,7 +1023,7 @@ VWritef("Completed serial setting.\n", NULL);
 						pdt->length = 0;
 						pdt->loop  = 0;
 					}
-					requestSerial(6);
+					requestSerial(5);
 
 					if(oldPcm != NULL)
 						FreeMem(oldPcm, oldLen);
@@ -1034,9 +1033,9 @@ VWritef("Completed serial setting.\n", NULL);
 #endif
 				}
 				break;
-			case 100:	// PCM Loop
+			case 7:	// PCM Loop
 				{
-					requestSerial(6);
+					requestSerial(5);
 
 					UBYTE id = *dataBufPtr++;
 					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
@@ -1065,9 +1064,9 @@ VWritef("Completed serial setting.\n", NULL);
 		dataBufPtr = (UBYTE *)waitSerialData();
 	}
 	if(error == 0){
-		//if (!wb)
+		if (!wb)
+			VWritef("Exited\n", NULL);
 			//printText("Exited");
-		VWritef("Exited\n", NULL);
 	}else{
 		VWritef("Aborted by transfer error!\n", NULL);
 		//showMessage("Aborted by transfer error!");
