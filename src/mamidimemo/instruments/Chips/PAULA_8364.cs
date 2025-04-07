@@ -209,6 +209,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private bool f_TransferPcmData;
+
+        [Category("Chip(Dedicated)")]
+        [Description("Transfer PCM data via Serial cable.")]
+        [DefaultValue(false)]
+        public bool TransferPcmData
+        {
+            get
+            {
+                return f_TransferPcmData;
+            }
+            set
+            {
+                if (f_TransferPcmData != value)
+                {
+                    try
+                    {
+                        ignoreUpdatePcmData = true;
+                        AllSoundOff();
+                    }
+                    finally
+                    {
+                        ignoreUpdatePcmData = false;
+                    }
+
+                    f_TransferPcmData = value;
+
+                    ClearWrittenDataCache();
+                    PrepareSound();
+                }
+            }
+        }
+
         private PAULA_8364_Clock f_MasterClock = PAULA_8364_Clock.PAL;
 
         [DataMember]
@@ -343,6 +376,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updatePcmData(PaulaTimbre timbre, bool forceClear)
         {
+            if (!f_TransferPcmData)
+                return;
+
             if (timbre == null)
             {
                 AllSoundOff();
@@ -402,19 +438,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 (byte)(tim.PcmData.Length >> 8),
                                 (byte)tim.PcmData.Length
                             };
+#if USE_PCM_LOOP
                             //Loop
-                            //if (tim.LoopEnable && tim.LoopPoint < tim.PcmData.Length)
-                            //{
-                            //    data.Add((byte)(tim.LoopPoint >> 8));
-                            //    data.Add((byte)tim.LoopPoint);
-                            //}
-                            //else
-                            //{
-                            //    data.Add((byte)0xff);
-                            //    data.Add((byte)0xff);
-                            //}
-                            //Send params
+                            if (tim.LoopEnable && tim.LoopPoint < tim.PcmData.Length)
+                            {
+                                data.Add((byte)(tim.LoopPoint >> 8));
+                                data.Add((byte)tim.LoopPoint);
+                            }
+                            else
+                            {
+                                data.Add((byte)0xff);
+                                data.Add((byte)0xff);
+                            }
+#else
                             data.Add(0x00);
+#endif
+                            //Send params
                             vsifClient.RawWriteData(data.ToArray(), null);
                             data.Clear();
 
@@ -505,7 +544,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, (uint)ch, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, (uint)((0xa8 + (ch * 0x10)) / 2), data);
                     }
                     break;
                 case PAULA_CMD.Pitch:
@@ -523,7 +562,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
                         if (!vsifOnly)
-                            DeferredWriteData(paula_8364_write, unitNumber, (uint)ch, data);
+                            DeferredWriteData(paula_8364_write, unitNumber, (uint)((0xa6 + (ch * 0x10)) / 2), data);
                     }
                     break;
                 case PAULA_CMD.Filter:
@@ -591,6 +630,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             ch = chConvert[ch];
             if (loop >= length)
                 loop = 0xffff;
+#if !USE_PCM_LOOP
+            loop = 0;
+#endif
 
             lock (sndEnginePtrLock)
             {
@@ -749,6 +791,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             readSoundFontForDrumTimbre = new ToolStripMenuItem("Import PCM from SF2 for &DrumTimbre...");
             readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
+
+            exportPcmForAmiga = new ToolStripMenuItem("Export PCM from VSIF &AMIGA...");
+            exportPcmForAmiga.Click += ExportPcmForAmiga_Click;
         }
 
         #region IDisposable Support
@@ -1121,9 +1166,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                var vol = CalcCurrentVolume();
+                var vol = CalcCurrentVolume() * 64;
 
-                parentModule.Paula8364Write(parentModule.UnitNumber, PAULA_CMD.Volume, (uint)Slot, (ushort)(vol * 64), false);
+                parentModule.Paula8364Write(parentModule.UnitNumber, PAULA_CMD.Volume, (uint)Slot, (ushort)vol, false);
             }
 
             /// <summary>
@@ -1219,7 +1264,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Loop point enable")]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
-#if USE_PCM_LOOP
+#if !USE_PCM_LOOP
             [Browsable(false)]
 #endif
             public bool LoopEnable
@@ -1250,7 +1295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-#if USE_PCM_LOOP
+#if !USE_PCM_LOOP
             [Browsable(false)]
 #endif
             public ushort LoopPoint
@@ -1562,6 +1607,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private ToolStripMenuItem readSoundFontForDrumTimbre;
 
+        private ToolStripMenuItem exportPcmForAmiga;
+
         /// <summary>
         /// 
         /// </summary>
@@ -1572,7 +1619,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             menus.AddRange(new ToolStripMenuItem[] {
                 readSoundFontForTimbre,
-                readSoundFontForDrumTimbre
+                readSoundFontForDrumTimbre,
+                exportPcmForAmiga
             });
 
             return menus.ToArray();
@@ -1609,6 +1657,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     throw;
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
+
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
 
@@ -1641,6 +1691,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     throw;
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
+
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
 
@@ -1712,6 +1764,70 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     tn++;
                     if (tn == 128)
                         break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExportPcmForAmiga_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var saveFileDialog = new System.Windows.Forms.SaveFileDialog())
+                {
+                    saveFileDialog.OverwritePrompt = true;
+                    saveFileDialog.FileName = "default.vpcm";
+                    saveFileDialog.SupportMultiDottedExtensions = true;
+                    saveFileDialog.Title = "Export VSIF AMIGA PCM file";
+                    saveFileDialog.Filter = "VSIF AMIGA PCM File(*.vpcm)|*.vpcm";
+
+                    var fr = saveFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    writePcm(saveFileDialog.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        private void writePcm(String filePath)
+        {
+            using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                using (var bw = new BinaryWriter(fs))
+                {
+                    bw.Write(new char[] { 'V', 'A', 'P', 'C' });
+                    foreach (var t in Timbres)
+                    {
+                        // 00 00 Len
+                        // 00 00 Loop
+                        // ....
+                        bw.Write(((ushort)t.PcmData.Length).ToByteArray().Reverse().ToArray());
+                        if (t.LoopEnable)
+                            bw.Write(((ushort)t.LoopPoint).ToByteArray().Reverse().ToArray());
+                        else
+                            bw.Write((ushort)0xFFFF);
+                        for (int i = 0; i < t.PcmData.Length; i++)
+                            bw.Write(t.PcmData[i]);
+                    }
                 }
             }
         }
