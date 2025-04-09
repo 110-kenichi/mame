@@ -6,9 +6,6 @@ UWORD SystemADKCON = 0;
 APTR VBR = 0;
 APTR SystemIrq = 0;
 
-UBYTE recvBufferId = 0;
-UBYTE recvBuffer[2][SERIAL_BUFFER_SIZE] = {0};
-
 static APTR GetVBR(void) {
 	APTR vbr = 0;
 	UWORD getvbr[] = { 0x4e7a, 0x0801, 0x4e73 }; // MOVEC.L VBR,D0 RTE
@@ -79,7 +76,7 @@ void FreeSystem() {
 	if(!StopData)
 		FreeMem(StopData, 4);
 
-	if(serialIO != NULL)
+	if(serialIO)
 	{
 		if(closeDev)
 		{
@@ -96,7 +93,7 @@ void FreeSystem() {
 			DeleteIORequest((struct IORequest *)serialIO);
 		}
 	}
-	if(serialPort != NULL)
+	if(serialPort)
 	{
 		// 10. メッセージポートを解放
 		DeleteMsgPort(serialPort);
@@ -127,13 +124,13 @@ void FreeSystem() {
 		CloseLibrary((struct Library *)CamdBase);
 #endif
 
-	if(mainWin != NULL)
+	if(mainWin)
 		CloseWindow(mainWin);
 
-	if(IntuitionBase != NULL)
+	if(IntuitionBase)
 		CloseLibrary((struct Library *)IntuitionBase);
 
-	if(DOSBase != NULL)
+	if(DOSBase)
 		CloseLibrary((struct Library*)DOSBase);
 
 #ifndef NO_INT
@@ -144,91 +141,6 @@ void FreeSystem() {
 	Exit(0);
 }
 
-
-BYTE writeArray(UBYTE *buffptr,ULONG length)
-{
-	serialIO->IOSer.io_Command = CMD_WRITE;
-	serialIO->IOSer.io_Data = buffptr;
-	serialIO->IOSer.io_Length = length;
-	recvBufferId = (recvBufferId + 1) & 1;
-	BYTE error = DoIO((struct IORequest *)serialIO);
-	serialIO->IOSer.io_Command = CMD_READ;
-
-	return error;
-}
-
-void requestSerial(ULONG length)
-{
-	serialIO->IOSer.io_Data = (APTR)recvBuffer[recvBufferId];
-	serialIO->IOSer.io_Length = length;
-	SendIO((struct IORequest *)serialIO);  // 非同期リクエストを送信
-	recvBufferId = (recvBufferId + 1) & 1;
-}
-UBYTE * waitSerialData()
-{
-	//while(1)
-#ifndef NOGUI 
-	while(1)
-	{
-		int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
-		waitMask = Wait(waitMask);
-		if (waitMask & (1L << serialPort->mp_SigBit))
-		{
-			// 受信待機
-			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-			if(CheckIO((struct IORequest *)serialIO))
-				if(!WaitIO((struct IORequest *)serialIO))
-					return serialIO->IOSer.io_Data;
-		}else if (waitMask & SIGBREAKF_CTRL_C)
-		{
-			return NULL;
-		}else if(waitMask & (1L << mainWin->UserPort->mp_SigBit))
-		{
-			struct IntuiMessage *msg;
-			int close = 0;
-			while ((msg = (struct IntuiMessage *)GetMsg(mainWin->UserPort))) {
-				if (msg->Class == IDCMP_CLOSEWINDOW)
-					close = 1;
-				ReplyMsg((struct Message *)msg);
-			}
-			if (close == 1)
-			{
-				CloseWindow(mainWin);
-				mainWin = NULL;
-				return NULL;
-            }
-		}
-	}
-#endif
-#ifdef NOGUI
-	//while(1){
-		ULONG waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit);
-		waitMask = Wait(waitMask);
-		if (waitMask & (1L << serialPort->mp_SigBit))
-		{
-			// 受信待機
-			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-			if(CheckIO((struct IORequest *)serialIO))
-				if(!WaitIO((struct IORequest *)serialIO))
-					return serialIO->IOSer.io_Data;
-		}else if (waitMask & SIGBREAKF_CTRL_C)
-		{
-			return NULL;
-		}
-	//}
-	#endif
-	return (UBYTE *)0xFFFFFFFF;
-}
-
-UBYTE *readArray(UBYTE *buffptr,ULONG length)
-{
-	serialIO->IOSer.io_Data = buffptr;
-	serialIO->IOSer.io_Length = length;
-	recvBufferId = (recvBufferId + 1) & 1;
-	if(DoIO((struct IORequest *)serialIO) == 0)
-		return (UBYTE *)serialIO->IOSer.io_Data;
-	return NULL;
-}
 
 void showMessage(char *message)
 {
@@ -300,18 +212,6 @@ void printText(char* message, int ofst_x, int ofst_y)
 		VWritef(message, NULL);
 		VWritef("\n", NULL);
 	}
-}
-
-void aud_memcpy(volatile struct AudChannel *dest, volatile struct AudChannel *src) {
-    UWORD  *d32 = (UWORD *)dest;
-    UWORD *s32 = (UWORD *)src;
-
-    // 2バイト単位でコピー
-	*d32++ = *s32++;
-	*d32++ = *s32++;
-	*d32++ = *s32++;
-	*d32++ = *s32++;
-	*d32++ = *s32++;
 }
 
 void wait_next_scanline() {

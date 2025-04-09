@@ -29,7 +29,9 @@
         "libraries.h": "c",
         "dos.h": "c",
         "midiprefs.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "tasks.h": "c",
+        "lists.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA",
     "m68k.includePaths": [

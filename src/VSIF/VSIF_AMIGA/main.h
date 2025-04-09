@@ -1,9 +1,12 @@
 #include "support/gcc8_c_support.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <dos/dostags.h>
 
 #include <exec/execbase.h>
 #include <exec/io.h>
+#include <exec/tasks.h>
+#include <dos/dosextens.h>
 #include <hardware/custom.h>
 #include <hardware/dmabits.h>
 #include <hardware/intbits.h>
@@ -20,6 +23,7 @@
 #include <midi/mididefs.h>
 #include <midi/midiprefs.h>
 #include <proto/camd.h>
+
 
 //config
 //#define NOGUI
@@ -90,6 +94,17 @@ struct PlayData
 	struct PcmData *pcm;
 };
 
+// メッセージ構造体
+struct AudioMessage
+{
+    struct Message msg;
+    UBYTE data[5];
+};
 
 extern struct PcmData pcmDataTable[256];
 extern volatile struct PlayData curPlayData[4];
+
+void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period);
+void reqStopPcm(int ch);
+void audioTask(void);
+
