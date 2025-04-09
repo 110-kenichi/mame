@@ -45,6 +45,12 @@
 #define XON 0x11
 #define XOFF 0x13
 
+#define SERD_ERRMASK   0xF0
+#define SERD_OVERRUN   0x10
+#define SERD_PARITY    0x20
+#define SERD_FRAMING   0x40
+#define SERD_BREAK     0x80
+
 extern UWORD SystemInts;
 extern UWORD SystemDMA;
 extern UWORD SystemADKCON;

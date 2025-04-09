@@ -370,6 +370,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private bool cancelTransferPcmData;
 
         /// <summary>
         /// 
@@ -379,11 +380,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             if (!f_TransferPcmData)
                 return;
 
+            cancelTransferPcmData = false;
             if (timbre == null)
             {
                 AllSoundOff();
                 for (int i = 0; i < Timbres.Length; i++)
+                {
                     updatePcmData(Timbres[i], forceClear);
+                    if(cancelTransferPcmData)
+                        break;
+                }
             }
             else if (CurrentSoundEngine != SoundEngineType.Software)
             {
@@ -393,14 +399,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (timbre.PcmData.Length > 0)
                     {
-                        FormMain.AppliactionForm.Enabled = false;
-                        using (FormProgress f = new FormProgress())
+                        FormProgress.RunDialog(Resources.UpdatingPCM, (f) =>
                         {
                             f.StartPosition = FormStartPosition.CenterScreen;
                             f.Message = Resources.UpdatingPCM + " (" + timbre.DisplayName + ")";
-                            f.Show();
                             transferPcmData(timbre, f);
-                        }
+                        },
+                        () =>
+                        {
+                            cancelTransferPcmData = true;
+                        });
                     }
                     else
                     {
@@ -473,6 +481,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     {
                                         if (fp != null)
                                             fp.Percentage = percentage;
+
+                                        if (cancelTransferPcmData)
+                                            fp.Message = "Cancelling...";
+
                                     }
                                     Application.DoEvents();
                                     lastPercentage = percentage;

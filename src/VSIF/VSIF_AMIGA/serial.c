@@ -40,7 +40,21 @@ UBYTE * waitSerialData()
 			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
 			//if(CheckIO((struct IORequest *)serialIO))
 			if(!WaitIO((struct IORequest *)serialIO))
+            {
+                LONG error = serialIO->IOSer.io_Error;
+                if(error)
+                {
+                    if (error & SERD_OVERRUN)
+                        showMessage("Overrun error");
+                    if (error & SERD_FRAMING)
+                        showMessage("Framing error");
+                    if (error & SERD_PARITY)
+                        showMessage("Parity error");
+                    if (error & SERD_BREAK)
+                        showMessage("Break signal received");
+                }
 				return serialIO->IOSer.io_Data;
+            }
 		}else if (waitMask & SIGBREAKF_CTRL_C)
 		{
 			return NULL;

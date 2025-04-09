@@ -352,13 +352,12 @@ namespace zanac.MAmidiMEmo.VSIF
                                 sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.WriteTimeout = 500;
                                 sp.ReadTimeout = 500;
-                                //sp.DtrEnable = true;
-                                //sp.RtsEnable = true;
                                 sp.BaudRate = 31250;
                                 sp.StopBits = StopBits.One;
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;
-                                sp.Handshake = Handshake.RequestToSend;
+                                sp.Handshake = Handshake.None;
+                                //sp.Handshake = Handshake.RequestToSend;
                                 sp.Open();
                                 var client = new VsifClient(soundModule, new PortWriterAMIGA(sp));
                                 client.Disposed += Client_Disposed;
