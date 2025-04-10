@@ -32,28 +32,60 @@ UBYTE * waitSerialData()
 #ifndef NOGUI 
 	while(1)
 	{
-		int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | (1L << serialPort->mp_SigBit) | (1L << mainWin->UserPort->mp_SigBit);
+		int waitMask = SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F |
+         (1L << serialPort->mp_SigBit) |
+          (1L << mainWin->UserPort->mp_SigBit);
 		waitMask = Wait(waitMask);
 		if (waitMask & (1L << serialPort->mp_SigBit))
 		{
 			// 受信待機
 			//This function determines the current state of an I/O request and returns FALSE if the I/O has not yet completed. 
-			//if(CheckIO((struct IORequest *)serialIO))
-			if(!WaitIO((struct IORequest *)serialIO))
+			if(CheckIO((struct IORequest *)serialIO))
             {
-                LONG error = serialIO->IOSer.io_Error;
-                if(error)
+                if(!WaitIO((struct IORequest *)serialIO))
                 {
-                    if (error & SERD_OVERRUN)
-                        showMessage("Overrun error");
-                    if (error & SERD_FRAMING)
-                        showMessage("Framing error");
-                    if (error & SERD_PARITY)
-                        showMessage("Parity error");
-                    if (error & SERD_BREAK)
-                        showMessage("Break signal received");
+                    LONG error = serialIO->IOSer.io_Error;
+                    if(error)
+                    {
+                        if (error & SERD_OVERRUN)
+                            showMessage("Overrun error");
+                        if (error & SERD_FRAMING)
+                            showMessage("Framing error");
+                        if (error & SERD_PARITY)
+                            showMessage("Parity error");
+                        if (error & SERD_BREAK)
+                            showMessage("Break signal received");
+                    }
+                    return serialIO->IOSer.io_Data;
+                }else{
+                    LONG error = serialIO->IOSer.io_Error;
+                    if(error)
+                    {
+                        if (error & SERD_OVERRUN)
+                            showMessage("Overrun error");
+                        if (error & SERD_FRAMING)
+                            showMessage("Framing error");
+                        if (error & SERD_PARITY)
+                            showMessage("Parity error");
+                        if (error & SERD_BREAK)
+                            showMessage("Break signal received");
+                    }
+                    showMessage("Wait I/O was aborted");
+                    return NULL;
                 }
-				return serialIO->IOSer.io_Data;
+            }else{
+                showMessage("Check I/O was aborted");
+
+                // 念のため強制終了
+                AbortIO((struct IORequest *)serialIO);
+                WaitIO((struct IORequest *)serialIO);
+                // バッファ・状態をクリア
+                serialIO->IOSer.io_Command = CMD_CLEAR;
+                DoIO((struct IORequest *)serialIO);
+
+                // 改めて受信リクエスト発行
+                serialIO->IOSer.io_Command = CMD_READ;
+                SendIO((struct IORequest *)serialIO);
             }
 		}else if (waitMask & SIGBREAKF_CTRL_C)
 		{
@@ -73,8 +105,8 @@ UBYTE * waitSerialData()
 				mainWin = NULL;
 				return NULL;
             }
-		}
-	}
+        }
+    }
 #endif
 #ifdef NOGUI
 	//while(1){

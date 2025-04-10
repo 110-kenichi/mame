@@ -55,7 +55,8 @@ void paula_8364_device::device_start()
 		m_channel[i].curticks = 0;
 		m_channel[i].manualmode = false;
 		m_channel[i].curlocation = 0;
-		m_channel[i].irq_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(paula_8364_device::signal_irq), this));
+		//HACK: MAMIDIMEMO
+		//m_channel[i].irq_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(paula_8364_device::signal_irq), this));
 
 		m_channel[i].loop = 0;
 		m_channel[i].id = 0;
@@ -167,12 +168,12 @@ void paula_8364_device::keyoff(uint8_t ch)
 	audio_channel* chan = &m_channel[ch];
 	chan->curlocation = chan->loc;
 	chan->curlength = chan->len;
-	//dma_reload(chan);
+	dma_reload(chan);
 }
 
 void paula_8364_device::reg_w(offs_t offset, uint16_t data)
 {
-	if (offset >= 0xa0 && offset <= 0xdf)
+	if (offset >= 0xa0/2 && offset <= 0xe0/2)
 		m_stream->update();
 
 	switch (offset)
@@ -234,7 +235,8 @@ void paula_8364_device::dma_reload(audio_channel *chan)
 {
 	chan->curlocation = chan->loc;
 	chan->curlength = chan->len;
-	chan->irq_timer->adjust(attotime::from_hz(15750), chan->index); // clock() / 227
+	//HACK: MAMIDIMEMO
+	//chan->irq_timer->adjust(attotime::from_hz(15750), chan->index); // clock() / 227
 
 	LOG("dma_reload(%d): offs=%05X len=%04X\n", chan->index, chan->curlocation, chan->curlength);
 }

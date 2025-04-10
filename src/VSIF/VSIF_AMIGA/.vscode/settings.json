@@ -31,7 +31,9 @@
         "midiprefs.h": "c",
         "main.h": "c",
         "tasks.h": "c",
-        "lists.h": "c"
+        "lists.h": "c",
+        "workbench.h": "c",
+        "wb_protos.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA",
     "m68k.includePaths": [

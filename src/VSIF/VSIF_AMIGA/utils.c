@@ -61,6 +61,9 @@ void TakeSystem() {
 	//but the interrupts for each audio ch can be ene/dis indivisually
 	SetAudioInterruptHandler((APTR)audioInterruptHandler);
 	custom->intena = INTF_SETCLR | INTF_INTEN | INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3 | INTF_PORTS;
+#else
+	SystemInts=custom->intenar;
+	custom->intena = INTF_AUD0 | INTF_AUD1 | INTF_AUD2 | INTF_AUD3;
 #endif
 }
 
@@ -106,6 +109,8 @@ void FreeSystem() {
 	//Restore all interrupts and DMA settings.
 	custom->intena=SystemInts|0x8000;
 	custom->adkcon=SystemADKCON|0x8000;
+#else
+	custom->intena=SystemInts|0x8000;
 #endif
 	custom->dmacon=SystemDMA|0x8000;
 

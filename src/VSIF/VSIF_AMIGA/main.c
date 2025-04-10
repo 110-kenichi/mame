@@ -107,8 +107,8 @@ int WBmain(struct WBStartup *wb)
 	serialIO->io_SerFlags = 0;
 //	serialIO->io_SerFlags &= ~SERF_PARTY_ON;  // パリティなし
 	serialIO->io_SerFlags |= SERF_XDISABLED;
-//	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
-//	serialIO->io_SerFlags |= SERF_7WIRE;
+	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
+	serialIO->io_SerFlags |= SERF_7WIRE;
 	if (OpenDevice("serial.device", 0, (struct IORequest *)serialIO, 0) != 0) {
 		showMessage("Failed to open serial.device!");
 		FreeSystem();
@@ -128,8 +128,8 @@ int WBmain(struct WBStartup *wb)
 	serialIO->io_SerFlags = 0;
 //	serialIO->io_SerFlags &= ~SERF_PARTY_ON;  // パリティなし
 	serialIO->io_SerFlags |= SERF_XDISABLED;
-//	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
-//	serialIO->io_SerFlags |= SERF_7WIRE;
+	serialIO->io_SerFlags |= SERF_RAD_BOOGIE;
+	serialIO->io_SerFlags |= SERF_7WIRE;
 	serialIO->IOSer.io_Command = SDCMD_SETPARAMS;
 	if (DoIO((struct IORequest *)serialIO) != 0) {
 		showMessage("Failed to set serial parameters!");
