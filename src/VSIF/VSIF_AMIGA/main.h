@@ -110,7 +110,7 @@ struct AudioMessage
 extern struct PcmData pcmDataTable[256];
 extern volatile struct PlayData curPlayData[4];
 
-void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period);
-void reqStopPcm(int ch);
+void reqPlayPcm(UBYTE ch, UBYTE id,  UWORD volume, UWORD period);
+void reqStopPcm(UBYTE ch);
 void audioTask(void);
 

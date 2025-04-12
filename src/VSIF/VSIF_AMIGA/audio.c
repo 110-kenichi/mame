@@ -18,7 +18,7 @@ void aud_memcpy(volatile struct AudChannel *dest, volatile struct AudChannel *sr
 }
 
 
-void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period)
+void reqPlayPcm(UBYTE ch, UBYTE id,  UWORD volume, UWORD period)
 {
 	if(pcmDataTable[id].dataPtr == 0)
 		return;
@@ -73,13 +73,15 @@ void reqPlayPcm(int ch, int id,  UWORD volume, UWORD period)
 
 /*
 */
-void reqStopPcm(int ch)
+void reqStopPcm(UBYTE ch)
 {
 	// custom->intena = (INTF_AUD0 << ch);
 	// custom->intreq = (INTF_AUD0 << ch); custom->intreq = (INTF_AUD0 << ch);
 
+	custom->dmacon = (DMAF_AUD0 << ch); // Stop DMA for AUD
+
 	ULONG *audl = (ULONG *)&custom->aud[ch];
-	*audl++ = (ULONG)0;
+	*audl++ = (ULONG)StopData;
 	UWORD *aud = (UWORD *)audl;
 	*aud++ = 0;
 	*aud++ = 1;

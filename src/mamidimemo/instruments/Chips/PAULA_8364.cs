@@ -551,7 +551,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)), (byte)data, 0, 0, 0 }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)),
+                                        (byte)data, 0, 0, 0 }, null);
                                     break;
                             }
                         }
@@ -569,7 +570,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 case SoundEngineType.VSIF_AMIGA:
                                     // ch, value
-                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)), (byte)(data >> 8), (byte)data, 0, 0 }, null);
+                                    vsifClient.RawWriteData(new byte[] { (byte)((byte)type | (ch << 4)),
+                                        (byte)(data >> 8), (byte)data, 0, 0 }, null);
                                     break;
                             }
                         }

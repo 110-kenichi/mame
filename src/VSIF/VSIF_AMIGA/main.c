@@ -378,14 +378,15 @@ VWritef("Completed serial setting.\n", NULL);
 			case 1:	// Volume
 				{
 					requestSerial(5);
-
+					
 					UWORD vol = *dataBufPtr;
 #ifndef NO_LOOP
 					curPlayData[ch].aud.ac_vol = vol;
 #endif
 					custom->aud[ch].ac_vol = vol;
 #ifdef LOG
-					VWritef("Vol\n", NULL);
+					ULONG arg[] = {vol};
+					VWritef("Vol %N\n", arg);
 #endif
 				}
 				break;
@@ -393,13 +394,14 @@ VWritef("Completed serial setting.\n", NULL);
 				{
 					requestSerial(5);
 
-					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
+					UWORD per = *(UWORD *)dataBufPtr;
 #ifndef NO_LOOP
 					curPlayData[ch].aud.ac_per = per;
 #endif
 					custom->aud[ch].ac_per = per;
 #ifdef LOG
-					VWritef("Pitch\n", NULL);
+					ULONG arg[] = {per};
+					VWritef("Pitch %N\n", arg);
 #endif
 				}
 				break;
@@ -412,7 +414,7 @@ VWritef("Completed serial setting.\n", NULL);
 					// vol 0 - 64;
 					UWORD vol = *dataBufPtr++;
 					// period 0 - 65535
-					UWORD per = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
+					UWORD per = *(UWORD *)dataBufPtr;
 
 					reqPlayPcm(ch, id, vol, per);
 #ifdef LOG
@@ -437,13 +439,10 @@ VWritef("Completed serial setting.\n", NULL);
 					requestSerial(5);
 
 					if(*dataBufPtr == 0)
-		{
+					{
 						//Filter off
 						__asm volatile (
-							"BSET.B #1,0xbfe001\n"
-							:
-							:
-							:
+							"BSET.B #1,0xbfe001\n":::
 							"cc", "memory");
 #ifdef LOG
 						VWritef("Flt OFF\n", NULL);
@@ -452,10 +451,7 @@ VWritef("Completed serial setting.\n", NULL);
 					{
 						//Filter on
 						__asm volatile (
-							"BCLR.B #1,0xbfe001\n"
-							:
-							:
-							:
+							"BCLR.B #1,0xbfe001\n":::
 							"cc", "memory");
 #ifdef LOG
 							VWritef("Flt ON\n", NULL);
@@ -470,8 +466,8 @@ VWritef("Completed serial setting.\n", NULL);
 #endif
 						
 					UBYTE id = *dataBufPtr++;
-					UWORD len = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr++;
-					//UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
+					UWORD len = *(UWORD *)dataBufPtr++;
+					//UWORD loop = *(UWORD *)dataBufPtr++;
 					//if(loop >= len)
 					//	loop = 0xFFFF;
 					UWORD loop = 0;
@@ -532,7 +528,7 @@ VWritef("Completed serial setting.\n", NULL);
 					requestSerial(5);
 
 					UBYTE id = *dataBufPtr++;
-					UWORD loop = ((UWORD)*dataBufPtr++ << 8) + *dataBufPtr;
+					UWORD loop = *(UWORD *)dataBufPtr;
 					UWORD len = pcmDataTable[id].length;
 					if(loop >= len)
 						loop = 0xFFFF;
