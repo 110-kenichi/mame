@@ -2,6 +2,7 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <dos/dostags.h>
+#include <exec/errors.h>
 
 #include <exec/execbase.h>
 #include <exec/io.h>

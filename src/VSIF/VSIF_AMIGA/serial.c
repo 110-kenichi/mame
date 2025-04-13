@@ -55,6 +55,8 @@ UBYTE * waitSerialData()
                             showMessage("Parity error");
                         if (error & SERD_BREAK)
                             showMessage("Break signal received");
+						ULONG arg[] = {error};
+						VWritef("Wait error (%N)\n", arg);
                     }
                     return serialIO->IOSer.io_Data;
                 }else{
@@ -70,11 +72,14 @@ UBYTE * waitSerialData()
                         if (error & SERD_BREAK)
                             showMessage("Break signal received");
                     }
-                    showMessage("Wait I/O was aborted");
+					ULONG arg[] = {error};
+					VWritef("Wait I/O was aborted (%N)\n", arg);
                     return NULL;
                 }
             }else{
-                showMessage("Check I/O was aborted");
+				LONG error = serialIO->IOSer.io_Error;
+				ULONG arg[] = {error};
+				VWritef("Check I/O was aborted (%N)\n", arg);
 
                 // 念のため強制終了
                 AbortIO((struct IORequest *)serialIO);

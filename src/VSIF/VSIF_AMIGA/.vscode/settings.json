@@ -33,7 +33,8 @@
         "tasks.h": "c",
         "lists.h": "c",
         "workbench.h": "c",
-        "wb_protos.h": "c"
+        "wb_protos.h": "c",
+        "errors.h": "c"
     },
     "amiga.program": "out/VSIF_AMIGA",
     "m68k.includePaths": [

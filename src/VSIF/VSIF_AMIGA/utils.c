@@ -36,6 +36,7 @@ void TakeSystem() {
 	SystemDMA=custom->dmaconr;
 
 	Forbid();
+	Disable();
 
 #ifndef NO_INT
 	//Save current interrupts and DMA settings so we can restore them upon exit. 
@@ -141,6 +142,7 @@ void FreeSystem() {
 #ifndef NO_INT
 	Enable();
 #endif
+	Enable();
 	Permit();
 
 	Exit(0);
