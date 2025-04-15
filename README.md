@@ -1,4 +1,4 @@
-MAmidiMEmo 6.0.2.3 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.0.3.0 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.0.3.0 Support Loop Point PAULA_8364(AMIGA).
+  - Limitation1: The length of the PCM must be at least 2 bytes.  
+  - Limitation2: Does not support too short/too early loop point.  
 - 6.0.2.3 Fixed PAULA_8364(AMIGA) Wait I/O error.
 - 6.0.2.2 Fixed PAULA_8364(AMIGA) annoying noize issue.
 - 6.0.2.1 Fixed PAULA_8364(AMIGA) freezing issue.

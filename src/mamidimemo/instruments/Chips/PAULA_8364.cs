@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             // id, len, loop, data...
                             List<byte> data = new List<byte>
                             {
-                                (byte)PAULA_CMD.PCM,
+                                (byte)PAULA_CMD.SetPcmData,
                                 //ID
                                 (byte)tim.Index,
                                 //Length
@@ -496,7 +496,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 fp.Percentage = 100;
                             Application.DoEvents();
 #if USE_PCM_LOOP
-                            Paula8364Write(UnitNumber, PAULA_CMD.PCM_LOOP, (uint)tim.Index, (ushort)(tim.LoopEnable ? tim.LoopPoint : 0xFFFF), true);
+                            Paula8364Write(UnitNumber, PAULA_CMD.SetPcmDataLoop, (uint)tim.Index, (ushort)(tim.LoopEnable ? tim.LoopPoint : 0xFFFF), true);
 #endif
                         }
                         break;
@@ -591,7 +591,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     }
                     break;
-                case PAULA_CMD.PCM_LOOP:
+                case PAULA_CMD.SetPcmDataLoop:
                     lock (sndEnginePtrLock)
                     {
                         switch (CurrentSoundEngine)
@@ -644,9 +644,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             ch = chConvert[ch];
             if (loop >= length)
                 loop = 0xffff;
-#if !USE_PCM_LOOP
-            loop = 0;
-#endif
+//#if !USE_PCM_LOOP
+//            loop = 0;
+//#endif
 
             lock (sndEnginePtrLock)
             {
@@ -654,6 +654,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundEngineType.VSIF_AMIGA:
                         vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.KeyOn | ch << 4), id, vol, (byte)(period >> 8), (byte)period }, null);
+                        if(loop > 0)
+                            vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.SetLoop | ch << 4), id, (byte)(loop >> 8), (byte)loop, 0 }, null);
                         break;
                 }
             }
@@ -1170,7 +1172,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0xffff)
                     freq = 0xffff;
 
-                ushort loop = loopEn ? loopPoint : (ushort)0xffff;
+                //ushort loop = loopEn ? loopPoint : (ushort)0xffff;
+                ushort pcmLen = (ushort)timbre.PcmData.Length;
+                if(pcmLen < 2)
+                    pcmLen = 2; 
+                ushort loop = loopEn ? loopPoint : (ushort)(pcmLen - 2);
                 parentModule.Paula8364Keyon(parentModule.UnitNumber,
                     (byte)Slot, timbreIndex, (byte)vol, (ushort)freq, (ushort)timbre.PcmData.Length, loop);
             }
@@ -1275,11 +1281,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Loop point enable")]
+            [Description("Loop point enabled\r\n"+
+                "LIMITATION: Does not support too short/too early loop point.")]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
 #if !USE_PCM_LOOP
-            [Browsable(false)]
+//            [Browsable(false)]
 #endif
             public bool LoopEnable
             {
@@ -1295,7 +1302,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (Instrument != null)
                         {
                             ((PAULA_8364)Instrument).
-                                Paula8364Write(Instrument.UnitNumber, PAULA_CMD.PCM_LOOP, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
+                                Paula8364Write(Instrument.UnitNumber, PAULA_CMD.SetPcmDataLoop, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
                         }
                     }
                 }
@@ -1305,12 +1312,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65534) (65535 is loop off)")]
+            [Description("Set loop point (0 - 65534) (65535 is loop off)\r\n"+
+                "LIMITATION: Does not support too short/too early loop point.")]
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
 #if !USE_PCM_LOOP
-            [Browsable(false)]
+//            [Browsable(false)]
 #endif
             public ushort LoopPoint
             {
@@ -1326,7 +1334,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (Instrument != null)
                         {
                             ((PAULA_8364)Instrument).
-                            Paula8364Write(Instrument.UnitNumber, PAULA_CMD.PCM_LOOP, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
+                            Paula8364Write(Instrument.UnitNumber, PAULA_CMD.SetPcmDataLoop, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
                         }
                     }
                 }
@@ -1339,7 +1347,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch)\r\n" +
-                "Need to increase the Gain value to sound 8bit PCM data.")]
+                "Need to increase the Gain value to sound 8bit PCM data.\r\n"+
+                "LIMITATION: The length of the PCM must be at least 2 bytes.")]
             [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
             public sbyte[] PcmData
             {
@@ -1908,8 +1917,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         KeyOn = 3,
         KeyOff = 4,
         Filter = 5,
-        PCM = 6,
-        PCM_LOOP = 7,
+        SetPcmData = 6,
+        SetPcmDataLoop = 7,
+        SetLoop = 8,
     }
 
 

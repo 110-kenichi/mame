@@ -467,10 +467,12 @@ VWritef("Completed serial setting.\n", NULL);
 						
 					UBYTE id = *dataBufPtr++;
 					UWORD len = *(UWORD *)dataBufPtr++;
-					//UWORD loop = *(UWORD *)dataBufPtr++;
+					//UWORD loop = *(UWORD *)dataBufPtr;
 					//if(loop >= len)
 					//	loop = 0xFFFF;
-					UWORD loop = 0;
+#ifndef NO_LOOP
+						UWORD loop = 0;
+#endif
 #ifdef LOG
 					ULONG arg[] = {id, len, loop};
 					VWritef("%N %N %N\n", arg);
@@ -483,48 +485,48 @@ VWritef("Completed serial setting.\n", NULL);
 						BYTE* pcmDataPtr = (BYTE*)AllocMem(len, MEMF_CHIP);
 						if(pcmDataPtr != NULL)
 						{
-							UBYTE *pcmptr = (UBYTE *)readArray(pcmDataPtr, len);
-							if(pcmptr == NULL)
+							if(readArray(pcmDataPtr, len) == NULL)
 							{
-			error = -1;
+								error = -1;
 								FreeMem(pcmDataPtr, len);
 								break;
-		}
+							}
+							requestSerial(5);
 						}else
 						{
 							UWORD received = 0;
 							UWORD chunk_size;
-							while (received < len) {
+							while (received < len)
+							{
 								// 256バイト単位で受信（最後のブロックは余りを処理）
 								chunk_size = (len - received >= SERIAL_BUFFER_SIZE) ? SERIAL_BUFFER_SIZE : (len - received);
 								readArray(recvBuffer[recvBufferId], chunk_size);
 								received += chunk_size;
-	}
+							}
+							requestSerial(5);
 							showMessage("No PCM memory!");
-							error = -1;
 							break;
 						}
 
 						pdt->dataPtr = pcmDataPtr;
 						pdt->length = len;
-						pdt->loop  = loop;
+						pdt->loop  = 0;
 					}else{
+						requestSerial(5);
+
 						pdt->dataPtr = NULL;
 						pdt->length = 0;
 						pdt->loop  = 0;
 					}
-					requestSerial(5);
-
 					if(oldPcm != NULL)
 						FreeMem(oldPcm, oldLen);
-
 #ifdef LOG
 					VWritef("PCM Received\n", NULL);
 #endif
 				}
 				break;
-			case 7:	// PCM Loop
-	{
+			case 7:	// Change PCM Loop Pos
+				{
 					requestSerial(5);
 
 					UBYTE id = *dataBufPtr++;
@@ -539,6 +541,23 @@ VWritef("Completed serial setting.\n", NULL);
 #endif
 				}
 				break;
+
+			case 8:	// Set PCM Loop
+				{
+					requestSerial(5);
+
+					UBYTE id = *dataBufPtr++;
+					UWORD loop = *(UWORD *)dataBufPtr++;
+
+					custom->aud[ch].ac_len = (pcmDataTable[id].length - loop) >> 1;
+					custom->aud[ch].ac_ptr = (volatile UWORD *)(pcmDataTable[id].dataPtr + loop);
+#ifdef LOG
+					ULONG arg[] = {id, loop};
+					VWritef("LOOP %N %N\n", arg);
+#endif
+				}
+				break;
+
 			default:
 				error = -1;
 				break;
