@@ -4172,7 +4172,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             switch (binFile.Extension.ToUpper(CultureInfo.InvariantCulture))
             {
+                case ".RAW":
+                    {
+                        YM2612Timbre tim = (YM2612Timbre)timbre;
+                        try
+                        {
+                            using (var reader = new BinaryReader(new FileStream(binFile.FullName, FileMode.Open, FileAccess.Read)))
+                            {
+                                byte[] data = reader.ReadBytes((int)binFile.Length);
+                                tim.PcmData = data;
+                                tim.PcmDataInfo = binFile.FullName;
+                                tim.SampleRate = (uint)TargetSampleRate;
+                                tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                                tim.ToneType = ToneType.PCM;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.GetType() == typeof(Exception))
+                                throw;
+                            else if (ex.GetType() == typeof(SystemException))
+                                throw;
+                        }
+                    }
+                    break;
+
                 case ".WAV":
+                    {
                     YM2612Timbre tim = (YM2612Timbre)timbre;
                     try
                     {
@@ -4256,6 +4282,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         System.Windows.Forms.MessageBox.Show(ex.Message);
                     }
+                        }
                     break;
             }
         }

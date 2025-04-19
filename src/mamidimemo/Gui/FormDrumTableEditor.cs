@@ -104,6 +104,8 @@ namespace zanac.MAmidiMEmo.Gui
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
             Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
+
+            System.Windows.Forms.Application.Idle += Application_Idle;
         }
 
         protected override void OnShown(EventArgs e)
@@ -120,6 +122,8 @@ namespace zanac.MAmidiMEmo.Gui
         protected override void OnClosing(CancelEventArgs e)
         {
             Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
+
+            System.Windows.Forms.Application.Idle -= new EventHandler(Application_Idle);
 
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
@@ -268,20 +272,41 @@ namespace zanac.MAmidiMEmo.Gui
                 item.SubItems[1].Text = text;
         }
 
+        private bool listViewPcmSoundsItemSelectionChanged;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void listViewPcmSounds_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        /// <exception cref="InvalidDataException"></exception>
+        private async void Application_Idle(object sender, EventArgs e)
         {
-            List<DrumTimbre> insts = new List<DrumTimbre>();
-            foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
-                insts.Add((DrumTimbre)item.Tag);
-            propertyGrid1.SelectedObjects = insts.ToArray();
+            if (listViewPcmSoundsItemSelectionChanged)
+            {
+                listViewPcmSoundsItemSelectionChanged = false;
 
-            if (e.IsSelected && toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
-                await testPlay();
+                List<DrumTimbre> insts = new List<DrumTimbre>();
+                foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
+                    insts.Add((DrumTimbre)item.Tag);
+                propertyGrid1.SelectedObjects = insts.ToArray();
+
+                if (listViewPcmSounds.SelectedItems.Count != 0)
+                {
+                    if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
+                        await testPlay();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listViewPcmSounds_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            listViewPcmSoundsItemSelectionChanged = true;
         }
 
         /// <summary>

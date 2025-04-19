@@ -183,6 +183,7 @@ namespace zanac.MAmidiMEmo.Gui
                     return true;
             });
             fileFolderList1.ItemSelectionChanged += fileFolderList1_SelectedIndexChanged;
+            System.Windows.Forms.Application.Idle += Application_Idle;
 
             if (Settings.Default.ToneLibMRU == null)
                 Settings.Default.ToneLibMRU = new System.Collections.Specialized.StringCollection();
@@ -234,6 +235,8 @@ namespace zanac.MAmidiMEmo.Gui
             TimbreManagers.Remove(Instrument);
 
             Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
+
+            System.Windows.Forms.Application.Idle -= new EventHandler(Application_Idle);
 
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
@@ -516,12 +519,14 @@ namespace zanac.MAmidiMEmo.Gui
 
         private bool ignoreMetroComboBoxTimbres_SelectedIndexChanged;
 
+        private bool listViewCurrentTimbresItemSelectionChanged;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void listViewCurrentTimbres_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void listViewCurrentTimbres_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (!e.IsSelected)
                 return;
@@ -530,20 +535,17 @@ namespace zanac.MAmidiMEmo.Gui
             if (listViewCurrentTimbres.SelectedItems.Count == 0)
                 return;
 
-            TimbreItem ti = (TimbreItem)listViewCurrentTimbres.SelectedItems[0].Tag;
-            if (ti == null)
-                return;
-
-            if (e.IsSelected && toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
-                await testPlay();
+            listViewCurrentTimbresItemSelectionChanged = true;
         }
 
+        private bool listViewFilesTimbresItemSelectionChanged;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void listViewFilesTimbres_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void listViewFilesTimbres_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (!e.IsSelected)
                 return;
@@ -552,12 +554,312 @@ namespace zanac.MAmidiMEmo.Gui
             if (listViewCurrentTimbres.SelectedItems.Count == 0)
                 return;
 
-            TimbreItem ti = (TimbreItem)listViewFilesTimbres.SelectedItems[0].Tag;
-            if (ti == null)
-                return;
+            listViewFilesTimbresItemSelectionChanged = true;
+        }
 
-            if (e.IsSelected && toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
-                await testPlay();
+        private bool fileFolderListItemSelectionChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidDataException"></exception>
+        private async void Application_Idle(object sender, EventArgs e)
+        {
+            if (listViewCurrentTimbresItemSelectionChanged)
+            {
+                listViewCurrentTimbresItemSelectionChanged = false;
+
+                TimbreItem ti = (TimbreItem)listViewCurrentTimbres.SelectedItems[0].Tag;
+                if (ti != null)
+                {
+                    if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
+                        await testPlay();
+                }
+            }
+
+            if (listViewFilesTimbresItemSelectionChanged)
+            {
+                listViewFilesTimbresItemSelectionChanged = false;
+
+                TimbreItem ti = (TimbreItem)listViewFilesTimbres.SelectedItems[0].Tag;
+                if (ti != null)
+                {
+                    if (listViewCurrentTimbres.SelectedItems.Count != 0)
+                    {
+                        if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
+                            await testPlay();
+                    }
+                }
+            }
+
+            if (fileFolderListItemSelectionChanged)
+            {
+                fileFolderListItemSelectionChanged = false;
+
+                var dlDestFilePath = fileFolderList1.SelectedPaths;
+                if (dlDestFilePath == null)
+                    return;
+
+                List<ListViewItem> items = new List<ListViewItem>();
+                int no = 0;
+                try
+                {
+                    listViewFilesTimbres.BeginUpdate();
+                    listViewFilesTimbres.Items.Clear();
+
+                    for (int i = 0; i < dlDestFilePath.Length; i++)
+                    {
+                        string file = dlDestFilePath[i];
+                        if (!System.IO.File.Exists(file))
+                            return;
+
+                        switch (Path.GetExtension(file).ToUpper(CultureInfo.InvariantCulture))
+                        {
+                            case ".MSD":
+                                try
+                                {
+                                    string txt = System.IO.File.ReadAllText(file);
+                                    StringReader rs = new StringReader(txt);
+
+                                    string ftname = rs.ReadLine();
+                                    if (!string.Equals(timbreType.FullName, ftname, StringComparison.Ordinal))
+                                        return;
+                                    string ver = rs.ReadLine();
+                                    if (ver != "1.0")
+                                        return;
+
+                                    string serializeData = rs.ReadToEnd();
+
+                                    TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(serializeData, timbreType);
+                                    TimbreItem tim = new TimbreItem(t, no);
+                                    no++;
+
+                                    var lvi = new ListViewItem(new string[] { i.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
+                                    lvi.Tag = tim;
+                                    items.Add(lvi);
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+
+                                }
+                                break;
+                            case ".MSDS":
+                                {
+                                    string txt = System.IO.File.ReadAllText(file);
+                                    StringReader rs = new StringReader(txt);
+
+                                    string ftname = rs.ReadLine();
+                                    if (ftname == timbreType.FullName)
+                                    {
+                                        string ver = rs.ReadLine();
+                                        if (ver != "1.0")
+                                            throw new InvalidDataException();
+                                        int num = int.Parse(rs.ReadLine());
+                                        StringBuilder lines = new StringBuilder();
+                                        while (true)
+                                        {
+                                            try
+                                            {
+                                                string line = rs.ReadLine();
+                                                if (line == null || line == "-")
+                                                {
+                                                    if (lines.Length == 0)
+                                                        break;
+
+                                                    TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(lines.ToString(), timbreType);
+                                                    TimbreItem tim = new TimbreItem(t, no);
+
+                                                    var lvi = new ListViewItem(new string[] { no.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
+                                                    no++;
+                                                    lvi.Tag = tim;
+                                                    items.Add(lvi);
+
+                                                    lines.Clear();
+                                                    if (line == null)
+                                                        break;
+                                                    continue;
+                                                }
+                                                lines.AppendLine(line);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                if (ex.GetType() == typeof(Exception))
+                                                    throw;
+                                                else if (ex.GetType() == typeof(SystemException))
+                                                    throw;
+
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            case ".MUC":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Muc.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".DAT":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Dat.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".MWI":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Fmp.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".MML":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Pmd.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".FXB":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Vopm.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".GWI":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Gwi.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".BNK":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = BankReader.Read(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".SYX":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = SyxReaderTX81Z.Read(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".FF":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = FF.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".FFOPM":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = FF.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+                            case ".VGI":
+                                if (Instrument.CanImportToneFile)
+                                {
+                                    var tones = Vgi.Reader(file);
+                                    no = loadTones(no, tones);
+                                }
+                                break;
+
+                            default:
+                                if (Instrument.CanImportBinFile)
+                                {
+                                    var texts = Instrument.SupportedBinExts.Split(';');
+                                    for (int ei = 0; ei < texts.Length; ei++)
+                                    {
+                                        String ext = texts[ei].Replace("*", "");
+                                        if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
+                                        {
+                                            try
+                                            {
+                                                TimbreBase t = (TimbreBase)Activator.CreateInstance(timbreType);
+                                                Instrument.ImportBinFile(t, new FileInfo(file));
+                                                var tim = new TimbreItem(t, no);
+
+                                                var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
+                                                no++;
+                                                lvi.Tag = tim;
+                                                items.Add(lvi);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                if (ex.GetType() == typeof(Exception))
+                                                    throw;
+                                                else if (ex.GetType() == typeof(SystemException))
+                                                    throw;
+
+                                                System.Windows.Forms.MessageBox.Show(ex.Message);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (Instrument.CustomToneImporter != null)
+                                {
+                                    var texts = Instrument.CustomToneImporter.ExtensionsFilterExt.Split(';');
+                                    for (int ei = 0; ei < texts.Length; ei++)
+                                    {
+                                        String ext = texts[ei].Replace("*", "");
+                                        if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
+                                        {
+                                            try
+                                            {
+                                                var tims = Instrument.CustomToneImporter.ImportToneFileAsTimbre(file);
+                                                if (tims != null)
+                                                {
+                                                    foreach (var t in tims)
+                                                    {
+                                                        var tim = new TimbreItem(t, no);
+
+                                                        var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
+                                                        no++;
+                                                        lvi.Tag = tim;
+                                                        items.Add(lvi);
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                if (ex.GetType() == typeof(Exception))
+                                                    throw;
+                                                else if (ex.GetType() == typeof(SystemException))
+                                                    throw;
+
+                                                System.Windows.Forms.MessageBox.Show(ex.Message);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    listViewFilesTimbres.Items.AddRange(items.ToArray());
+                }
+                finally
+                {
+                    foreach (ColumnHeader c in listViewFilesTimbres.Columns)
+                        c.Width = -1;
+
+                    listViewFilesTimbres.EndUpdate();
+                }
+                //fileFolderList1.SelectedPath
+            }
         }
 
         /// <summary>
@@ -570,242 +872,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (!e.IsSelected)
                 return;
 
-            var dlDestFilePath = fileFolderList1.SelectedPaths;
-            if (dlDestFilePath == null)
-                return;
-
-            int no = 0;
-            try
-            {
-                listViewFilesTimbres.BeginUpdate();
-                listViewFilesTimbres.Items.Clear();
-
-                for (int i = 0; i < dlDestFilePath.Length; i++)
-                {
-                    string file = dlDestFilePath[i];
-                    if (!System.IO.File.Exists(file))
-                        return;
-
-                    switch (Path.GetExtension(file).ToUpper(CultureInfo.InvariantCulture))
-                    {
-                        case ".MSD":
-                            try
-                            {
-                                string txt = System.IO.File.ReadAllText(file);
-                                StringReader rs = new StringReader(txt);
-
-                                string ftname = rs.ReadLine();
-                                if (!string.Equals(timbreType.FullName, ftname, StringComparison.Ordinal))
-                                    return;
-                                string ver = rs.ReadLine();
-                                if (ver != "1.0")
-                                    return;
-
-                                string serializeData = rs.ReadToEnd();
-
-                                TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(serializeData, timbreType);
-                                TimbreItem tim = new TimbreItem(t, no);
-                                no++;
-
-                                var lvi = new ListViewItem(new string[] { i.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
-                                lvi.Tag = tim;
-                                listViewFilesTimbres.Items.Add(lvi);
-                            }
-                            catch (Exception ex)
-                            {
-                                if (ex.GetType() == typeof(Exception))
-                                    throw;
-                                else if (ex.GetType() == typeof(SystemException))
-                                    throw;
-
-                            }
-                            break;
-                        case ".MSDS":
-                            {
-                                string txt = System.IO.File.ReadAllText(file);
-                                StringReader rs = new StringReader(txt);
-
-                                string ftname = rs.ReadLine();
-                                if (ftname == timbreType.FullName)
-                                {
-                                    string ver = rs.ReadLine();
-                                    if (ver != "1.0")
-                                        throw new InvalidDataException();
-                                    int num = int.Parse(rs.ReadLine());
-                                    StringBuilder lines = new StringBuilder();
-                                    while (true)
-                                    {
-                                        try
-                                        {
-                                            string line = rs.ReadLine();
-                                            if (line == null || line == "-")
-                                            {
-                                                if (lines.Length == 0)
-                                                    break;
-
-                                                TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(lines.ToString(), timbreType);
-                                                TimbreItem tim = new TimbreItem(t, no);
-
-                                                var lvi = new ListViewItem(new string[] { no.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
-                                                no++;
-                                                lvi.Tag = tim;
-                                                listViewFilesTimbres.Items.Add(lvi);
-
-                                                lines.Clear();
-                                                if (line == null)
-                                                    break;
-                                                continue;
-                                            }
-                                            lines.AppendLine(line);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            if (ex.GetType() == typeof(Exception))
-                                                throw;
-                                            else if (ex.GetType() == typeof(SystemException))
-                                                throw;
-
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-                        case ".MUC":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Muc.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".DAT":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Dat.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".MWI":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Fmp.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".MML":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Pmd.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".FXB":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Vopm.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".GWI":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Gwi.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".BNK":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = BankReader.Read(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".SYX":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = SyxReaderTX81Z.Read(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".FF":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = FF.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".FFOPM":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = FF.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-                        case ".VGI":
-                            if (Instrument.CanImportToneFile)
-                            {
-                                var tones = Vgi.Reader(file);
-                                no = loadTones(no, tones);
-                            }
-                            break;
-
-                        default:
-                            if (Instrument.CanImportBinFile)
-                            {
-                                var texts = Instrument.SupportedBinExts.Split(';');
-                                for (int ei = 0; ei < texts.Length; ei++)
-                                {
-                                    String ext = texts[ei].Replace("*", "");
-                                    if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
-                                    {
-                                        TimbreBase t = (TimbreBase)Activator.CreateInstance(timbreType);
-                                        Instrument.ImportBinFile(t, new FileInfo(file));
-                                        var tim = new TimbreItem(t, no);
-
-                                        var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
-                                        no++;
-                                        lvi.Tag = tim;
-                                        listViewFilesTimbres.Items.Add(lvi);
-                                    }
-                                }
-                            }
-                            if (Instrument.CustomToneImporter != null)
-                            {
-                                var texts = Instrument.CustomToneImporter.ExtensionsFilterExt.Split(';');
-                                for (int ei = 0; ei < texts.Length; ei++)
-                                {
-                                    String ext = texts[ei].Replace("*", "");
-                                    if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
-                                    {
-                                        var tims = Instrument.CustomToneImporter.ImportToneFileAsTimbre(file);
-                                        if (tims != null)
-                                        {
-                                            foreach (var t in tims)
-                                            {
-                                                var tim = new TimbreItem(t, no);
-
-                                                var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
-                                                no++;
-                                                lvi.Tag = tim;
-                                                listViewFilesTimbres.Items.Add(lvi);
-                                            }
-                                        }
-
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-            finally
-            {
-                foreach (ColumnHeader c in listViewFilesTimbres.Columns)
-                    c.Width = -1;
-
-                listViewFilesTimbres.EndUpdate();
-            }
-            //fileFolderList1.SelectedPath
+            fileFolderListItemSelectionChanged = true;
         }
 
         private int loadTones(int no, IEnumerable<Tone> tones)
@@ -1516,18 +1583,46 @@ namespace zanac.MAmidiMEmo.Gui
                     }
                 }
             }
-            fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            try
+            {
+                fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
 
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void metroButtonRefresh_Click(object sender, EventArgs e)
         {
-            fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            try
+            {
+                fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void metroButtonExplorer_Click(object sender, EventArgs e)
         {
-            string path = fileFolderList1.CurrentDirectory;
+            String path = null;
+            var dlDestFilePath = fileFolderList1.SelectedPaths;
+            if (dlDestFilePath.Length != 0)
+                path = dlDestFilePath[0];
+            else
+                path = fileFolderList1.CurrentDirectory;
 
             Task.Run(new Action(() =>
             {

@@ -115,6 +115,19 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
             this.ItemActivate += new EventHandler(FileFolderList_ItemActivate);
             this.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(FileFolderList_ItemSelectionChanged);
+            Application.Idle += new EventHandler(Application_Idle);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                Application.Idle -= new EventHandler(Application_Idle);
+
+            base.Dispose(disposing);
         }
 
         private void listView1_DrawItem(object sender,
@@ -302,35 +315,47 @@ namespace zanac.MAmidiMEmo.ComponentModel
             }
         }
 
+        private bool itemSelectionChanged;
+
+        private void Application_Idle(object sender, EventArgs e)
+        {
+            if (itemSelectionChanged)
+            {
+                itemSelectionChanged = false;
+
+                //try
+                {
+                    List<string> files = new List<string>();
+                    foreach (ListViewItem item in this.SelectedItems)
+                    {
+                        ItemType type = (ItemType)item.Tag;
+                        if (type.Invalid)
+                            continue;
+
+                        if (type.Type == Types.FOLDER)
+                        {
+                            DirectoryInfo di = (DirectoryInfo)type.ItemInfo;
+                            files.Add(di.FullName);
+                        }
+                        else
+                        {
+                            FileInfo fi = (FileInfo)type.ItemInfo;
+                            files.Add(fi.FullName);
+                        }
+                    }
+                    f_SelectedPaths = files.ToArray();
+                }
+                //catch { }
+            }
+        }
+
         void FileFolderList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (this.SelectedItems.Count <= 0) { return; }
             if (!e.IsSelected)
                 return;
 
-            //try
-            {
-                List<string> files = new List<string>();
-                foreach (ListViewItem item in this.SelectedItems)
-                {
-                    ItemType type = (ItemType)item.Tag;
-                    if (type.Invalid)
-                        continue;
-
-                    if (type.Type == Types.FOLDER)
-                    {
-                        DirectoryInfo di = (DirectoryInfo)type.ItemInfo;
-                        files.Add(di.FullName);
-                    }
-                    else
-                    {
-                        FileInfo fi = (FileInfo)type.ItemInfo;
-                        files.Add(fi.FullName);
-                    }
-                }
-                f_SelectedPaths = files.ToArray();
-            }
-            //catch { }
+            itemSelectionChanged = true;
         }
 
         void FileFolderList_ItemActivate(object sender, EventArgs e)
@@ -349,170 +374,175 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
         public void Browse(string path)
         {
-            this.bgIconLoader.CancelAsync();
-
-            if (View == System.Windows.Forms.View.LargeIcon || View == System.Windows.Forms.View.Tile)
+            try
             {
-                use16 = false;
-            }
+                this.bgIconLoader.CancelAsync();
 
-            while (this.bgIconLoader.IsBusy)
-            {
-                Application.DoEvents();
-            }
-
-            this.Paths.Clear();
-            this.Items.Clear();
-
-            this.BeginUpdate();
-
-            #region // add "back" item if necessary
-            if (this._isSoloBrowser)
-            {
-                DirectoryInfo currentPath = new DirectoryInfo(path);
-                if (currentPath.FullName.Length > 3)
+                if (View == System.Windows.Forms.View.LargeIcon || View == System.Windows.Forms.View.Tile)
                 {
-                    ListViewItem item = new ListViewItem("...");
+                    use16 = false;
+                }
+
+                while (this.bgIconLoader.IsBusy)
+                {
+                    Application.DoEvents();
+                }
+
+                this.Paths.Clear();
+                this.Items.Clear();
+
+                this.BeginUpdate();
+
+                #region // add "back" item if necessary
+                if (this._isSoloBrowser)
+                {
+                    DirectoryInfo currentPath = new DirectoryInfo(path);
+                    if (currentPath.FullName.Length > 3)
+                    {
+                        ListViewItem item = new ListViewItem("...");
+                        item.Tag = new ItemType()
+                        {
+                            ItemInfo = currentPath.Parent,
+                            Type = Types.FOLDER
+                        };
+                        Items.Add(item);
+                    }
+                }
+                #endregion
+
+                #region // get folders
+                foreach (string folder in Directory.GetDirectories(path))
+                {
+                    DirectoryInfo di = new DirectoryInfo(folder);
+
+                    if (di.Attributes.ToString().Contains("System"))
+                    {
+                        continue;
+                    }
+
+                    ListViewItem item = new ListViewItem(di.Name);
+
+                    bool invalid = false;
+                    if (FileValidator != null && !FileValidator(di))
+                    {
+                        item.ForeColor = SystemColors.GrayText;
+                        invalid = true;
+                    }
+
+                    //if (!il16.Images.ContainsKey(di.FullName))
+                    //{
+                    //    Icon ico32;
+                    //    il16.Images.Add(di.FullName, this.win32.GetIcon(di.FullName, out ico32));
+                    //    il32.Images.Add(di.FullName, ico32);
+                    //}
+
+                    item.ImageKey = di.FullName;
                     item.Tag = new ItemType()
                     {
-                        ItemInfo = currentPath.Parent,
-                        Type = Types.FOLDER
+                        ItemInfo = di,
+                        Type = Types.FOLDER,
+                        Invalid = invalid
                     };
-                    Items.Add(item);
-                }
-            }
-            #endregion
 
-            #region // get folders
-            foreach (string folder in Directory.GetDirectories(path))
-            {
-                DirectoryInfo di = new DirectoryInfo(folder);
-                    
-                if (di.Attributes.ToString().Contains("System"))
-                {
-                    continue;
-                }
-
-                ListViewItem item = new ListViewItem(di.Name);
-
-                bool invalid = false;
-                if (FileValidator != null && !FileValidator(di))
-                {
-                    item.ForeColor = SystemColors.GrayText;
-                    invalid = true;
-                }
-
-                //if (!il16.Images.ContainsKey(di.FullName))
-                //{
-                //    Icon ico32;
-                //    il16.Images.Add(di.FullName, this.win32.GetIcon(di.FullName, out ico32));
-                //    il32.Images.Add(di.FullName, ico32);
-                //}
-
-                item.ImageKey = di.FullName;
-                item.Tag = new ItemType()
-                {
-                    ItemInfo = di,
-                    Type = Types.FOLDER,
-                    Invalid = invalid
-                };
-
-                // add temp subitems if View was set to Details
-                //if (this.View == System.Windows.Forms.View.Details)
-                {
-                    for (int i = 0; i < this.Columns.Count; i++)
+                    // add temp subitems if View was set to Details
+                    //if (this.View == System.Windows.Forms.View.Details)
                     {
-                        item.SubItems.Add(string.Empty);
+                        for (int i = 0; i < this.Columns.Count; i++)
+                        {
+                            item.SubItems.Add(string.Empty);
+                        }
+
+                        item.SubItems[3].Text = di.CreationTime.ToString();
+                        // key should be "colType" but am not sure
+                        // why it does not work
+                        item.SubItems[1].Text = "File folder";
                     }
 
-                    item.SubItems[3].Text = di.CreationTime.ToString();
-                    // key should be "colType" but am not sure
-                    // why it does not work
-                    item.SubItems[1].Text = "File folder";
+                    Items.Add(item);
+
+                    Paths.Add((ItemType)item.Tag);
                 }
+                #endregion
 
-                Items.Add(item);
-
-                Paths.Add((ItemType)item.Tag);
-            }
-            #endregion
-
-            #region // get files
-            foreach (string file in Directory.GetFiles(path))
-            {
-                FileInfo fi = new FileInfo(file);
-
-                if (fi.Attributes.ToString().Contains("System"))
+                #region // get files
+                foreach (string file in Directory.GetFiles(path))
                 {
-                    continue;
-                }
+                    FileInfo fi = new FileInfo(file);
 
-                ListViewItem item = new ListViewItem(fi.Name);
-
-
-                bool ignore = true;
-                if (FilterExts != null)
-                {
-                    foreach (String ext in FilterExts)
+                    if (fi.Attributes.ToString().Contains("System"))
                     {
-                        if (string.Equals(fi.Extension, ext, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    }
+
+                    ListViewItem item = new ListViewItem(fi.Name);
+
+
+                    bool ignore = true;
+                    if (FilterExts != null)
+                    {
+                        foreach (String ext in FilterExts)
                         {
-                            ignore = false;
-                            break;
+                            if (string.Equals(fi.Extension, ext, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ignore = false;
+                                break;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    ignore = false;
-                }
-                bool invalid = false;
-                if (ignore || (FileValidator != null && !FileValidator(fi)))
-                {
-                    item.ForeColor = SystemColors.GrayText;
-                    invalid = true;
-                }
-                else
-                    item.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Bold, Font.Unit, Font.GdiCharSet, Font.GdiVerticalFont);
-
-                //if (!il16.Images.ContainsKey(fi.FullName))
-                //{
-                //    Icon ico32;
-                //    il16.Images.Add(fi.FullName, this.win32.GetIcon(fi.FullName, out ico32));
-                //    il32.Images.Add(fi.FullName, ico32);
-                //}
-
-                item.ImageKey = fi.FullName;
-                item.Tag = new ItemType()
-                {
-                    ItemInfo = fi,
-                    Type = Types.FILE,
-                    Invalid = invalid
-                };
-
-                // add temp subitems if View was set to Details
-                //if (this.View == System.Windows.Forms.View.Details)
-                {
-                    for (int i = 0; i < this.Columns.Count; i++)
+                    else
                     {
-                        item.SubItems.Add(string.Empty);
+                        ignore = false;
+                    }
+                    bool invalid = false;
+                    if (ignore || (FileValidator != null && !FileValidator(fi)))
+                    {
+                        item.ForeColor = SystemColors.GrayText;
+                        invalid = true;
+                    }
+                    else
+                        item.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Bold, Font.Unit, Font.GdiCharSet, Font.GdiVerticalFont);
+
+                    //if (!il16.Images.ContainsKey(fi.FullName))
+                    //{
+                    //    Icon ico32;
+                    //    il16.Images.Add(fi.FullName, this.win32.GetIcon(fi.FullName, out ico32));
+                    //    il32.Images.Add(fi.FullName, ico32);
+                    //}
+
+                    item.ImageKey = fi.FullName;
+                    item.Tag = new ItemType()
+                    {
+                        ItemInfo = fi,
+                        Type = Types.FILE,
+                        Invalid = invalid
+                    };
+
+                    // add temp subitems if View was set to Details
+                    //if (this.View == System.Windows.Forms.View.Details)
+                    {
+                        for (int i = 0; i < this.Columns.Count; i++)
+                        {
+                            item.SubItems.Add(string.Empty);
+                        }
+
+                        item.SubItems[3].Text = fi.CreationTime.ToString();
                     }
 
-                    item.SubItems[3].Text = fi.CreationTime.ToString();
+                    Items.Add(item);
+
+                    Paths.Add((ItemType)item.Tag);
                 }
+                #endregion
 
-                Items.Add(item);
-
-                Paths.Add((ItemType)item.Tag);
+                CurrentDirectory = path;
             }
-            #endregion
+            finally
+            {
+                this.EndUpdate();
+                this.Refresh();
 
-            this.EndUpdate();
-            this.Refresh();
-
-            CurrentDirectory = path;
-
-            bgIconLoader.RunWorkerAsync();
+                bgIconLoader.RunWorkerAsync();
+            }
         }
 
         void AutoColResize()

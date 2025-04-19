@@ -1,10 +1,12 @@
 ﻿//#define USE_PCM_LOOP
 // copyright-holders:K.Ito
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -38,9 +40,13 @@ using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using static zanac.MAmidiMEmo.Instruments.Chips.Beep;
 using static zanac.MAmidiMEmo.Instruments.Chips.MultiPCM;
 using static zanac.MAmidiMEmo.Instruments.Chips.SIDBase;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612.YM2612Timbre;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3812;
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -206,6 +212,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return f_CurrentSoundEngineType;
+            }
+        }
+
+        private uint targetSampleRate = 16000;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set default raw PCM file converting target PCM sample rate [Hz].")]
+        [DefaultValue(typeof(uint), "16000")]
+        public uint TargetSampleRate
+        {
+            get
+            {
+                return targetSampleRate;
+            }
+            set
+            {
+                if (value != 0)
+                    targetSampleRate = value;
             }
         }
 
@@ -387,7 +412,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < Timbres.Length; i++)
                 {
                     updatePcmData(Timbres[i], forceClear);
-                    if(cancelTransferPcmData)
+                    if (cancelTransferPcmData)
                         break;
                 }
             }
@@ -644,9 +669,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             ch = chConvert[ch];
             if (loop >= length)
                 loop = 0xffff;
-//#if !USE_PCM_LOOP
-//            loop = 0;
-//#endif
+            //#if !USE_PCM_LOOP
+            //            loop = 0;
+            //#endif
 
             lock (sndEnginePtrLock)
             {
@@ -654,7 +679,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundEngineType.VSIF_AMIGA:
                         vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.KeyOn | ch << 4), id, vol, (byte)(period >> 8), (byte)period }, null);
-                        if(loop > 0)
+                        if (loop > 0)
                             vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.SetLoop | ch << 4), id, (byte)(loop >> 8), (byte)loop, 0 }, null);
                         break;
                 }
@@ -1174,8 +1199,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //ushort loop = loopEn ? loopPoint : (ushort)0xffff;
                 ushort pcmLen = (ushort)timbre.PcmData.Length;
-                if(pcmLen < 2)
-                    pcmLen = 2; 
+                if (pcmLen < 2)
+                    pcmLen = 2;
                 ushort loop = loopEn ? loopPoint : (ushort)(pcmLen - 2);
                 parentModule.Paula8364Keyon(parentModule.UnitNumber,
                     (byte)Slot, timbreIndex, (byte)vol, (ushort)freq, (ushort)timbre.PcmData.Length, loop);
@@ -1281,12 +1306,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Loop point enabled\r\n"+
+            [Description("Loop point enabled\r\n" +
                 "LIMITATION: Does not support too short/too early loop point.")]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
 #if !USE_PCM_LOOP
-//            [Browsable(false)]
+            //            [Browsable(false)]
 #endif
             public bool LoopEnable
             {
@@ -1312,13 +1337,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65534) (65535 is loop off)\r\n"+
+            [Description("Set loop point (0 - 65534) (65535 is loop off)\r\n" +
                 "LIMITATION: Does not support too short/too early loop point.")]
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
 #if !USE_PCM_LOOP
-//            [Browsable(false)]
+            //            [Browsable(false)]
 #endif
             public ushort LoopPoint
             {
@@ -1347,7 +1372,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch)\r\n" +
-                "Need to increase the Gain value to sound 8bit PCM data.\r\n"+
+                "Need to increase the Gain value to sound 8bit PCM data.\r\n" +
                 "LIMITATION: The length of the PCM must be at least 2 bytes.")]
             [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
             public sbyte[] PcmData
@@ -1868,6 +1893,432 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             PAULA_8364_Reg.REG_AUD1PER,
             PAULA_8364_Reg.REG_AUD2PER,
             PAULA_8364_Reg.REG_AUD3PER };
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportBinFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override String SupportedBinExts
+        {
+            get
+            {
+                return "*.raw;*.wav";
+            }
+        }
+
+        private PaulaCustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new PaulaCustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PaulaCustomToneImporter : CustomToneImporter
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get
+                {
+                    return "*.raw;*.wav;*.8svx;*.iff";
+                }
+            }
+
+            public override IEnumerable<Tone> ImportTone(string text)
+            {
+                return null;
+            }
+
+            public override IEnumerable<Tone> ImportToneFile(string file)
+            {
+                return null;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                return importPcmFile(new FileInfo(file));
+            }
+        }
+
+        private static DialogResult? previousSampleRateAns;
+
+        private static uint littleEndianBytesToBigEndianUInt(byte[] littleEndianBytes)
+        {
+            // 1. リトルエンディアンのバイト配列をuintとして読み込む (バイト配列を反転させる)
+            byte[] reversedBytes = littleEndianBytes.Reverse().ToArray();
+            return BitConverter.ToUInt32(reversedBytes, 0);
+        }
+
+        private static ushort littleEndianBytesToBigEndianUShort(byte[] littleEndianBytes)
+        {
+            // 1. リトルエンディアンのバイト配列をuintとして読み込む (バイト配列を反転させる)
+            byte[] reversedBytes = littleEndianBytes.Reverse().ToArray();
+            return BitConverter.ToUInt16(reversedBytes, 0);
+        }
+
+        private static byte[] readChunkData(BinaryReader br)
+        {
+            uint len = littleEndianBytesToBigEndianUInt(br.ReadBytes((int)4));
+
+            return br.ReadBytes((int)len);
+        }
+
+        /* Fibonacci delta encoding for sound data. */
+        private static sbyte[] codeToDelta = { -34, -21, -13, -8, -5, -3, -2, -1, 0, 1, 2, 3, 5, 8, 13, 21 };
+
+        /* Unpack Fibonacci-delta encoded data from n byte source buffer into
+         * 2*n byte dest buffer, given initial data value x.  It returns the
+         * last data value x so you can call it several times to incrementally
+         * decompress the data.                                             */
+        private static short D1Unpack(sbyte[] source, int n, sbyte[] dest, sbyte x)
+        {
+            sbyte d;
+            int i, lim;
+
+            lim = n << 1;
+            for (i = 0; i < lim; ++i)
+            { /* Decode a data nibble; high nibble then low nibble. */
+                d = source[i >> 1];    /* get a pair of nibbles        */
+                if ((i & 1) != 0)              /* select low or high nibble?   */
+                    d &= 0xf;       /* mask to get the low nibble   */
+                else
+                    d >>= 4;       /* shift to get the high nibble */
+                x += codeToDelta[d];    /* add in the decoded delta     */
+                dest[i] = x;            /* store a 1-byte sample        */
+            }
+            return x;
+        }
+
+        /* Unpack Fibonacci-delta encoded data from n byte source buffer into
+         * 2*(n-2) byte dest buffer. Source buffer has a pad byte, an 8-bit
+         * initial value, followed by n-2 bytes comprising 2*(n-2) 4-bit
+         * encoded samples.                                                 */
+
+        private static void DUnpack(sbyte[] source, sbyte[] dest)
+        {
+            D1Unpack(source.Take(source.Length - 2).ToArray(), source.Length - 2, dest, source[1]);
+        }
+
+        /// <param name="binFile"></param>
+        private static List<PaulaTimbre> importPcmFile(FileInfo binFile)
+        {
+            List<PaulaTimbre> tims = new List<PaulaTimbre>();
+
+            switch (binFile.Extension.ToUpper(CultureInfo.InvariantCulture))
+            {
+                case ".IFF":
+                case ".8SVX":
+                    {
+                        try
+                        {
+                            using (var fs = new FileStream(binFile.FullName, FileMode.Open, FileAccess.Read))
+                            {
+                                var br = new BinaryReader(fs);
+                                var tmpdata = br.ReadBytes((int)4);
+                                if (!String.Equals(ASCIIEncoding.ASCII.GetString(tmpdata), "FORM", StringComparison.Ordinal))
+                                {
+                                    System.Windows.Forms.MessageBox.Show("This file(" + binFile.Name + ") is not IFF format.");
+                                    return tims;
+                                }
+
+                                br.ReadBytes((int)4);
+
+                                tmpdata = br.ReadBytes((int)4);
+                                if (!String.Equals(ASCIIEncoding.ASCII.GetString(tmpdata), "8SVX", StringComparison.Ordinal))
+                                {
+                                    System.Windows.Forms.MessageBox.Show("This file(" + binFile.Name + ") is not 8SVX format.");
+                                    return tims;
+                                }
+
+                                sbyte[] pcmData = null;
+                                String pcmDataInfo = binFile.FullName;
+                                String name = null;
+                                String memo = null;
+                                uint? oneShotHiSamples = null;
+                                uint? repeatHiSamples = null;
+                                uint? samplesPerHiCycle = null;
+                                ushort? samplesPerSec = null;
+                                byte? ctOctave = null;
+                                byte? compression = null;
+                                uint? volume = null;
+                                bool? atack = null;
+                                bool? release = null;
+                                //https://wiki.amigaos.net/wiki/8SVX_IFF_8-Bit_Sampled_Voice
+                                while (true)
+                                {
+                                    var chunk = br.ReadBytes((int)4);
+                                    if (chunk.Length < 4)
+                                        break;
+                                    tmpdata = readChunkData(br);
+                                    if (tmpdata.Length == 0)
+                                        break;
+                                    switch (ASCIIEncoding.ASCII.GetString(chunk))
+                                    {
+                                        case "VHDR":
+                                            /*
+                                            uint32_t oneShotHiSamples;
+                                            uint32_t repeatHiSamples;
+                                            uint32_t samplesPerHiCycle;
+                                            uint16_t samplesPerSec;
+                                            uint8_t  ctOctave;
+                                            uint8_t  compression;
+                                            uint32_t volume;
+                                            */
+                                            oneShotHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(0).Take(4).ToArray());
+                                            repeatHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(4).Take(4).ToArray());
+                                            samplesPerHiCycle = littleEndianBytesToBigEndianUInt(tmpdata.Skip(8).Take(4).ToArray());
+                                            samplesPerSec = littleEndianBytesToBigEndianUShort(tmpdata.Skip(12).Take(2).ToArray());
+                                            ctOctave = tmpdata[14];
+                                            compression = tmpdata[15];
+                                            volume = littleEndianBytesToBigEndianUInt(tmpdata.Skip(16).Take(4).ToArray());
+                                            break;
+                                        case "NAME":
+                                            name = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
+                                            break;
+                                        case "ANNO":
+                                            memo = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
+                                            break;
+                                        case "BODY":
+                                            pcmData = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
+                                            break;
+                                        case "ATAK":
+                                            atack = true;
+                                            break;
+                                        case "RLSE":
+                                            release = true;
+                                            break;
+                                        default:
+                                            //AUTH
+                                            break;
+                                    }
+                                }
+                                if (pcmData != null)
+                                {
+                                    if (compression != null && compression.Value == 1)
+                                        DUnpack(pcmData, pcmData);
+
+                                    if (ctOctave != null)
+                                    {
+                                        int index = 0;
+                                        for (int i = 0; i < ctOctave; i++)
+                                        {
+                                            PaulaTimbre tim = new PaulaTimbre();
+                                            int oct = (int)Math.Pow(2, i);
+
+                                            tim.PcmData = pcmData.Skip(index).Take(oct * (int)(oneShotHiSamples + repeatHiSamples)).ToArray();
+
+                                            index += tim.PcmData.Length;
+
+                                            if (oct * oneShotHiSamples < tim.PcmData.Length)
+                                            {
+                                                tim.LoopEnable = true;
+                                                tim.LoopPoint = (ushort)(oct * oneShotHiSamples) > 0xFFFF ? (ushort)0xFFFF : (ushort)(oct * oneShotHiSamples);
+                                            }
+                                            else
+                                            {
+                                                tim.LoopEnable = false;
+                                                tim.LoopPoint = 0xffff;
+                                            }
+
+                                            tim.SampleRate = samplesPerSec.Value;
+                                            if (samplesPerHiCycle != 0)
+                                                tim.BaseFreqency = (double)tim.SampleRate / (double)samplesPerHiCycle;
+                                            else
+                                                tim.BaseFreqency = (double)440;
+
+                                            if (atack != null || release != null)
+                                                tim.SDS.ADSR.Enable = true;
+                                            else
+                                                tim.SDS.ADSR.Enable = false;
+
+                                            if (name == null)
+                                                tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name) + "_(o" + i + ")";
+                                            else
+                                                tim.TimbreName = name + "_(o" + i + ")";
+                                            tim.Memo = memo;
+                                            tim.PcmDataInfo = pcmDataInfo;
+
+                                            tims.Add(tim);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        PaulaTimbre tim = new PaulaTimbre();
+                                        tim.PcmData = pcmData;
+
+                                        if (atack != null || release != null)
+                                            tim.SDS.ADSR.Enable = true;
+                                        else
+                                            tim.SDS.ADSR.Enable = false;
+
+                                        if (name == null)
+                                            tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                                        else
+                                            tim.TimbreName = name;
+                                        tim.Memo = memo;
+                                        tim.PcmDataInfo = pcmDataInfo;
+
+                                        tims.Add(tim);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.GetType() == typeof(Exception))
+                                throw;
+                            else if (ex.GetType() == typeof(SystemException))
+                                throw;
+
+
+                            System.Windows.Forms.MessageBox.Show(ex.Message);
+                        }
+                    }
+                    break;
+            }
+            return tims;
+        }
+
+        public override void ImportBinFile(TimbreBase timbre, FileInfo binFile)
+        {
+            List<PaulaTimbre> tims = new List<PaulaTimbre>();
+
+            switch (binFile.Extension.ToUpper(CultureInfo.InvariantCulture))
+            {
+                case ".RAW":
+                    {
+                        PaulaTimbre tim = (PaulaTimbre)timbre;
+
+                        using (var fs = new FileStream(binFile.FullName, FileMode.Open, FileAccess.Read))
+                        {
+                            var br = new BinaryReader(fs);
+                            var tmpdata = br.ReadBytes((int)fs.Length);
+                            if (String.Equals(ASCIIEncoding.ASCII.GetString(tmpdata, 0, 4), "FORM", StringComparison.Ordinal))
+                            {
+                                throw new IOException("This file(" + binFile.Name + ") is IFF format. Please change the extension to .IFF or .8SVX");
+                            }
+
+                            sbyte[] data = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
+                            tim.PcmData = data;
+                            tim.PcmDataInfo = binFile.FullName;
+                            tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                        }
+                    }
+                    break;
+                case ".WAV":
+                    {
+                        PaulaTimbre tim = (PaulaTimbre)timbre;
+                        using (var reader = new NAudio.Wave.WaveFileReader(binFile.FullName))
+                        {
+                            var wf = reader.WaveFormat;
+
+                            sbyte[] data = null;
+
+                            if (8 != wf.BitsPerSample || 1 != wf.Channels || wf.SampleRate > TargetSampleRate)
+                            {
+                                /*
+                                var r = MessageBox.Show(null,
+                                    $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
+                                    "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                if (r == DialogResult.Cancel)
+                                {
+                                    throw new FileLoadException(
+                                    string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
+                                }*/
+
+                                int bits = 8;
+                                int rate = wf.SampleRate;
+                                int ch = 1;
+
+                                if (rate > TargetSampleRate)
+                                {
+                                    DialogResult r;
+                                    if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+                                        previousSampleRateAns = null;
+
+                                    if (previousSampleRateAns.HasValue)
+                                    {
+                                        r = previousSampleRateAns.Value;
+                                    }
+                                    else
+                                    {
+                                        r = MessageBox.Show(null,
+                                            String.Format(Resources.SampleRateOver + "\r\n", TargetSampleRate) +
+                                            String.Format(Resources.ConfirmConvertSampleRate, TargetSampleRate), "Qeuestion", MessageBoxButtons.YesNo);
+                                        previousSampleRateAns = r;
+                                    }
+                                    if (r == DialogResult.Yes)
+                                    {
+                                        rate = (int)TargetSampleRate;
+                                    }
+                                }
+
+                                wf = new WaveFormat(rate, bits, ch);
+                                using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
+                                {
+                                    using (var stream = new WaveFormatConversionProvider(wf, converter.ToSampleProvider().ToWaveProvider16()))
+                                    {
+                                        var tmpdata = new byte[converter.Length];
+                                        int rd = stream.Read(tmpdata, 0, tmpdata.Length);
+                                        data = new sbyte[rd];
+                                        Array.Copy(tmpdata, data, rd);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var tmpdata = new byte[reader.Length];
+                                reader.Read(tmpdata, 0, tmpdata.Length);
+                                data = new sbyte[tmpdata.Length];
+                                Array.Copy(tmpdata, data, tmpdata.Length);
+                            }
+
+                            tim.PcmData = data;
+                            tim.PcmDataInfo = binFile.FullName;
+                            tim.SampleRate = (uint)wf.SampleRate;
+                            tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                        }
+                    }
+                    break;
+            }
+        }
     }
 
     public enum PAULA_8364_Reg

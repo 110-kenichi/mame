@@ -1,4 +1,6 @@
-﻿namespace zanac.MAmidiMEmo.Gui
+﻿using System;
+
+namespace zanac.MAmidiMEmo.Gui
 {
     partial class FormTimbreManager
     {

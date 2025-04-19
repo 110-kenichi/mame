@@ -92,6 +92,14 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InitializeComponent();
 
+            System.Windows.Forms.Application.Idle += Application_Idle;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            System.Windows.Forms.Application.Idle -= Application_Idle;
+
+            base.OnClosing(e);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -150,15 +158,34 @@ namespace zanac.MAmidiMEmo.Gui
             propertyGrid1.Refresh();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidDataException"></exception>
+        private void Application_Idle(object sender, EventArgs e)
+        {
+            if (listViewPcmSoundsItemSelectionChanged)
+            {
+                listViewPcmSoundsItemSelectionChanged = false;
+
+                List<PcmTimbreBase> insts = new List<PcmTimbreBase>();
+                foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
+                    insts.Add((PcmTimbreBase)item.Tag);
+                propertyGrid1.SelectedObjects = insts.ToArray();
+            }
+        }
+
+        private bool listViewPcmSoundsItemSelectionChanged;
+
         private void listViewPcmSounds_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             buttonAdd.Enabled = listViewPcmSounds.FocusedItem != null ? true : false;
             buttonDelete.Enabled = listViewPcmSounds.SelectedItems.Count != 0 ? true : false;
 
-            List<PcmTimbreBase> insts = new List<PcmTimbreBase>();
-            foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
-                insts.Add((PcmTimbreBase)item.Tag);
-            propertyGrid1.SelectedObjects = insts.ToArray();
+            listViewPcmSoundsItemSelectionChanged = true;
         }
 
         /// <summary>
