@@ -125,6 +125,10 @@ namespace zanac.MAmidiMEmo.Gui
 
             System.Windows.Forms.Application.Idle -= new EventHandler(Application_Idle);
 
+            Settings.Default.SettingsLoaded -= Default_SettingsLoaded;
+            InstrumentManager.InstrumentChanged -= InstrumentManager_InstrumentChanged;
+            InstrumentManager.InstrumentRemoved -= InstrumentManager_InstrumentRemoved;
+
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
             Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;

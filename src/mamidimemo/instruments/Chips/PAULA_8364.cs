@@ -237,7 +237,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private bool f_TransferPcmData;
 
         [Category("Chip(Dedicated)")]
-        [Description("Transfer PCM data via Serial cable.")]
+        [Description("Transfer PCM data via Serial cable. **Too slow**\r\n" +
+            "Try to use the [Export PCM] on the PAULA_8364 context menu.")]
         [DefaultValue(false)]
         public bool TransferPcmData
         {
@@ -684,7 +685,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-            DeferredWriteData(paula_8364_keyon, unitNumber, ch, id, vol, period, length, loop);
+            DeferredWriteData(paula_8364_keyon, unitNumber, ch, id, vol, period, (ushort)(length >> 1), loop);
         }
 
         /// <summary>
@@ -1111,7 +1112,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     case PhysicalChannel.IndeterminateneLeft:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 4, -1, 0);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 2, -1, 0);
                             break;
                         }
                     case PhysicalChannel.IndeterminateneRight:
@@ -1192,12 +1193,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 var vol = (ushort)(CalcCurrentVolume() * 64);
                 uint freq = 0;
-                //freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 32768 * sampleRate / (double)parentModule.MasterClock);
-                freq = (uint)Math.Round((double)parentModule.MasterClock / (2 * (CalcCurrentFrequency() / baseFreq) * sampleRate));
+                freq = (uint)Math.Round((double)parentModule.MasterClock / ((CalcCurrentFrequency() / baseFreq) * sampleRate));
                 if (freq > 0xffff)
                     freq = 0xffff;
 
-                //ushort loop = loopEn ? loopPoint : (ushort)0xffff;
                 ushort pcmLen = (ushort)timbre.PcmData.Length;
                 if (pcmLen < 2)
                     pcmLen = 2;
@@ -1337,7 +1336,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65534) (65535 is loop off)\r\n" +
+            [Description("Set loop point in WORD (0 - 65534) (65535 is loop off)\r\n" +
                 "LIMITATION: Does not support too short/too early loop point.")]
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
@@ -1371,10 +1370,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch)\r\n" +
+            [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 128K samples, 1ch)\r\n" +
                 "Need to increase the Gain value to sound 8bit PCM data.\r\n" +
                 "LIMITATION: The length of the PCM must be at least 2 bytes.")]
-            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 131071)]
             public sbyte[] PcmData
             {
                 get
@@ -1514,7 +1513,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65534) (65535 is loop off)")]
+            [Description("Set loop point in WORD (0 - 65534) (65535 is loop off)")]
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65534)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1605,9 +1604,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 }
 
                                 List<byte> al = new List<byte>(data);
-                                //Max 64k
-                                if (al.Count > 65535)
-                                    al.RemoveRange(65535, al.Count - 65535);
+                                //Max 128K
+                                if (al.Count > 131071)
+                                    al.RemoveRange(131071, al.Count - 131071);
 
                                 f_PcmData = al.ToArray();
 
@@ -1773,18 +1772,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         end = s.LoopEnd;
 
                     uint len = end - start + 1;
-                    if (len > 65535)
-                        len = 65535;
+                    if (len > 131071)
+                        len = 131071;
                     uint loopP = s.LoopStart - s.Start;
-                    if (loopP > 65535)
-                        loopP = 65535;
+                    if (loopP > 131071)
+                        loopP = 131071;
 
                     sbyte[] samples = new sbyte[len];
                     for (uint i = 0; i < len; i++)
                         samples[i] = (sbyte)(spl[start + i] >> 8);
 
                     tim.PcmData = samples;
-                    tim.LoopPoint = (ushort)loopP;
+                    tim.LoopPoint = (ushort)(loopP >> 1);
                     tim.LoopEnable = s.LoopStart < s.LoopEnd;
 
                     if (s.LoopStart < s.LoopEnd)
@@ -2141,18 +2140,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                         {
                                             PaulaTimbre tim = new PaulaTimbre();
                                             int oct = (int)Math.Pow(2, i);
-
-                                            tim.PcmData = pcmData.Skip(index).Take(oct * (int)(oneShotHiSamples + repeatHiSamples)).ToArray();
-
-                                            index += tim.PcmData.Length;
-
-                                            if (oct * oneShotHiSamples < tim.PcmData.Length)
+                                            if (oneShotHiSamples != 0)
                                             {
-                                                tim.LoopEnable = true;
-                                                tim.LoopPoint = (ushort)(oct * oneShotHiSamples) > 0xFFFF ? (ushort)0xFFFF : (ushort)(oct * oneShotHiSamples);
+                                                tim.PcmData = pcmData.Skip(index).Take(oct * (int)(oneShotHiSamples + repeatHiSamples)).ToArray();
+
+                                                index += tim.PcmData.Length;
+
+                                                if (oct * oneShotHiSamples < tim.PcmData.Length)
+                                                {
+                                                    tim.LoopEnable = true;
+                                                    tim.LoopPoint = (ushort)(oct * oneShotHiSamples) > 0xFFFF ? (ushort)0xFFFF : (ushort)(oct * oneShotHiSamples);
+                                                }
+                                                else
+                                                {
+                                                    tim.LoopEnable = false;
+                                                    tim.LoopPoint = 0xffff;
+                                                }
                                             }
                                             else
                                             {
+                                                tim.PcmData = pcmData;
                                                 tim.LoopEnable = false;
                                                 tim.LoopPoint = 0xffff;
                                             }
@@ -2168,10 +2175,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                             else
                                                 tim.SDS.ADSR.Enable = false;
 
+                                            String idx = "";
+                                            if(ctOctave != 1)
+                                                idx = "(" + (i + 1) + "/" + ctOctave + ")";
                                             if (name == null)
-                                                tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name) + "_(o" + i + ")";
+                                                tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name) + idx;
                                             else
-                                                tim.TimbreName = name + "_(o" + i + ")";
+                                                tim.TimbreName = name + idx;
                                             tim.Memo = memo;
                                             tim.PcmDataInfo = pcmDataInfo;
 

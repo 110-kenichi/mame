@@ -7,6 +7,7 @@ using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
 using MetroFramework.Forms;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -138,6 +139,9 @@ namespace zanac.MAmidiMEmo.Gui
             if (e.Cancel == false)
             {
                 PluginCommandStub.EditorClose();
+
+                InstrumentManager.InstrumentChanged -= InstrumentManager_InstrumentChanged;
+                InstrumentManager.InstrumentRemoved -= InstrumentManager_InstrumentRemoved;
             }
         }
     }

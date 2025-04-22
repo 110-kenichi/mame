@@ -231,6 +231,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
 
+            Properties.Settings.Default.SettingsLoaded -= Default_SettingsLoaded;
+            MAmidiMEmo.Instruments.InstrumentManager.InstrumentChanged -= InstrumentManager_InstrumentChanged;
+            MAmidiMEmo.Instruments.InstrumentManager.InstrumentRemoved -= InstrumentManager_InstrumentRemoved;
+
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
             Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;

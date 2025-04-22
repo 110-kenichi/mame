@@ -390,6 +390,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.listViewCurrentTimbres.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewCurrentTimbres_DragOver);
             this.listViewCurrentTimbres.Enter += new System.EventHandler(this.listViewCurrentTimbres_Enter);
             this.listViewCurrentTimbres.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewCurrentTimbres_MouseDoubleClick);
+            this.listViewCurrentTimbres.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.listViewCurrentTimbres_PreviewKeyDown);
             // 
             // columnHeader1
             // 
@@ -478,6 +479,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.fileFolderList1.UseCompatibleStateImageBehavior = false;
             this.fileFolderList1.View = System.Windows.Forms.View.Details;
             this.fileFolderList1.CurrentDirectoryChanged += new System.EventHandler(this.fileFolderList1_CurrentDirectoryChanged);
+            this.fileFolderList1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.fileFolderList1_PreviewKeyDown);
             // 
             // columnHeader4
             // 
@@ -547,6 +549,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.listViewFilesTimbres.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewFilesTimbres_DragEnter);
             this.listViewFilesTimbres.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewFilesTimbres_DragOver);
             this.listViewFilesTimbres.Enter += new System.EventHandler(this.listViewFilesTimbres_Enter);
+            this.listViewFilesTimbres.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.listViewFilesTimbres_PreviewKeyDown);
             // 
             // columnHeader5
             // 

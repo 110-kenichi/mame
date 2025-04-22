@@ -238,6 +238,10 @@ namespace zanac.MAmidiMEmo.Gui
 
             System.Windows.Forms.Application.Idle -= new EventHandler(Application_Idle);
 
+            Settings.Default.SettingsLoaded -= Default_SettingsLoaded;
+            InstrumentManager.InstrumentChanged -= InstrumentManager_InstrumentChanged;
+            InstrumentManager.InstrumentRemoved -= InstrumentManager_InstrumentRemoved;
+
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
             Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;
@@ -613,7 +617,7 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         string file = dlDestFilePath[i];
                         if (!System.IO.File.Exists(file))
-                            return;
+                            continue;
 
                         switch (Path.GetExtension(file).ToUpper(CultureInfo.InvariantCulture))
                         {
@@ -1742,6 +1746,63 @@ namespace zanac.MAmidiMEmo.Gui
                 testStop();
 
                 ttim.Timbre.OpenPropEditor(Instrument);
+            }
+        }
+
+        private void fileFolderList1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                try
+                {
+                    fileFolderList1.BeginUpdate();
+                    foreach (ListViewItem item in fileFolderList1.Items)
+                    {
+                        item.Selected = true;
+                    }
+                }
+                finally
+                {
+                    fileFolderList1.EndUpdate();
+                }
+            }
+        }
+
+        private void listViewFilesTimbres_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                try
+                {
+                    listViewFilesTimbres.BeginUpdate();
+                    foreach (ListViewItem item in listViewFilesTimbres.Items)
+                    {
+                        item.Selected = true;
+                    }
+                }
+                finally
+                {
+                    listViewFilesTimbres.EndUpdate();
+                }
+            }
+        }
+
+        private void listViewCurrentTimbres_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                try
+                {
+                    listViewCurrentTimbres.BeginUpdate();
+                    foreach (ListViewItem item in listViewCurrentTimbres.Items)
+                    {
+                        item.Selected = true;
+                    }
+                }
+                finally
+                {
+                    listViewCurrentTimbres.EndUpdate();
+                }
             }
         }
     }

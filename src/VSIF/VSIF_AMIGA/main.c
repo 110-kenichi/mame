@@ -548,9 +548,12 @@ VWritef("Completed serial setting.\n", NULL);
 
 					UBYTE id = *dataBufPtr++;
 					UWORD loop = *(UWORD *)dataBufPtr++;
-
-					custom->aud[ch].ac_len = (pcmDataTable[id].length - loop) >> 1;
-					custom->aud[ch].ac_ptr = (volatile UWORD *)(pcmDataTable[id].dataPtr + loop);
+					UWORD len = pcmDataTable[id].length;
+					if(len > loop)
+					{
+						custom->aud[ch].ac_len = (len - loop) >> 1;
+						custom->aud[ch].ac_ptr = (volatile UWORD *)(pcmDataTable[id].dataPtr + loop);
+					}
 #ifdef LOG
 					ULONG arg[] = {id, loop};
 					VWritef("LOOP %N %N\n", arg);

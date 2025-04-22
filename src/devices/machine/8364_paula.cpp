@@ -376,10 +376,11 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 					if (chan->curlength == 0)
 					{
 						//mamidimemo
-						//if (chan->loop != 0xFFFF)
+						if (chan->loop != 0xFFFF)
 						{
 							dma_reload(chan);
-							chan->curlocation = chan->loop;
+							chan->curlocation = chan->loc + chan->loop;
+							chan->curlength = chan->len - chan->loop;
 						}
 					}
 				}
