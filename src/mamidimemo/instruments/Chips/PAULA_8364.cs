@@ -617,18 +617,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     }
                     break;
-                case PAULA_CMD.SetPcmDataLoop:
-                    lock (sndEnginePtrLock)
-                    {
-                        switch (CurrentSoundEngine)
-                        {
-                            case SoundEngineType.VSIF_AMIGA:
-                                // id, value
-                                vsifClient.RawWriteData(new byte[] { (byte)type, (byte)address, (byte)(data >> 8), (byte)data, 0 }, null);
-                                break;
-                        }
-                    }
-                    break;
             }
             /*
             try
@@ -660,16 +648,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="data"></param>
         /// <returns></returns>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_paula_8364_keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort length, ushort loop);
+        private delegate void delegate_paula_8364_keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort lengthInBytes, ushort loopInWord);
 
         /// <summary>
         /// 
         /// </summary>
-        private void Paula8364Keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort length, ushort loop)
+        private void Paula8364Keyon(uint unitNumber, byte ch, byte id, byte vol, ushort period, ushort lengthInBytes, ushort loopInWord)
         {
             ch = chConvert[ch];
-            if (loop >= length)
-                loop = 0xffff;
+            if (loopInWord >= lengthInBytes >> 1)
+                loopInWord = 0xffff;
             //#if !USE_PCM_LOOP
             //            loop = 0;
             //#endif
@@ -680,12 +668,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundEngineType.VSIF_AMIGA:
                         vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.KeyOn | ch << 4), id, vol, (byte)(period >> 8), (byte)period }, null);
-                        if (loop > 0)
-                            vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.SetLoop | ch << 4), id, (byte)(loop >> 8), (byte)loop, 0 }, null);
+                        if (loopInWord > 0)
+                            vsifClient.RawWriteData(new byte[] { (byte)((byte)PAULA_CMD.SetLoop | ch << 4), id, (byte)(loopInWord >> 8), (byte)loopInWord, 0 }, null);
                         break;
                 }
             }
-            DeferredWriteData(paula_8364_keyon, unitNumber, ch, id, vol, period, (ushort)(length >> 1), loop);
+            DeferredWriteData(paula_8364_keyon, unitNumber, ch, id, vol, period, (ushort)(lengthInBytes >> 1), loopInWord);
         }
 
         /// <summary>
@@ -1197,12 +1185,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0xffff)
                     freq = 0xffff;
 
-                ushort pcmLen = (ushort)timbre.PcmData.Length;
-                if (pcmLen < 2)
-                    pcmLen = 2;
-                ushort loop = loopEn ? loopPoint : (ushort)(pcmLen - 2);
+                ushort pcmLenInWord = (ushort)(timbre.PcmData.Length >> 1);
+                if (pcmLenInWord < 1)
+                    pcmLenInWord = 1;
+                ushort loopInWord = loopEn ? loopPoint : (ushort)(pcmLenInWord - 1);
                 parentModule.Paula8364Keyon(parentModule.UnitNumber,
-                    (byte)Slot, timbreIndex, (byte)vol, (ushort)freq, (ushort)timbre.PcmData.Length, loop);
+                    (byte)Slot, timbreIndex, (byte)vol, (ushort)freq, (ushort)timbre.PcmData.Length, loopInWord);
             }
 
             /// <summary>
@@ -1323,11 +1311,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (f_LoopEnable != value)
                     {
                         f_LoopEnable = value;
-                        if (Instrument != null)
-                        {
-                            ((PAULA_8364)Instrument).
-                                Paula8364Write(Instrument.UnitNumber, PAULA_CMD.SetPcmDataLoop, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
-                        }
                     }
                 }
             }
@@ -1355,11 +1338,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (f_LoopPoint != value)
                     {
                         f_LoopPoint = value;
-                        if (Instrument != null)
-                        {
-                            ((PAULA_8364)Instrument).
-                            Paula8364Write(Instrument.UnitNumber, PAULA_CMD.SetPcmDataLoop, (uint)Index, (ushort)(f_LoopEnable ? f_LoopPoint : 0xFFFF), true);
-                        }
                     }
                 }
             }
@@ -2149,7 +2127,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                                 if (oct * oneShotHiSamples < tim.PcmData.Length)
                                                 {
                                                     tim.LoopEnable = true;
-                                                    tim.LoopPoint = (ushort)(oct * oneShotHiSamples) > 0xFFFF ? (ushort)0xFFFF : (ushort)(oct * oneShotHiSamples);
+                                                    tim.LoopPoint = (ushort)(oct * oneShotHiSamples) > 0xFFFF ? (ushort)0xFFFF : (ushort)((oct * oneShotHiSamples) >> 1);
                                                 }
                                                 else
                                                 {
@@ -2386,7 +2364,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         KeyOff = 4,
         Filter = 5,
         SetPcmData = 6,
-        SetPcmDataLoop = 7,
         SetLoop = 8,
     }
 

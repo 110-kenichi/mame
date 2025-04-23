@@ -525,20 +525,9 @@ VWritef("Completed serial setting.\n", NULL);
 #endif
 				}
 				break;
-			case 7:	// Change PCM Loop Pos
+			case 7:	// 
 				{
 					requestSerial(5);
-
-					UBYTE id = *dataBufPtr++;
-					UWORD loop = *(UWORD *)dataBufPtr;
-					UWORD len = pcmDataTable[id].length;
-					if(loop >= len)
-						loop = 0xFFFF;
-					pcmDataTable[id].loop = loop;
-#ifdef LOG
-					ULONG arg[] = {id, loop};
-					VWritef("LOOP %N %N\n", arg);
-#endif
 				}
 				break;
 
@@ -548,11 +537,11 @@ VWritef("Completed serial setting.\n", NULL);
 
 					UBYTE id = *dataBufPtr++;
 					UWORD loop = *(UWORD *)dataBufPtr++;
-					UWORD len = pcmDataTable[id].length;
+					UWORD len = pcmDataTable[id].length >> 1;
 					if(len > loop)
 					{
-						custom->aud[ch].ac_len = (len - loop) >> 1;
-						custom->aud[ch].ac_ptr = (volatile UWORD *)(pcmDataTable[id].dataPtr + loop);
+						custom->aud[ch].ac_len = (len - loop);
+						custom->aud[ch].ac_ptr = (volatile UWORD *)(pcmDataTable[id].dataPtr + (loop << 1));
 					}
 #ifdef LOG
 					ULONG arg[] = {id, loop};
