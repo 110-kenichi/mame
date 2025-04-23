@@ -367,7 +367,10 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 					//mamidimemo
 					//chan->dat = m_mem_r(chan->curlocation);
 					if (m_callback != NULL)
-						chan->dat = m_callback(chan->id, chan->curlocation);
+					{
+						chan->dat = (m_callback(chan->id, chan->curlocation) << 8) & 0xff00;
+						chan->dat |= m_callback(chan->id, chan->curlocation + 1) & 0xff;
+					}
 
 					if (chan->curlength != 0)
 						chan->curlength--;

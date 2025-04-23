@@ -2176,7 +2176,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                                 tim.SDS.ADSR.Enable = false;
 
                                             String idx = "";
-                                            if(ctOctave != 1)
+                                            if (ctOctave != 1)
                                                 idx = "(" + (i + 1) + "/" + ctOctave + ")";
                                             if (name == null)
                                                 tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name) + idx;
@@ -2236,20 +2236,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         PaulaTimbre tim = (PaulaTimbre)timbre;
 
-                        using (var fs = new FileStream(binFile.FullName, FileMode.Open, FileAccess.Read))
+                        byte[] tmpdata = null;
+                        using (var fs = new BinaryReader(new FileStream(binFile.FullName, FileMode.Open, FileAccess.Read)))
                         {
-                            var br = new BinaryReader(fs);
-                            var tmpdata = br.ReadBytes((int)fs.Length);
-                            if (String.Equals(ASCIIEncoding.ASCII.GetString(tmpdata, 0, 4), "FORM", StringComparison.Ordinal))
-                            {
-                                throw new IOException("This file(" + binFile.Name + ") is IFF format. Please change the extension to .IFF or .8SVX");
-                            }
-
-                            sbyte[] data = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
-                            tim.PcmData = data;
-                            tim.PcmDataInfo = binFile.FullName;
-                            tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                            tmpdata = fs.ReadBytes((int)fs.BaseStream.Length);
                         }
+                        if (String.Equals(ASCIIEncoding.ASCII.GetString(tmpdata, 0, 4), "FORM", StringComparison.Ordinal))
+                        {
+                            var result = MessageBox.Show("This file(" + binFile.Name + ") may IFF format( *.iff or *.8svx )\r\n" +
+                                "Do you want to change *.raw to *.iff?", "Warning", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes)
+                            {
+
+                                System.IO.File.Move(binFile.FullName, System.IO.Path.ChangeExtension(binFile.FullName, ".iff"));
+                                throw new WarningException("Done. Please refresh the view.");
+                            }
+                        }
+
+                        sbyte[] data = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
+                        tim.PcmData = data;
+                        tim.PcmDataInfo = binFile.FullName;
+                        tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
                     }
                     break;
                 case ".WAV":
