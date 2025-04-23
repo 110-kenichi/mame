@@ -1,4 +1,4 @@
-MAmidiMEmo 6.0.4.1 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.0.4.2 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,12 +274,12 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.0.4.2 Fixed PAULA_8364(AMIGA) emulator sound engine.
 - 6.0.4.1 Fixed the Timbre Manager  for PAULA_8364(AMIGA) while connecting to a real AMIGA.
   - Fixed event handler does not released on Forms
   - Fixed PAULA_8364(AMIGA) frequency calculation.
   - Fixed PAULA_8364(AMIGA) loop calculation.
   - Fixed PAULA_8364(AMIGA) PCM MAX size is 128K.
-  - Fixed PAULA_8364(AMIGA) emulator sound engine.
 - 6.0.4.0 Supported the Timbre Manager for PAULA_8364(AMIGA).
 - 6.0.3.0 Supported Loop Point PAULA_8364(AMIGA).
   - Limitation1: The length of the PCM must be at least 2 bytes.  
