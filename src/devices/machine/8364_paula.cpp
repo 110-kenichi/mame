@@ -356,8 +356,8 @@ void paula_8364_device::sound_stream_update(sound_stream &stream, stream_sample_
 			{
 				// reset the clock and ensure we're above the minimum ticks
 				chan->curticks = period;
-				if (chan->curticks < 124)
-					chan->curticks = 124;
+				if (chan->curticks < 2)
+					chan->curticks = 2;
 
 				// move forward one byte; if we move to an even byte, fetch new
 				if (chan->dma_enabled || chan->manualmode)

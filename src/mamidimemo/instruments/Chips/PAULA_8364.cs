@@ -215,12 +215,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private uint targetSampleRate = 16000;
+        private uint targetSampleRate = 16726;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Set default raw PCM file converting target PCM sample rate [Hz].")]
-        [DefaultValue(typeof(uint), "16000")]
+        [DefaultValue(typeof(uint), "16726")]
         public uint TargetSampleRate
         {
             get
@@ -268,6 +268,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        private bool f_RemoveMaxPeriodRistriction;
+
+        [Category("Chip(Dedicated)")]
+        [Description("If set to True, max period is 2. If not, max period is 114. Supports Software Sound Engine only.")]
+        [DefaultValue(false)]
+        public bool RemoveMaxPeriodRistriction
+        {
+            get
+            {
+                return f_RemoveMaxPeriodRistriction;
+            }
+            set
+            {
+                f_RemoveMaxPeriodRistriction = value;
+            }
+        }
+
         private PAULA_8364_Clock f_MasterClock = PAULA_8364_Clock.PAL;
 
         [DataMember]
@@ -295,7 +313,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Global)")]
-        [Description("Filter settings. Available for real machine only.")]
+        [Description("Filter settings. Available for real machine only.\r\n" +
+            "If you use the Software Sound Engine, please use the Filter properties and set like this: FilterMode = LowPass, FilterCutoff = 0.25")]
         [DefaultValue(false)]
         public bool FilterEnable
         {
@@ -1185,6 +1204,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0xffff)
                     freq = 0xffff;
 
+                if (!parentModule.RemoveMaxPeriodRistriction && freq < 114)
+                    freq = 114;
+                if (freq < 2)
+                    freq = 2;
+
                 ushort pcmLenInWord = (ushort)(timbre.PcmData.Length >> 1);
                 if (pcmLenInWord < 1)
                     pcmLenInWord = 1;
@@ -1281,7 +1305,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Set PCM samplerate [Hz]")]
             [DefaultValue(typeof(uint), "14000")]
-            [SlideParametersAttribute(4000, 44100)]
+            [SlideParametersAttribute(4000, 22050)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
@@ -1480,14 +1504,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Set PCM samplerate [Hz]")]
-            [DefaultValue(typeof(uint), "16000")]
-            [SlideParametersAttribute(4000, 44100)]
+            [DefaultValue(typeof(uint), "16726")]
+            [SlideParametersAttribute(4000, 22050)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 16000;
+            } = 16726;
 
             [DataMember]
             [Category("Sound")]
@@ -2058,52 +2082,69 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 bool? atack = null;
                                 bool? release = null;
                                 //https://wiki.amigaos.net/wiki/8SVX_IFF_8-Bit_Sampled_Voice
-                                while (true)
+                                try
                                 {
-                                    var chunk = br.ReadBytes((int)4);
-                                    if (chunk.Length < 4)
-                                        break;
-                                    tmpdata = readChunkData(br);
-                                    if (tmpdata.Length == 0)
-                                        break;
-                                    switch (ASCIIEncoding.ASCII.GetString(chunk))
+                                    while (true)
                                     {
-                                        case "VHDR":
-                                            /*
-                                            uint32_t oneShotHiSamples;
-                                            uint32_t repeatHiSamples;
-                                            uint32_t samplesPerHiCycle;
-                                            uint16_t samplesPerSec;
-                                            uint8_t  ctOctave;
-                                            uint8_t  compression;
-                                            uint32_t volume;
-                                            */
-                                            oneShotHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(0).Take(4).ToArray());
-                                            repeatHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(4).Take(4).ToArray());
-                                            samplesPerHiCycle = littleEndianBytesToBigEndianUInt(tmpdata.Skip(8).Take(4).ToArray());
-                                            samplesPerSec = littleEndianBytesToBigEndianUShort(tmpdata.Skip(12).Take(2).ToArray());
-                                            ctOctave = tmpdata[14];
-                                            compression = tmpdata[15];
-                                            volume = littleEndianBytesToBigEndianUInt(tmpdata.Skip(16).Take(4).ToArray());
+                                        var chunk = br.ReadBytes((int)4);
+                                        if (chunk.Length < 4)
                                             break;
-                                        case "NAME":
-                                            name = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
+                                        tmpdata = readChunkData(br);
+                                        if (tmpdata.Length == 0)
                                             break;
-                                        case "ANNO":
-                                            memo = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
-                                            break;
-                                        case "BODY":
-                                            pcmData = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
-                                            break;
-                                        case "ATAK":
-                                            atack = true;
-                                            break;
-                                        case "RLSE":
-                                            release = true;
-                                            break;
-                                        default:
-                                            //AUTH
-                                            break;
+                                        switch (ASCIIEncoding.ASCII.GetString(chunk))
+                                        {
+                                            case "VHDR":
+                                                /*
+                                                uint32_t oneShotHiSamples;
+                                                uint32_t repeatHiSamples;
+                                                uint32_t samplesPerHiCycle;
+                                                uint16_t samplesPerSec;
+                                                uint8_t  ctOctave;
+                                                uint8_t  compression;
+                                                uint32_t volume;
+                                                */
+                                                oneShotHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(0).Take(4).ToArray());
+                                                repeatHiSamples = littleEndianBytesToBigEndianUInt(tmpdata.Skip(4).Take(4).ToArray());
+                                                samplesPerHiCycle = littleEndianBytesToBigEndianUInt(tmpdata.Skip(8).Take(4).ToArray());
+                                                samplesPerSec = littleEndianBytesToBigEndianUShort(tmpdata.Skip(12).Take(2).ToArray());
+                                                ctOctave = tmpdata[14];
+                                                compression = tmpdata[15];
+                                                volume = littleEndianBytesToBigEndianUInt(tmpdata.Skip(16).Take(4).ToArray());
+                                                break;
+                                            case "NAME":
+                                                name = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
+                                                break;
+                                            case "ANNO":
+                                                memo = ASCIIEncoding.ASCII.GetString(tmpdata).Replace((char)0, ' ').Trim();
+                                                break;
+                                            case "BODY":
+                                                pcmData = Array.ConvertAll(tmpdata, b => unchecked((sbyte)b));
+                                                break;
+                                            case "ATAK":
+                                                atack = true;
+                                                break;
+                                            case "RLSE":
+                                                release = true;
+                                                break;
+                                            default:
+                                                //AUTH
+                                                break;
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+
+                                    if (pcmData == null)
+                                        throw;
+                                    else
+                                    {
+                                        System.Windows.Forms.MessageBox.Show("This file(" + binFile.Name + ") is loaded but may be corrupted.");
                                     }
                                 }
                                 if (pcmData != null)
