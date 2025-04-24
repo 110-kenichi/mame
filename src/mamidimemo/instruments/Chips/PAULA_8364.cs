@@ -215,12 +215,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private uint targetSampleRate = 16726;
+        private uint targetSampleRate = 16574;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set default raw PCM file converting target PCM sample rate [Hz].")]
-        [DefaultValue(typeof(uint), "16726")]
+        [Description("Set default raw PCM file converting target PCM sample rate [Hz].\r\n" +
+            "If NTSC machine, set to 16726.\r\n")]
+        [DefaultValue(typeof(uint), "16574")]
         public uint TargetSampleRate
         {
             get
@@ -1303,15 +1304,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set PCM samplerate [Hz]")]
-            [DefaultValue(typeof(uint), "14000")]
+            [Description("Set PCM samplerate [Hz]. If NTSC machine, set to 16726")]
+            [DefaultValue(typeof(uint), "16574")]
             [SlideParametersAttribute(4000, 22050)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 14000;
+            } = 16574;
 
             private bool f_LoopEnable;
 
@@ -1503,15 +1504,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set PCM samplerate [Hz]")]
-            [DefaultValue(typeof(uint), "16726")]
+            [Description("Set PCM samplerate [Hz]. If NTSC machine, set to 16726")]
+            [DefaultValue(typeof(uint), "16574")]
             [SlideParametersAttribute(4000, 22050)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 16726;
+            } = 16574;
 
             [DataMember]
             [Category("Sound")]
