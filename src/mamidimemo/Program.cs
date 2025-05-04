@@ -41,7 +41,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "6.0.5.2";
+        public const string FILE_VERSION = "6.0.5.3";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2025 Itoken.All rights reserved.";
@@ -171,12 +171,17 @@ Copyright(C) 2019, 2025 Itoken.All rights reserved.";
             }
         }
 
-        static readonly float DpiScale = ((new System.Windows.Forms.Form()).CreateGraphics().DpiX) / 96;
+        public static readonly float DpiScale = 1f; // ((new System.Windows.Forms.Form()).CreateGraphics().DpiX) / 96;
+
+        public static readonly float DpiScaleResolver = ((new System.Windows.Forms.Form()).CreateGraphics().DpiX) / 96;
 
         static object ResolveFont(MethodInfo info, IMethodCallMessage msg)
         {
             float sz = (float)msg.Args[1];
-            sz = sz + (sz * guiScale);
+            //sz = System.Drawing.SystemFonts.DefaultFont.Size;
+            sz *= ((100f + (float)Settings.Default.GuiScale) / 100f);
+            sz *= DpiScaleResolver;
+            //sz = sz + (sz * ((((DpiScaleResolver * 100f) - 100f) + (float)Settings.Default.GuiScale) / 100f));
 
             return new Font((String)msg.Args[0], sz,
                 (System.Drawing.FontStyle)msg.Args[2], (GraphicsUnit)msg.Args[3]);

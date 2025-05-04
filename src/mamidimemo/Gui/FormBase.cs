@@ -154,14 +154,15 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (c is NumericUpDown)
             {
-                //c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
-                //c.Controls[1].Font = c.Font;
+                c.Font = new Font("Yu Gothic UI", MetroFramework.MetroFonts.Button.Size / Program.DpiScaleResolver);
+                c.Controls[1].Font = c.Font;
                 c.Margin = new Padding(1);
             }
             else if (c is ComboBox)
             {
+                c.Font = new Font("Yu Gothic UI", MetroFramework.MetroFonts.Button.Size / Program.DpiScaleResolver);
                 //c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
-                SetComboBoxHeight(c.Handle,c.Font.Height);
+                SetComboBoxHeight(c.Handle,(int)(c.Font.Height));
             }
             else if (c is ListView)
             {
@@ -209,7 +210,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         protected override void OnControlAdded(ControlEventArgs e)
         {
-            if (Program.GuiScale != 0)
+            //if (Program.GuiScale != 0)
             {
                 SetAllControlsFontSize(e.Control, Program.GuiScale);
                 if (canSetFontSize(e.Control))
