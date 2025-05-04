@@ -33,8 +33,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		         VC++ 2012 Runtime https://www.microsoft.com/en-au/download/details.aspx?id=30679
 
 1. Extract downloaded zip file.
-   Execute "DelZoneID.ps1" on PowerShell to remove "Zone.Identifier" flag.
 
+   And execute "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass" on the PowerShell to allow script execution.
+   Then execute "DelZoneID.ps1" on the PowerShell to remove "Zone.Identifier" flag.
+   
    ★日本語フォルダには現状対応していません★
 
 2. Install VC++ runtime 2012 and .NET Framework 4.7 or lator.
