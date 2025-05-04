@@ -113,8 +113,10 @@ namespace zanac.MAmidiMEmo.ComponentModel
             this.bgIconLoader.ProgressChanged += new ProgressChangedEventHandler(bgIconLoader_ProgressChanged);
             this.bgIconLoader.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgIconLoader_RunWorkerCompleted);
 
-            this.ItemActivate += new EventHandler(FileFolderList_ItemActivate);
+            this.DoubleClick += FileFolderList_DoubleClick;
+            //this.ItemActivate += new EventHandler(FileFolderList_ItemActivate);
             this.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(FileFolderList_ItemSelectionChanged);
+            this.KeyDown += FileFolderList_KeyDown;
             Application.Idle += new EventHandler(Application_Idle);
         }
 
@@ -356,6 +358,35 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 return;
 
             itemSelectionChanged = true;
+        }
+
+        private void FileFolderList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                ListViewItem thisItem = this.FocusedItem;
+                ItemType type = (ItemType)thisItem.Tag;
+
+                if (type.Type == Types.FOLDER)
+                {
+                    DirectoryInfo di = (DirectoryInfo)type.ItemInfo;
+                    Browse(di.FullName);
+                }
+            }
+        }
+
+        private void FileFolderList_DoubleClick(object sender, EventArgs e)
+        {
+            if (this.SelectedItems.Count <= 0) { return; }
+
+            ListViewItem thisItem = this.SelectedItems[0];
+            ItemType type = (ItemType)thisItem.Tag;
+
+            if (type.Type == Types.FOLDER)
+            {
+                DirectoryInfo di = (DirectoryInfo)type.ItemInfo;
+                Browse(di.FullName);
+            }
         }
 
         void FileFolderList_ItemActivate(object sender, EventArgs e)

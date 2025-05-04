@@ -7,11 +7,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Properties;
 
@@ -198,17 +200,24 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         public static void MidiEventReceived(MidiPort port, long eventId, long frameId, byte data1, byte data2, byte data3)
         {
-            long count;
-            QueryPerformanceCounter(out count);
-            var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
-            me.DeltaTime = count;
+            try
+            {
+                long count;
+                QueryPerformanceCounter(out count);
+                var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
+                me.DeltaTime = count;
 
-            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
-            MidiEventHooked?.Invoke(typeof(MidiManager), ea);
-            if (ea.Cancel)
-                return;
+                var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
+                MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+                if (ea.Cancel)
+                    return;
 
-            SendMidiEvent(port, me);
+                SendMidiEvent(port, me);
+            }
+            catch (Exception ex)
+            {
+                FormMain.OutputLog(null, "MidiEventsReceived:" + ex.Message);
+            }
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -225,28 +234,35 @@ namespace zanac.MAmidiMEmo.Midi
             //    Thread.Sleep(100);
             //}
 #endif
-            long count;
-            QueryPerformanceCounter(out count);
-            List<MidiEvent> events = new List<MidiEvent>();
-            for (int i = 0; i < length; i++)
+            try
             {
-                var me = midiConverter.Convert(new byte[] { data1[i], data2[i], data3[i] });
-                me.DeltaTime = count;
-                events.Add(me);
-            }
-
-            for (int i = 0; i < events.Count; i++)
-            {
-                var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(events[i]));
-                MidiEventHooked?.Invoke(typeof(MidiManager), ea);
-                if (ea.Cancel)
+                long count;
+                QueryPerformanceCounter(out count);
+                List<MidiEvent> events = new List<MidiEvent>();
+                for (int i = 0; i < length; i++)
                 {
-                    events.RemoveAt(i);
-                    i--;
+                    var me = midiConverter.Convert(new byte[] { data1[i], data2[i], data3[i] });
+                    me.DeltaTime = count;
+                    events.Add(me);
                 }
-            }
 
-            SendMidiEvents(port, events.ToArray());
+                for (int i = 0; i < events.Count; i++)
+                {
+                    var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(events[i]));
+                    MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+                    if (ea.Cancel)
+                    {
+                        events.RemoveAt(i);
+                        i--;
+                    }
+                }
+
+                SendMidiEvents(port, events.ToArray());
+            }
+            catch (Exception ex)
+            {
+                FormMain.OutputLog(null, "MidiEventsReceived:" + ex.Message);
+            }
         }
 
         /// <summary>
@@ -254,20 +270,28 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         unsafe public static void MidiSysEventReceived(MidiPort port, long eventId, long frameId, byte* data, int length)
         {
-            long count;
-            QueryPerformanceCounter(out count);
-            List<byte> buf = new List<byte>();
-            for (int i = 0; i < length; i++)
-                buf.Add(data[i]);
-            var me = midiConverter.Convert(buf.ToArray());
-            me.DeltaTime = count;
+            try
+            {
+                long count;
+                QueryPerformanceCounter(out count);
+                List<byte> buf = new List<byte>();
+                for (int i = 1; i < length; i++)
+                    buf.Add(data[i]);
 
-            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
-            MidiEventHooked?.Invoke(typeof(MidiManager), ea);
-            if (ea.Cancel)
-                return;
+                var me = new NormalSysExEvent(buf.ToArray());
+                me.DeltaTime = count;
 
-            SendMidiEvent(port, me);
+                var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
+                MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+                if (ea.Cancel)
+                    return;
+
+                SendMidiEvent(port, me);
+            }
+            catch (Exception ex)
+            {
+                FormMain.OutputLog(null, "MidiSysEventReceived:" + ex.Message);
+            }
         }
 
         public static event MidiEventHookHandler MidiEventHooked;

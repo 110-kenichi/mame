@@ -590,6 +590,7 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 	std::vector<unsigned char> midiEvents2;
 	std::vector<unsigned char> midiEvents3;
 	int count = 0;
+	std::vector<unsigned char> sysexEvent;
 
 	for (int i = 0; i < loops; i++)
 	{
@@ -609,9 +610,22 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 			}
 			case kVstSysExType:
 			{
+				LONG64 eid = eventId;
+				if (!(ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
+					eid = 0;
+				int frame = (int)(ti->samplePos / (ti->sampleRate / 60.0));
+
 				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
-				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
-				m_rpcClient->async_call("SendMidiSysEvent", eventId, buffer, midievent->dumpBytes);
+				for (int j = 0; j < midievent->dumpBytes; j++)
+					sysexEvent.push_back((unsigned char)midievent->sysexDump[j]);
+				if ((unsigned char)midievent->sysexDump[midievent->dumpBytes - 1] == 0xF7)
+				{
+					m_rpcClient->async_call("SendMidiSysEvent", eid, frame, sysexEvent, sysexEvent.size());
+					sysexEvent.clear();
+				}
+
+				eventId++;
+
 				break;
 			}
 		}
