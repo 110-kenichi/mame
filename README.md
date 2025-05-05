@@ -1,4 +1,4 @@
-MAmidiMEmo 6.0.5.3 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.0.5.4 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -276,6 +276,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.0.5.4 Fixed MT-32 BIOS ROM loading path. No longer need to place MT32_CONTROL.ROM and MT32_PCM.ROM in the VST Host directory.
 - 6.0.5.3 Re-improved Hi-DPI screen handling.
 - 6.0.5.2 Fixed SysEx message handling for VSTi
 - 6.0.5.1 Change default sample rate of PAULA_8364(AMIGA) to 16574Hz.

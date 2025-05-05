@@ -8,6 +8,8 @@
 #include "emu.h"
 #include "sound/mt32.h"
 #include "..\munt\mt32emu\src\c_interface\c_interface.h"
+#include <windows.h>
+#include <shlwapi.h>
 
 // device type definition
 DEFINE_DEVICE_TYPE(MT32, mt32_device, "mt32", "MT32")
@@ -72,8 +74,22 @@ void mt32_device::device_start()
 	mt32emu_set_midi_delay_mode(context, mt32emu_midi_delay_mode::MT32EMU_MDM_IMMEDIATE);
 	//mt32emu_set_output_gain(context, 0.75);
 
-	mt32emu_add_rom_file(context, "MT32_CONTROL.ROM");
-	mt32emu_add_rom_file(context, "MT32_PCM.ROM");
+	char szModulePath[MAX_PATH];
+	::GetModuleFileName(NULL, szModulePath, sizeof(szModulePath) / sizeof(szModulePath[0]));
+	::PathRemoveFileSpec(szModulePath);
+
+	char szControlPath[MAX_PATH];
+	strcpy(szControlPath, szModulePath);
+	::PathAppend(szControlPath, "MT32_CONTROL.ROM");
+	mt32emu_add_rom_file(context, szControlPath);
+
+	char szPcmPath[MAX_PATH];
+	strcpy(szPcmPath, szModulePath);
+	::PathAppend(szPcmPath, "MT32_PCM.ROM");
+	mt32emu_add_rom_file(context, szPcmPath);
+
+	//mt32emu_add_rom_file(context, "MT32_CONTROL.ROM");
+	//mt32emu_add_rom_file(context, "MT32_PCM.ROM");
 }
 
 //-------------------------------------------------
