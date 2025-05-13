@@ -1467,7 +1467,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.DutyEnvelopesRepeatPoint >= 0)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
                             else
-                                f_dutyCounter = (uint)vm;
+                                f_dutyCounter = (uint)vm - 1;
                         }
                     }
                     else

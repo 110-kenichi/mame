@@ -1309,7 +1309,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.ToneEnvelopesRepeatPoint >= 0)
                                 f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
                             else
-                                f_toneCounter = (uint)vm;
+                                f_toneCounter = (uint)vm - 1;
                         }
                     }
                     else

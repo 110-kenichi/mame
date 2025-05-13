@@ -2673,7 +2673,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.PitchShift13RepeatPoint >= 0)
                                 f_PitchShift13Counter = (uint)settings.PitchShift13RepeatPoint;
                             else
-                                f_PitchShift13Counter = (uint)vm;
+                                f_PitchShift13Counter = (uint)vm - 1;
                         }
                     }
                     else
@@ -2708,7 +2708,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.PitchShift24RepeatPoint >= 0)
                                 f_PitchShift24Counter = (uint)settings.PitchShift24RepeatPoint;
                             else
-                                f_PitchShift24Counter = (uint)vm;
+                                f_PitchShift24Counter = (uint)vm - 1;
                         }
                     }
                     else

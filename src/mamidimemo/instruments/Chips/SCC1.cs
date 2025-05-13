@@ -1824,7 +1824,7 @@ typeof(UITypeEditor)), Localizable(false)]
                             if (settings.MorphEnvelopesRepeatPoint >= 0)
                                 f_morphCounter = (uint)settings.MorphEnvelopesRepeatPoint;
                             else
-                                f_morphCounter = (uint)vm;
+                                f_morphCounter = (uint)vm - 1;
                         }
                     }
                     else

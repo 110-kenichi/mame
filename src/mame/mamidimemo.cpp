@@ -46,6 +46,7 @@
 #include "..\devices\sound\ymfm\src\ymfm_opq.h"
 #include "..\devices\sound\saa1099.h"
 #include ".\machine\8364_paula.h"
+#include "..\devices\sound\tiaintf.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2341,4 +2342,26 @@ extern "C"
 		paula_8364_devices[unitNumber]->set_callback(callback);
 	}
 
+	tia_device* tia_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void tia_device_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (tia_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			tia_device* tia = dynamic_cast<tia_device*>(rm->device((std::string("tia_") + num).c_str()));
+			if (tia == nullptr)
+				return;
+
+			tia_devices[unitNumber] = tia;
+		}
+		tia_devices[unitNumber]->tia_sound_w(address, data);
+	}
 }

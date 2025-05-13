@@ -1861,7 +1861,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.settings = settings;
             }
 
-            private uint f_EnvelopeClocks;
+            private uint f_EnvelopeClocksCounter;
 
             public byte? EnvelopeClocks
             {
@@ -1869,7 +1869,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
-            private uint f_NoiseRates;
+            private uint f_NoiseRatesCounter;
 
             public byte? NoiseRates
             {
@@ -1877,7 +1877,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
-            private uint f_EnvelopeTypes;
+            private uint f_EnvelopeTypesCounter;
 
             public byte? EnvelopeTypes
             {
@@ -1897,27 +1897,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         var vm = settings.EnvelopeClocksNums.Length;
                         if (settings.EnvelopeClocksReleasePoint >= 0)
                             vm = settings.EnvelopeClocksReleasePoint;
-                        if (f_EnvelopeClocks >= vm)
+                        if (f_EnvelopeClocksCounter >= vm)
                         {
                             if (settings.EnvelopeClocksRepeatPoint >= 0)
-                                f_EnvelopeClocks = (uint)settings.EnvelopeClocksRepeatPoint;
+                                f_EnvelopeClocksCounter = (uint)settings.EnvelopeClocksRepeatPoint;
                             else
-                                f_EnvelopeClocks = (uint)vm;
+                                f_EnvelopeClocksCounter = (uint)vm - 1;
                         }
                     }
                     else
                     {
-                        if (f_EnvelopeClocks >= settings.EnvelopeClocksNums.Length)
+                        if (f_EnvelopeClocksCounter < settings.EnvelopeClocksNums.Length)
                         {
-                            if (settings.EnvelopeClocksReleasePoint >= 0 && f_EnvelopeClocks <= (uint)settings.EnvelopeClocksReleasePoint)
-                                f_EnvelopeClocks = (uint)settings.EnvelopeClocksReleasePoint;
+                            if (settings.EnvelopeClocksReleasePoint >= 0 && f_EnvelopeClocksCounter <= (uint)settings.EnvelopeClocksReleasePoint)
+                                f_EnvelopeClocksCounter = (uint)settings.EnvelopeClocksReleasePoint;
                             else if (settings.EnvelopeClocksReleasePoint < 0 && settings.KeyOffStop)
-                                f_EnvelopeClocks = (uint)settings.EnvelopeClocksNums.Length;
+                                f_EnvelopeClocksCounter = (uint)settings.EnvelopeClocksNums.Length;
                         }
                     }
-                    if (f_EnvelopeClocks < settings.EnvelopeClocksNums.Length)
+                    if (f_EnvelopeClocksCounter < settings.EnvelopeClocksNums.Length)
                     {
-                        int vol = settings.EnvelopeClocksNums[f_EnvelopeClocks++];
+                        int vol = settings.EnvelopeClocksNums[f_EnvelopeClocksCounter++];
 
                         EnvelopeClocks = (byte)vol;
                         process = true;
@@ -1932,27 +1932,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         var vm = settings.NoiseRatesNums.Length;
                         if (settings.NoiseRatesReleasePoint >= 0)
                             vm = settings.NoiseRatesReleasePoint;
-                        if (f_NoiseRates >= vm)
+                        if (f_NoiseRatesCounter >= vm)
                         {
                             if (settings.NoiseRatesRepeatPoint >= 0)
-                                f_NoiseRates = (uint)settings.NoiseRatesRepeatPoint;
+                                f_NoiseRatesCounter = (uint)settings.NoiseRatesRepeatPoint;
                             else
-                                f_NoiseRates = (uint)vm;
+                                f_NoiseRatesCounter = (uint)vm - 1;
                         }
                     }
                     else
                     {
-                        if (f_NoiseRates >= settings.NoiseRatesNums.Length)
+                        if (f_NoiseRatesCounter < settings.NoiseRatesNums.Length)
                         {
-                            if (settings.NoiseRatesReleasePoint >= 0 && f_NoiseRates <= (uint)settings.NoiseRatesReleasePoint)
-                                f_NoiseRates = (uint)settings.NoiseRatesReleasePoint;
+                            if (settings.NoiseRatesReleasePoint >= 0 && f_NoiseRatesCounter <= (uint)settings.NoiseRatesReleasePoint)
+                                f_NoiseRatesCounter = (uint)settings.NoiseRatesReleasePoint;
                             else if (settings.NoiseRatesReleasePoint < 0 && settings.KeyOffStop)
-                                f_NoiseRates = (uint)settings.NoiseRatesNums.Length;
+                                f_NoiseRatesCounter = (uint)settings.NoiseRatesNums.Length;
                         }
                     }
-                    if (f_NoiseRates < settings.NoiseRatesNums.Length)
+                    if (f_NoiseRatesCounter < settings.NoiseRatesNums.Length)
                     {
-                        int vol = settings.NoiseRatesNums[f_NoiseRates++];
+                        int vol = settings.NoiseRatesNums[f_NoiseRatesCounter++];
 
                         NoiseRates = (byte)vol;
                         process = true;
@@ -1967,27 +1967,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         var vm = settings.EnvelopeTypesNums.Length;
                         if (settings.EnvelopeTypesReleasePoint >= 0)
                             vm = settings.EnvelopeTypesReleasePoint;
-                        if (f_EnvelopeTypes >= vm)
+                        if (f_EnvelopeTypesCounter >= vm)
                         {
                             if (settings.EnvelopeTypesRepeatPoint >= 0 && settings.KeyOffStop)
-                                f_EnvelopeTypes = (uint)settings.EnvelopeTypesRepeatPoint;
+                                f_EnvelopeTypesCounter = (uint)settings.EnvelopeTypesRepeatPoint;
                             else
-                                f_EnvelopeTypes = (uint)vm;
+                                f_EnvelopeTypesCounter = (uint)vm - 1;
                         }
                     }
                     else
                     {
-                        if (f_EnvelopeTypes >= settings.EnvelopeTypesNums.Length)
+                        if (f_EnvelopeTypesCounter < settings.EnvelopeTypesNums.Length)
                         {
-                            if (settings.EnvelopeTypesReleasePoint >= 0 && f_EnvelopeTypes <= (uint)settings.EnvelopeTypesReleasePoint)
-                                f_EnvelopeTypes = (uint)settings.EnvelopeTypesReleasePoint;
+                            if (settings.EnvelopeTypesReleasePoint >= 0 && f_EnvelopeTypesCounter <= (uint)settings.EnvelopeTypesReleasePoint)
+                                f_EnvelopeTypesCounter = (uint)settings.EnvelopeTypesReleasePoint;
                             else if (settings.EnvelopeTypesReleasePoint < 0 && settings.KeyOffStop)
-                                f_EnvelopeTypes = (uint)settings.EnvelopeTypesNums.Length;
+                                f_EnvelopeTypesCounter = (uint)settings.EnvelopeTypesNums.Length;
                         }
                     }
-                    if (f_EnvelopeTypes < settings.EnvelopeTypesNums.Length)
+                    if (f_EnvelopeTypesCounter < settings.EnvelopeTypesNums.Length)
                     {
-                        int vol = settings.EnvelopeTypesNums[f_EnvelopeTypes++];
+                        int vol = settings.EnvelopeTypesNums[f_EnvelopeTypesCounter++];
 
                         EnvelopeTypes = (byte)vol;
                         process = true;

@@ -159,6 +159,7 @@
             this.extendSPC700ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.multiPCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rF5C164ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pAULA8364ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fMSynthesisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM2610BToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
@@ -184,6 +185,7 @@
             this.extendAY38910ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uPD1771ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendMSM5232ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tIAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendBeepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sP0256ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -206,7 +208,6 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.pAULA8364ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -265,6 +266,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.propertyGrid);
             this.splitContainer2.Panel2.Controls.Add(this.toolStrip3);
+            resources.ApplyResources(this.splitContainer2.Panel2, "splitContainer2.Panel2");
             // 
             // metroLabelDrop
             // 
@@ -1131,6 +1133,7 @@
             // 
             // toolStrip4
             // 
+            resources.ApplyResources(this.toolStrip4, "toolStrip4");
             this.toolStrip4.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonPlay,
@@ -1142,7 +1145,6 @@
             this.toolStripButtonAutoVGM,
             this.toolStripButtonAutoWav,
             this.toolStripButtonReload});
-            resources.ApplyResources(this.toolStrip4, "toolStrip4");
             this.toolStrip4.Name = "toolStrip4";
             // 
             // toolStripButtonPlay
@@ -1304,12 +1306,12 @@
             // 
             // menuStrip1
             // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolToolStripMenuItem,
             this.helpToolStripMenuItem});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // fileToolStripMenuItem
@@ -1570,6 +1572,12 @@
             resources.ApplyResources(this.rF5C164ToolStripMenuItem, "rF5C164ToolStripMenuItem");
             this.rF5C164ToolStripMenuItem.Click += new System.EventHandler(this.rF5C164ToolStripMenuItem_Click);
             // 
+            // pAULA8364ToolStripMenuItem
+            // 
+            this.pAULA8364ToolStripMenuItem.Name = "pAULA8364ToolStripMenuItem";
+            resources.ApplyResources(this.pAULA8364ToolStripMenuItem, "pAULA8364ToolStripMenuItem");
+            this.pAULA8364ToolStripMenuItem.Click += new System.EventHandler(this.pAULA8364ToolStripMenuItem_Click);
+            // 
             // fMSynthesisToolStripMenuItem
             // 
             this.fMSynthesisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1679,6 +1687,7 @@
             this.extendAY38910ToolStripMenuItem,
             this.uPD1771ToolStripMenuItem,
             this.extendMSM5232ToolStripMenuItem,
+            this.tIAToolStripMenuItem,
             this.extendBeepToolStripMenuItem});
             this.pSGToolStripMenuItem.Name = "pSGToolStripMenuItem";
             resources.ApplyResources(this.pSGToolStripMenuItem, "pSGToolStripMenuItem");
@@ -1742,6 +1751,12 @@
             this.extendMSM5232ToolStripMenuItem.Name = "extendMSM5232ToolStripMenuItem";
             resources.ApplyResources(this.extendMSM5232ToolStripMenuItem, "extendMSM5232ToolStripMenuItem");
             this.extendMSM5232ToolStripMenuItem.Click += new System.EventHandler(this.extendMSM5232ToolStripMenuItem_Click);
+            // 
+            // tIAToolStripMenuItem
+            // 
+            this.tIAToolStripMenuItem.Name = "tIAToolStripMenuItem";
+            resources.ApplyResources(this.tIAToolStripMenuItem, "tIAToolStripMenuItem");
+            this.tIAToolStripMenuItem.Click += new System.EventHandler(this.tIAToolStripMenuItem_Click_1);
             // 
             // extendBeepToolStripMenuItem
             // 
@@ -1869,12 +1884,6 @@
             // 
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
-            // pAULA8364ToolStripMenuItem
-            // 
-            this.pAULA8364ToolStripMenuItem.Name = "pAULA8364ToolStripMenuItem";
-            resources.ApplyResources(this.pAULA8364ToolStripMenuItem, "pAULA8364ToolStripMenuItem");
-            this.pAULA8364ToolStripMenuItem.Click += new System.EventHandler(this.pAULA8364ToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -2092,6 +2101,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonXGM2;
         private System.Windows.Forms.ToolStripMenuItem sA1099ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pAULA8364ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tIAToolStripMenuItem;
     }
 }
 

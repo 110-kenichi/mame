@@ -1127,6 +1127,14 @@ void md_base_state::md_ntsc(machine_config &config)
 		PAULA_8364(config, *m_paula_8364[i], XTAL(28'375'160)/8);	//CLK_C1_PAL
 		(*m_paula_8364[i])->add_route(0, "lspeaker", 1.00);
 		(*m_paula_8364[i])->add_route(1, "rspeaker", 1.00);
+
+		/*
+		* #define MASTER_CLOCK_NTSC   3579545
+		* #define MASTER_CLOCK_PAL    3546894
+		*/
+		TIA(config, *m_tia[i], 3579545 / 114);
+		(*m_tia[i])->add_route(0, "lspeaker", 1.00);
+		(*m_tia[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

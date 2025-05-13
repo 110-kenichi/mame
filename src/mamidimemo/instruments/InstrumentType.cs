@@ -46,5 +46,6 @@ namespace zanac.MAmidiMEmo.Instruments
         RF5C164,    //32
         SAA1099,    //33
         PAULA_8364, //34
+        TIA, //35
     }
 }

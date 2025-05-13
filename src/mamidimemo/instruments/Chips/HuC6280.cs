@@ -1941,7 +1941,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.MorphEnvelopesRepeatPoint >= 0)
                                 f_lfoCounter = (uint)settings.MorphEnvelopesRepeatPoint;
                             else
-                                f_lfoCounter = (uint)vm;
+                                f_lfoCounter = (uint)vm - 1;
                         }
                     }
                     else

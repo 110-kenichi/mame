@@ -1357,7 +1357,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.settings = settings;
             }
 
-            private uint f_SoundType;
+            private uint f_SoundTypeCounter;
 
             public byte? SoundType
             {
@@ -1377,27 +1377,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         var vm = settings.SoundTypeEnvelopesNums.Length;
                         if (settings.SoundTypeEnvelopesReleasePoint >= 0)
                             vm = settings.SoundTypeEnvelopesReleasePoint;
-                        if (f_SoundType >= vm)
+                        if (f_SoundTypeCounter >= vm)
                         {
                             if (settings.SoundTypeEnvelopesRepeatPoint >= 0)
-                                f_SoundType = (uint)settings.SoundTypeEnvelopesRepeatPoint;
+                                f_SoundTypeCounter = (uint)settings.SoundTypeEnvelopesRepeatPoint;
                             else
-                                f_SoundType = (uint)vm;
+                                f_SoundTypeCounter = (uint)vm - 1;
                         }
                     }
                     else
                     {
-                        if (f_SoundType >= settings.SoundTypeEnvelopesNums.Length)
+                        if (f_SoundTypeCounter < settings.SoundTypeEnvelopesNums.Length)
                         {
-                            if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType <= (uint)settings.SoundTypeEnvelopesReleasePoint)
-                                f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
+                            if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundTypeCounter <= (uint)settings.SoundTypeEnvelopesReleasePoint)
+                                f_SoundTypeCounter = (uint)settings.SoundTypeEnvelopesReleasePoint;
                             else if (settings.SoundTypeEnvelopesReleasePoint < 0 && settings.KeyOffStop)
-                                f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
+                                f_SoundTypeCounter = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }
-                    if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
+                    if (f_SoundTypeCounter < settings.SoundTypeEnvelopesNums.Length)
                     {
-                        int vol = settings.SoundTypeEnvelopesNums[f_SoundType++];
+                        int vol = settings.SoundTypeEnvelopesNums[f_SoundTypeCounter++];
 
                         SoundType = (byte)vol;
                         process = true;

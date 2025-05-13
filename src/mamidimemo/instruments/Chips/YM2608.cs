@@ -3821,7 +3821,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.SoundTypeEnvelopesRepeatPoint >= 0)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesRepeatPoint;
                             else
-                                f_SoundType = (uint)vm;
+                                f_SoundType = (uint)vm - 1;
                         }
                     }
                     else

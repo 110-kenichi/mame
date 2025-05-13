@@ -1024,7 +1024,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.HarmonicsEnvelopesRepeatPoint >= 0)
                                 f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesRepeatPoint;
                             else
-                                f_HarmonicsCounter = (uint)vm;
+                                f_HarmonicsCounter = (uint)vm - 1;
                         }
                     }
                     else

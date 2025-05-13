@@ -274,6 +274,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("RF5C164", Resources.RF5C164);
             imageList1.Images.Add("SAA1099", Resources.SAA1099);
             imageList1.Images.Add("PAULA_8364", Resources.PAULA_8364);
+            imageList1.Images.Add("TIA", Resources.TIA);
 
             if (Program.IsVSTiMode())
             {
@@ -877,6 +878,10 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.PAULA_8364);
         }
 
+        private void tIAToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.TIA);
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -2848,6 +2853,7 @@ namespace zanac.MAmidiMEmo.Gui
                 propertyGrid.Refresh();
             timer1.Stop();
         }
+
 
     }
 }

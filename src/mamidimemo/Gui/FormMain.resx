@@ -122,6 +122,9 @@
     <value>Fill</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="splitContainer1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 109</value>
   </data>
@@ -131,6 +134,9 @@
   <data name="splitContainer2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="splitContainer2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="splitContainer2.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
@@ -138,7 +144,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabelDrop.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.75pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="metroLabelDrop.Location" type="System.Drawing.Point, System.Drawing">
     <value>2, 2</value>
@@ -208,7 +214,7 @@
     <value>Fill</value>
   </data>
   <data name="listViewIntruments.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 12pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="listViewIntruments.Groups" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
@@ -297,6 +303,9 @@
   <data name="&gt;&gt;listViewIntruments.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="splitContainer2.Panel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="splitContainer2.Panel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
@@ -346,7 +355,7 @@
     <value>Fill</value>
   </data>
   <data name="propertyGrid.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.75pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="propertyGrid.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -374,6 +383,9 @@
   </metadata>
   <data name="toolStrip3.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="toolStrip3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="toolStripButtonCat.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
@@ -444,6 +456,9 @@
   <data name="&gt;&gt;toolStrip3.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="splitContainer2.Panel2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="&gt;&gt;splitContainer2.Panel2.Name" xml:space="preserve">
     <value>splitContainer2.Panel2</value>
   </data>
@@ -477,6 +492,9 @@
   <data name="&gt;&gt;splitContainer2.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="splitContainer1.Panel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="splitContainer1.Panel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
@@ -491,6 +509,9 @@
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPage1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
   </data>
   <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
@@ -522,6 +543,9 @@
   <data name="pianoControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="pianoControl1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 25</value>
   </data>
@@ -551,6 +575,9 @@
   </metadata>
   <data name="toolStrip2.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="toolStrip2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 22</value>
@@ -1911,6 +1938,9 @@
   <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="tabPage3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
   </data>
@@ -1941,8 +1971,11 @@
   <data name="metroTrackBarVol.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
+  <data name="metroTrackBarVol.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="metroTrackBarVol.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 51</value>
+    <value>243, 51</value>
   </data>
   <data name="metroTrackBarVol.Size" type="System.Drawing.Size, System.Drawing">
     <value>144, 41</value>
@@ -1969,7 +2002,7 @@
     <value>True</value>
   </data>
   <data name="label1.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Arial, 9pt, style=Bold</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -1978,7 +2011,7 @@
     <value>30, 3</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 15</value>
+    <value>32, 15</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -2005,16 +2038,16 @@
     <value>True</value>
   </data>
   <data name="labelClock.Font" type="System.Drawing.Font, System.Drawing">
-    <value>MS UI Gothic, 24pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="labelClock.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="labelClock.Location" type="System.Drawing.Point, System.Drawing">
-    <value>94, 3</value>
+    <value>118, 12</value>
   </data>
   <data name="labelClock.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 39</value>
+    <value>34, 21</value>
   </data>
   <data name="labelClock.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -2039,6 +2072,9 @@
   </data>
   <data name="panelOsc2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
+  </data>
+  <data name="panelOsc2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
   </data>
   <data name="panelOsc2.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 51</value>
@@ -2068,16 +2104,16 @@
     <value>Fill</value>
   </data>
   <data name="labelTitle.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 18pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="labelTitle.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="labelTitle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 3</value>
+    <value>243, 3</value>
   </data>
   <data name="labelTitle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>880, 40</value>
+    <value>882, 40</value>
   </data>
   <data name="labelTitle.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -2099,6 +2135,9 @@
   </data>
   <data name="labelStat.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="labelStat.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="labelStat.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -2128,7 +2167,7 @@
     <value>True</value>
   </data>
   <data name="label2.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Arial, 9pt, style=Bold</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -2137,7 +2176,7 @@
     <value>208, 43</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 15</value>
+    <value>23, 15</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -2161,7 +2200,7 @@
     <value>True</value>
   </data>
   <data name="label3.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Arial, 9pt, style=Bold</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -2170,7 +2209,7 @@
     <value>208, 3</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>31, 15</value>
+    <value>29, 15</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -2194,16 +2233,16 @@
     <value>True</value>
   </data>
   <data name="label4.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Arial, 9pt, style=Bold</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1015, 43</value>
+    <value>1053, 43</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>43, 15</value>
+    <value>42, 15</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -2230,16 +2269,16 @@
     <value>True</value>
   </data>
   <data name="labelCpuLoad.Font" type="System.Drawing.Font, System.Drawing">
-    <value>MS UI Gothic, 24pt</value>
+    <value>Yu Gothic UI, 9pt</value>
   </data>
   <data name="labelCpuLoad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="labelCpuLoad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1064, 52</value>
+    <value>1101, 61</value>
   </data>
   <data name="labelCpuLoad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 39</value>
+    <value>24, 21</value>
   </data>
   <data name="labelCpuLoad.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -2265,11 +2304,14 @@
   <data name="panelChDisp.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="panelChDisp.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="panelChDisp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>395, 46</value>
+    <value>393, 46</value>
   </data>
   <data name="panelChDisp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>614, 51</value>
+    <value>654, 51</value>
   </data>
   <data name="panelChDisp.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -2288,6 +2330,9 @@
   </data>
   <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
   </data>
   <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 4</value>
@@ -2322,6 +2367,9 @@
   <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="panel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 27</value>
   </data>
@@ -2349,6 +2397,9 @@
   <metadata name="toolStrip4.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>122, 56</value>
   </metadata>
+  <data name="toolStrip4.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
   <data name="toolStripButtonPlay.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -2463,6 +2514,9 @@
   <data name="&gt;&gt;toolStrip4.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="tabPage4.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="tabPage4.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
   </data>
@@ -2526,6 +2580,9 @@
   <data name="draggableListViewMediaList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="draggableListViewMediaList.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
   <data name="draggableListViewMediaList.LabelWrap" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -2549,6 +2606,9 @@
   </data>
   <data name="&gt;&gt;draggableListViewMediaList.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPage5.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
   </data>
   <data name="tabPage5.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
@@ -2583,6 +2643,9 @@
   <data name="listViewOutput.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <data name="listViewOutput.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
   <data name="listViewOutput.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
@@ -2603,6 +2666,9 @@
   </data>
   <data name="&gt;&gt;listViewOutput.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tabPage2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
   </data>
   <data name="tabPage2.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 38</value>
@@ -2652,6 +2718,9 @@
   <data name="&gt;&gt;tabControlBottom.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="splitContainer1.Panel2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 10.8pt</value>
+  </data>
   <data name="splitContainer1.Panel2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
@@ -2691,6 +2760,9 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>194, 17</value>
   </metadata>
+  <data name="menuStrip1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
   <data name="openSampleFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>256, 22</value>
   </data>
@@ -2853,6 +2925,9 @@
   <data name="toolStrip1.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <data name="toolStrip1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
   <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>58, 22</value>
   </data>
@@ -2890,43 +2965,43 @@
     <value>MIDI &amp;THRU</value>
   </data>
   <data name="lAToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="lAToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MIDI</value>
   </data>
   <data name="extendC140ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>140, 22</value>
   </data>
   <data name="extendC140ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;C140</value>
   </data>
   <data name="extendSPC700ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>140, 22</value>
   </data>
   <data name="extendSPC700ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;SPC700</value>
   </data>
   <data name="multiPCMToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>140, 22</value>
   </data>
   <data name="multiPCMToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MultiPCM</value>
   </data>
   <data name="rF5C164ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>140, 22</value>
   </data>
   <data name="rF5C164ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;RF5C164</value>
   </data>
   <data name="pAULA8364ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>140, 22</value>
   </data>
   <data name="pAULA8364ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;PAULA_8364</value>
   </data>
   <data name="pCMToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="pCMToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;PCM</value>
@@ -2986,7 +3061,7 @@
     <value>YM3806(OP&amp;Q)</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;FM</value>
@@ -3010,7 +3085,7 @@
     <value>&amp;HuC6280</value>
   </data>
   <data name="wSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="wSGToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;WSG</value>
@@ -3075,6 +3150,12 @@
   <data name="extendMSM5232ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MSM5232+TA7630</value>
   </data>
+  <data name="tIAToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 22</value>
+  </data>
+  <data name="tIAToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;TIA</value>
+  </data>
   <data name="extendBeepToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
   </data>
@@ -3085,7 +3166,7 @@
     <value>False</value>
   </data>
   <data name="pSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="pSGToolStripMenuItem.Text" xml:space="preserve">
     <value>PS&amp;G</value>
@@ -3109,7 +3190,7 @@
     <value>S&amp;AM</value>
   </data>
   <data name="eTCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="eTCToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;VOICE</value>
@@ -3121,7 +3202,7 @@
     <value>&amp;SN76477</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;DISCRETE</value>
@@ -5718,6 +5799,12 @@
   <data name="&gt;&gt;rF5C164ToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;pAULA8364ToolStripMenuItem.Name" xml:space="preserve">
+    <value>pAULA8364ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;pAULA8364ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;fMSynthesisToolStripMenuItem.Name" xml:space="preserve">
     <value>fMSynthesisToolStripMenuItem</value>
   </data>
@@ -5868,6 +5955,12 @@
   <data name="&gt;&gt;extendMSM5232ToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;tIAToolStripMenuItem.Name" xml:space="preserve">
+    <value>tIAToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;tIAToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;extendBeepToolStripMenuItem.Name" xml:space="preserve">
     <value>extendBeepToolStripMenuItem</value>
   </data>
@@ -5999,12 +6092,6 @@
   </data>
   <data name="&gt;&gt;timer1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;pAULA8364ToolStripMenuItem.Name" xml:space="preserve">
-    <value>pAULA8364ToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;pAULA8364ToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FormMain</value>

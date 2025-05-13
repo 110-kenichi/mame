@@ -3617,7 +3617,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.ToneEnvelopesRepeatPoint >= 0)
                                 f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
                             else
-                                f_toneCounter = (uint)vm;
+                                f_toneCounter = (uint)vm - 1;
                         }
                     }
                     else
@@ -3651,7 +3651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.DrumCh7FNumEnvelopesRepeatPoint >= 0)
                                 f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesRepeatPoint;
                             else
-                                f_drumCh7FNumCounter = (ushort)vm;
+                                f_drumCh7FNumCounter = (ushort)(vm - 1);
                         }
                     }
                     else
@@ -3684,7 +3684,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.DrumCh8FNumEnvelopesRepeatPoint >= 0)
                                 f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesRepeatPoint;
                             else
-                                f_drumCh8FNumCounter = (ushort)vm;
+                                f_drumCh8FNumCounter = (ushort)(vm - 1);
                         }
                     }
                     else
@@ -3717,7 +3717,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (settings.DrumCh9FNumEnvelopesRepeatPoint >= 0)
                                 f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesRepeatPoint;
                             else
-                                f_drumCh9FNumCounter = (ushort)vm;
+                                f_drumCh9FNumCounter = (ushort)(vm - 1);
                         }
                     }
                     else

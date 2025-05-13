@@ -31,7 +31,7 @@ tia_device::tia_device(const machine_config &mconfig, const char *tag, device_t 
 
 void tia_device::device_start()
 {
-	m_channel = stream_alloc(0, 1, clock());
+	m_channel = stream_alloc(0, 2, clock());
 	m_chip = tia_sound_init(this, clock(), clock(), 16);
 	if (!m_chip)
 		throw emu_fatalerror("tia_device(%s): Error creating TIA chip", tag());
@@ -55,6 +55,12 @@ void tia_device::device_stop()
 void tia_device::sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
 	tia_process(m_chip, outputs[0], samples);
+
+	//MAmi
+	for (int i = 0; i < samples; i++)
+	{
+		outputs[1][i] = outputs[0][i];
+	}
 }
 
 
