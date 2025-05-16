@@ -212,6 +212,7 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Gui\LpcFileLoaderUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\PAULA_8364.cs" />
     <Compile Include="Instruments\Chips\TIA.cs" />
     <Compile Include="Instruments\FmToneImporter.cs" />
@@ -1440,6 +1441,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\YMF262_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Tools\TMS5220\ConvertPraatToLpc.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Tools\TMS5220\lpc.praat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Tools\TMS5220\Releases · EricLafortune-VideoTools.url">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Tools\TMS5220\Releases · praat-praat.url">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VST\MAmiVSTi.ini">

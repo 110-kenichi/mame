@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +25,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
-using static zanac.MAmidiMEmo.Instruments.Chips.SP0256;
+using zanac.MAmidiMEmo.Properties;
 
 //https://www.dexsilicium.com/tms5220.pdf   
 //http://www.stuartconner.me.uk/ti_portable_speech_lab/ti_portable_speech_lab.htm
@@ -130,7 +131,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<Beep>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -635,7 +636,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 bw = new BitWriter(parentModule);
             }
-            
+
             /// <summary>
             /// 
             /// </summary>
@@ -658,11 +659,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 // Send commands
                 if (timbre.ToneType == ToneType.Custom)
                 {
-                    var lpcd = timbre.RawCustomLpcData;
-                    if (lpcd != null)
+                    if (timbre.CustomLpcRawData != null && timbre.CustomLpcRawData.Length != 0)
                     {
-                        foreach (var line in lpcd)
-                            sendCommand(line);
+                        var lpcd = timbre.CustomLpcRawData;
+                        foreach (var data in lpcd)
+                            parentModule.Tms5220DataW(data);
+                    }
+                    else
+                    {
+                        var lpcd = timbre.RawCustomLpcData;
+                        if (lpcd != null)
+                        {
+                            foreach (var line in lpcd)
+                                sendCommand(line);
+                        }
                     }
                 }
                 else
@@ -909,6 +919,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            public bool ShouldSerializeCustomLpcData()
+            {
+                return CustomLpcData != null && CustomLpcData.Length != 0;
+            }
+
+            public void ResetCustomLpcData()
+            {
+                CustomLpcData = null;
+            }
+
             [Browsable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
@@ -916,6 +936,55 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            private byte[] f_CustomLpcRawData = new byte[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(LpcFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set raw LPC data.")]
+            public byte[] CustomLpcRawData
+            {
+                get
+                {
+                    return f_CustomLpcRawData;
+                }
+                set
+                {
+                    f_CustomLpcRawData = value;
+                }
+            }
+
+            public bool ShouldSerializeCustomLpcRawData()
+            {
+                return CustomLpcRawData.Length != 0;
+            }
+
+            public void ResetCustomLpcRawData()
+            {
+                CustomLpcRawData = new byte[0];
+            }
+
+            private String lpcDataInfo;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("LpcData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String LpcDataInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return lpcDataInfo;
+                }
+                set
+                {
+                    lpcDataInfo = value;
+                }
             }
 
             [DataMember]
@@ -942,7 +1011,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<TMS5220Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {

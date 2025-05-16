@@ -295,6 +295,7 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sn76496.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sp0256.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\tms5220.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\vlm5030.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ym2151.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\2612intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ym2413.h" />
@@ -388,6 +389,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\tiasound.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\tms5220.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\upd1771.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\vlm5030.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ym2151.cpp">
       <ObjectFileName>$(IntDir)src\devices\sound\</ObjectFileName>
     </ClCompile>
