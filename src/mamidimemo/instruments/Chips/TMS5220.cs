@@ -790,7 +790,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
-            }
+            } = ToneType.Custom;
 
             [DataMember]
             [TypeConverter(typeof(OpenEditorTypeConverter))]
