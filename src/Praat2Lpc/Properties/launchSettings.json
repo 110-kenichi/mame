@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Praat2Lpc": {
+      "commandName": "Project",
+      "commandLineArgs": "-vlm5030 output.PraatPitch output.PraatLPC 0.4 0.6 output_vlm.lpc"
+    }
+  }
+}
