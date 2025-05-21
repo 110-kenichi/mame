@@ -275,6 +275,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("SAA1099", Resources.SAA1099);
             imageList1.Images.Add("PAULA_8364", Resources.PAULA_8364);
             imageList1.Images.Add("TIA", Resources.TIA);
+            imageList1.Images.Add("VLM5030", Resources.VLM5030);
 
             if (Program.IsVSTiMode())
             {
@@ -882,6 +883,12 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InstrumentManager.AddInstrument(InstrumentType.TIA);
         }
+
+        private void vLM5030ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.VLM5030);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -2853,7 +2860,6 @@ namespace zanac.MAmidiMEmo.Gui
                 propertyGrid.Refresh();
             timer1.Stop();
         }
-
 
     }
 }

@@ -47,6 +47,7 @@
 #include "..\devices\sound\saa1099.h"
 #include ".\machine\8364_paula.h"
 #include "..\devices\sound\tiaintf.h"
+#include "..\devices\sound\vlm5030.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2363,5 +2364,29 @@ extern "C"
 			tia_devices[unitNumber] = tia;
 		}
 		tia_devices[unitNumber]->tia_sound_w(address, data);
+	}
+
+	vlm5030_device* vlm_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void vlm_device_write_data_and_play(unsigned int unitNumber, unsigned char *data, unsigned short length, unsigned char stat)
+	{
+		if (vlm_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			vlm5030_device* vlm = dynamic_cast<vlm5030_device*>(rm->device((std::string("vlm_") + num).c_str()));
+			if (vlm == nullptr)
+				return;
+
+			vlm_devices[unitNumber] = vlm;
+		}
+
+		vlm_devices[unitNumber]->write_data_and_play(data, length, stat);
 	}
 }

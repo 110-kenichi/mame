@@ -27,11 +27,15 @@ public:
 	/* set ST pin level  : set table address A0-A7 / start speech */
 	DECLARE_WRITE_LINE_MEMBER( st );
 
+	//mamidimemo
+	void write_data_and_play(uint8_t* data, uint16_t length, uint8_t stat);
+
 protected:
 	// device-level overrides
 	virtual void device_start() override;
 	virtual void device_reset() override;
 	virtual void device_post_load() override;
+	virtual void device_clock_changed() override;
 
 	// sound stream update overrides
 	virtual void sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples) override;
@@ -94,6 +98,15 @@ private:
 	void update();
 	void setup_parameter(uint8_t param);
 	void restore_state();
+
+	//mamidimemo
+	uint8_t voice_data[65535];
+	inline u8 read_byte_mami(offs_t byteaddress) {
+		if (byteaddress >= sizeof(voice_data))
+			return 3;
+		return voice_data[byteaddress];
+	}
+
 };
 
 DECLARE_DEVICE_TYPE(VLM5030, vlm5030_device)

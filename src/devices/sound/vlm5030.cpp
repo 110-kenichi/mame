@@ -157,6 +157,12 @@ static const int vlm5030_speed_table[8] =
 	IP_SIZE_SLOW
 };
 
+void vlm5030_device::device_clock_changed()
+{
+	m_channel->set_sample_rate(clock() / 440);
+}
+
+
 DEFINE_DEVICE_TYPE(VLM5030, vlm5030_device, "vlm5030", "Sanyo VLM5030")
 
 vlm5030_device::vlm5030_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock)
@@ -194,6 +200,8 @@ vlm5030_device::vlm5030_device(const machine_config &mconfig, const char *tag, d
 		memset(m_current_k, 0, sizeof(m_current_k));
 		memset(m_target_k, 0, sizeof(m_target_k));
 		memset(m_x, 0, sizeof(m_x));
+		memset(m_x, 0, sizeof(m_x));
+		memset(voice_data, 0, sizeof(voice_data));
 }
 
 //-------------------------------------------------
@@ -214,7 +222,7 @@ void vlm5030_device::device_start()
 	device_reset();
 	m_phase = PH_IDLE;
 
-	m_channel = machine().sound().stream_alloc(*this, 0, 1, clock() / 440);
+	m_channel = machine().sound().stream_alloc(*this, 0, 2, clock() / 440);
 
 	save_item(NAME(m_address));
 	save_item(NAME(m_pin_BSY));
@@ -277,7 +285,7 @@ int vlm5030_device::get_bits(int sbit,int bits)
 	int offset = m_address + (sbit>>3);
 	int data;
 
-	data = read_byte(offset) | (read_byte(offset+1)<<8);
+	data = read_byte_mami(offset) | (read_byte_mami(offset+1)<<8);
 	data >>= (sbit&7);
 	data &= (0xff>>(8-bits));
 
@@ -297,7 +305,7 @@ int vlm5030_device::parse_frame()
 		m_old_k[i] = m_new_k[i];
 
 	/* command byte check */
-	cmd = read_byte(m_address);
+	cmd = read_byte_mami(m_address);
 	if( cmd & 0x01 )
 	{   /* extend frame */
 		m_new_energy = m_new_pitch = 0;
@@ -333,6 +341,12 @@ int vlm5030_device::parse_frame()
 	m_new_k[2] = m_coeff->ktable[2][get_bits(33,m_coeff->kbits[2])];
 	m_new_k[1] = m_coeff->ktable[1][get_bits(37,m_coeff->kbits[1])];
 	m_new_k[0] = m_coeff->ktable[0][get_bits(42,m_coeff->kbits[0])];
+
+	//fprintf(stderr, "*** target Energy, Pitch, and Ks = %04d, %04d, %04d, %04d, %04d, %04d, %04d, %04d, %04d, %04d, %04d, %04d\n",
+	//	get_bits(6, m_coeff->energy_bits), get_bits(1, m_coeff->pitch_bits),
+	//	get_bits(42, m_coeff->kbits[0]), get_bits(37, m_coeff->kbits[1]), get_bits(33, m_coeff->kbits[2]), get_bits(29, m_coeff->kbits[3]),
+	//	get_bits(26, m_coeff->kbits[4]), get_bits(23, m_coeff->kbits[5]), get_bits(20, m_coeff->kbits[6]), get_bits(17, m_coeff->kbits[7]),
+	//	get_bits(14, m_coeff->kbits[8]), get_bits(11, m_coeff->kbits[9]));
 
 	m_address+=6;
 	logerror("VLM5030 %04X voice \n",m_address );
@@ -436,7 +450,7 @@ WRITE_LINE_MEMBER( vlm5030_device::vcu )
 /* set ST pin level  : set table address A0-A7 / start speech */
 WRITE_LINE_MEMBER( vlm5030_device::st )
 {
-	int table;
+//	int table;
 
 	if( m_pin_ST != state )
 	{
@@ -453,21 +467,26 @@ WRITE_LINE_MEMBER( vlm5030_device::st )
 			{
 				/* start speech */
 				/* check access mode */
-				if( m_vcu_addr_h )
-				{   /* direct access mode */
-					m_address = (m_vcu_addr_h&0xff00) + m_latch_data;
-					m_vcu_addr_h = 0;
-				}
-				else
-				{   /* indirect accedd mode */
-					table = (m_latch_data&0xfe) + (((int)m_latch_data&1)<<8);
-					m_address = (read_byte(table)<<8) | read_byte(table+1);
-#if 0
-/* show unsupported parameter message */
-if( m_interp_step != 1)
-	popmessage("No %d %dBPS parameter",table/2,m_interp_step*2400);
-#endif
-				}
+//mamidimemo
+//				if( m_vcu_addr_h )
+//				{   /* direct access mode */
+//					m_address = (m_vcu_addr_h&0xff00) + m_latch_data;
+//					m_vcu_addr_h = 0;
+//				}
+//				else
+//				{   /* indirect accedd mode */
+//					table = (m_latch_data&0xfe) + (((int)m_latch_data&1)<<8);
+//					m_address = (read_byte(table)<<8) | read_byte(table+1);
+//#if 0
+///* show unsupported parameter message */
+//if( m_interp_step != 1)
+//	popmessage("No %d %dBPS parameter",table/2,m_interp_step*2400);
+//#endif
+//				}
+				
+				//mamidimemo
+				m_address = 0;
+
 				update();
 				/* logerror("VLM5030 %02X start adr=%04X\n",table/2,m_address ); */
 				/* reset process status */
@@ -489,6 +508,18 @@ if( m_interp_step != 1)
 	}
 }
 
+void vlm5030_device::write_data_and_play(uint8_t* data, uint16_t length, uint8_t stat)
+{
+	rst(1);
+	data_w(0);
+	rst(0);
+
+	for (int i = 0; i < length; i++)
+	{
+		voice_data[i] = data[i];
+	}
+	st(stat);
+}
 
 //-------------------------------------------------
 //  sound_stream_update - handle a stream update
@@ -501,6 +532,7 @@ void vlm5030_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 	int i;
 	int u[11];
 	stream_sample_t *buffer = outputs[0];
+	int smpls = samples;
 
 	/* running */
 	if( m_phase == PH_RUN || m_phase == PH_STOP )
@@ -647,4 +679,8 @@ phase_stop:
 		buffer[buf_count++] = 0x00;
 		samples--;
 	}
+
+	//mamidimemo
+	for(int i=0; i< smpls; i++)
+		outputs[1][i] = outputs[0][i];
 }

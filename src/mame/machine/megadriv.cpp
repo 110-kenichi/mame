@@ -1135,6 +1135,11 @@ void md_base_state::md_ntsc(machine_config &config)
 		TIA(config, *m_tia[i], 3579545 / 114);
 		(*m_tia[i])->add_route(0, "lspeaker", 1.00);
 		(*m_tia[i])->add_route(1, "rspeaker", 1.00);
+
+		//3'579'545
+		VLM5030(config, *m_vlm[i], 3579545);
+		(*m_vlm[i])->add_route(0, "lspeaker", 1.00);
+		(*m_vlm[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

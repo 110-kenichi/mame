@@ -46,6 +46,7 @@
 #include "sound/saa1099.h"
 #include "machine/8364_paula.h"
 #include "sound/tiaintf.h"
+#include "sound/vlm5030.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -240,10 +241,14 @@ public:
 			strcpy(device_names[didx][i], (std::string("tia_") + num).c_str());
 			m_tia[i] = new optional_device<tia_device>(*this, device_names[didx][i]);
 			didx++;
+			//vlm
+			strcpy(device_names[didx][i], (std::string("vlm_") + num).c_str());
+			m_vlm[i] = new optional_device<vlm5030_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 35 ][8][100];
+	char device_names[ 36 ][8][100];
 	optional_device<ymfm_opm_device> *m_ym2151[8];	//1
 	optional_device<ymfm_opn2_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -279,6 +284,7 @@ public:
 	optional_device<saa1099_device>* m_saa1099[8];	//33
 	optional_device<paula_8364_device>* m_paula_8364[8];	//34
 	optional_device<tia_device>* m_tia[8];	//35
+	optional_device<vlm5030_device>* m_vlm[8];	//36
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

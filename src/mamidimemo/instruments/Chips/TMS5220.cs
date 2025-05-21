@@ -531,7 +531,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     TMS5220Sound snd = new TMS5220Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog(parentModule, "KeyOn SP0256 ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn TM5220 ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

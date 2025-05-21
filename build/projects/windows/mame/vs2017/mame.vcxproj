@@ -118,7 +118,7 @@
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;..\..\..\..\..\src\osd;..\..\..\..\..\src\emu;..\..\..\..\..\src\devices;..\..\..\..\..\src\mame;..\..\..\..\..\src\lib;..\..\..\..\..\src\lib\util;..\..\..\..\..\3rdparty;..\..\..\..\generated\mame\layout;..\..\..\..\generated\resource;..\..\..\..\..\3rdparty\zlib;..\..\..\..\..\3rdparty\libflac\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDataBaseFileName>$(OutDir)mamed.pdb</ProgramDataBaseFileName>
       <AdditionalDependencies>user32.lib;advapi32.lib;wsock32.lib;ws2_32.lib;iphlpapi.lib;shell32.lib;userenv.lib;setupapi.lib;opengl32.lib;gdi32.lib;dsound.lib;dxguid.lib;oleaut32.lib;winmm.lib;dinput8.lib;comctl32.lib;comdlg32.lib;psapi.lib;ole32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -158,7 +158,7 @@
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;..\..\..\..\..\src\osd;..\..\..\..\..\src\emu;..\..\..\..\..\src\devices;..\..\..\..\..\src\mame;..\..\..\..\..\src\lib;..\..\..\..\..\src\lib\util;..\..\..\..\..\3rdparty;..\..\..\..\generated\mame\layout;..\..\..\..\generated\resource;..\..\..\..\..\3rdparty\zlib;..\..\..\..\..\3rdparty\libflac\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDataBaseFileName>$(OutDir)mame64d.pdb</ProgramDataBaseFileName>
       <AdditionalDependencies>user32.lib;advapi32.lib;wsock32.lib;ws2_32.lib;iphlpapi.lib;shell32.lib;userenv.lib;setupapi.lib;opengl32.lib;gdi32.lib;dsound.lib;dxguid.lib;oleaut32.lib;winmm.lib;dinput8.lib;comctl32.lib;comdlg32.lib;psapi.lib;ole32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -29,9 +29,6 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
-using static zanac.MAmidiMEmo.Instruments.Chips.TMS5220;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 //https://www16.atwiki.jp/mxdrv/pages/24.html
 //http://map.grauw.nl/resources/sound/yamaha_ym2151_synthesis.pdf

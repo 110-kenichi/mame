@@ -761,6 +761,18 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap VLM5030
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("VLM5030", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap Pause {
             get {
                 object obj = ResourceManager.GetObject("Pause", resourceCulture);

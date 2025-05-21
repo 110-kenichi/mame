@@ -208,6 +208,7 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.vLM5030ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1769,7 +1770,8 @@
             this.eTCToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sP0256ToolStripMenuItem,
             this.extendSP0256AL2ToolStripMenuItem,
-            this.extendSAMToolStripMenuItem});
+            this.extendSAMToolStripMenuItem,
+            this.vLM5030ToolStripMenuItem});
             this.eTCToolStripMenuItem.Name = "eTCToolStripMenuItem";
             resources.ApplyResources(this.eTCToolStripMenuItem, "eTCToolStripMenuItem");
             // 
@@ -1884,6 +1886,12 @@
             // 
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
+            // 
+            // vLM5030ToolStripMenuItem
+            // 
+            this.vLM5030ToolStripMenuItem.Name = "vLM5030ToolStripMenuItem";
+            resources.ApplyResources(this.vLM5030ToolStripMenuItem, "vLM5030ToolStripMenuItem");
+            this.vLM5030ToolStripMenuItem.Click += new System.EventHandler(this.vLM5030ToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -2102,6 +2110,7 @@
         private System.Windows.Forms.ToolStripMenuItem sA1099ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pAULA8364ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tIAToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem vLM5030ToolStripMenuItem;
     }
 }
 

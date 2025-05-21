@@ -215,6 +215,7 @@
     <Compile Include="Gui\LpcFileLoaderUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\PAULA_8364.cs" />
     <Compile Include="Instruments\Chips\TIA.cs" />
+    <Compile Include="Instruments\Chips\VLM5030.cs" />
     <Compile Include="Instruments\FmToneImporter.cs" />
     <Compile Include="Instruments\CustomToneImporter.cs" />
     <Compile Include="Gui\FormInputNumberScc.cs">
@@ -730,6 +731,14 @@
     <Compile Include="VSIF\PortWriterTurboEverDrive.cs" />
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
+    <Content Include="..\Praat2Lpc\bin\Debug\net8.0\Praat2Lpc.dll">
+      <Link>Tools\Praat2Lpc\Praat2Lpc.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Praat2Lpc\bin\Debug\net8.0\Praat2Lpc.exe">
+      <Link>Tools\Praat2Lpc\Praat2Lpc.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
       <Link>VSIF\VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -779,6 +788,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\TIA.png" />
+    <Content Include="Resources\VLM5030.png" />
     <None Include="..\..\docs\MAmidiMEmo\Manual.pdf">
       <Link>Manuals\Manual.pdf</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -789,6 +799,22 @@
     </None>
     <None Include="..\..\docs\MAmidiMEmo\OpManual_VSIF_MD_ja.pdf">
       <Link>Manuals\OpManual_VSIF_MD_ja.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Praat2Lpc\bin\Debug\net8.0\Praat2Lpc.deps.json">
+      <Link>Tools\Praat2Lpc\Praat2Lpc.deps.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Praat2Lpc\bin\Debug\net8.0\Praat2Lpc.runtimeconfig.json">
+      <Link>Tools\Praat2Lpc\Praat2Lpc.runtimeconfig.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Praat2Lpc\bin\Debug\net8.0\tms_lpc.praat">
+      <Link>Tools\Praat2Lpc\tms_lpc.praat</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Praat2Lpc\bin\Debug\net8.0\vlm_lpc.praat">
+      <Link>Tools\Praat2Lpc\vlm_lpc.praat</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\VSIF\VGMPlay_C64\VSIF_C64.prg">
@@ -1441,18 +1467,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\YMF262_GM.MAmi">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Tools\TMS5220\ConvertPraatToLpc.bat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Tools\TMS5220\lpc.praat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Tools\TMS5220\Releases · EricLafortune-VideoTools.url">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Tools\TMS5220\Releases · praat-praat.url">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VST\MAmiVSTi.ini">
