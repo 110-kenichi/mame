@@ -117,6 +117,6 @@ Save as short text file: output_pitch_file$
 # so skipping a few coefficient frames synchronizes the streams.
 
 selectObject: sound_8000
-lpc = To LPC (burg): 10, 0.075, 0.02, 50.0
+lpc = To LPC (burg): 10, 0.1, 0.02, 50.0
 
 Save as short text file: output_lpc_file$
