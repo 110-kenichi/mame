@@ -243,22 +243,22 @@ namespace Praat2Lpc
                 {
                     if (coeffs[i] <= val && val < coeffs[i + 1])
                     {
-                        return i;
+                        return val - coeffs[i] > coeffs[i + 1] - val ? i : i + 1;
                     }
                 }
-                if (coeffs[end / 2] < val)
+                if (coeffs[end / 2] <= val)
                 {
                     return end / 2;
                 }
 
                 for (int i = end / 2 + 1; i < end; ++i)
                 {
-                    if (coeffs[i] <= val && val <= coeffs[i + 1])
+                    if (coeffs[i] <= val && val < coeffs[i + 1])
                     {
-                        return i;
+                        return val - coeffs[i] > coeffs[i + 1] - val ? i : i + 1;
                     }
                 }
-                if (coeffs[end] < val)
+                if (coeffs[end] <= val)
                 {
                     return end;
                 }
