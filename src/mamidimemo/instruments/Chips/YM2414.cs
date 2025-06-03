@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -2581,12 +2582,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual bool ShouldSerializeOps()
             {
-                foreach (var op in Ops)
+                bool ret = false;
+                Parallel.For(0, Ops.Length, (i, loopState) =>
                 {
-                    if (!string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}"))
-                        return true;
-                }
-                return false;
+                    if (loopState.IsStopped)
+                        return;
+                    if (!string.Equals(JsonConvert.SerializeObject(Ops[i], Formatting.Indented), "{}"))
+                    {
+                        loopState.Stop();
+                        ret = true;
+                        return;
+                    }
+                });
+                return ret;
             }
 
             public virtual void ResetOps()

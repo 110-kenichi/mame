@@ -1,4 +1,4 @@
-MAmidiMEmo 6.1.4.0 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.1.5.0 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -276,6 +276,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.1.5.0 Improved property displaying speed for FM synthesis chips.
 - 6.1.4.0 Improved algorithm of Praat2LPC for VLM5030.
 - 6.1.3.0 Updated template file for praat for VLM5030.
 - 6.1.2.0 Added Praat2LPC tool to the TMS5220 folder. You can create custom raw LPC data using this tool.

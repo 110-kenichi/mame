@@ -357,6 +357,8 @@ namespace zanac.MAmidiMEmo.Gui
                 e.Cancel = true;
                 return;
             }
+            midiPlayback?.Stop();
+            midiPlayback?.Dispose();
 
             SaveWindowStatus();
             base.OnClosing(e);
