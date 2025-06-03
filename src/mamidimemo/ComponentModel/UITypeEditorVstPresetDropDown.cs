@@ -1,13 +1,6 @@
-﻿using Jacobi.Vst.Interop.Host;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Vst;

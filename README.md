@@ -1,4 +1,4 @@
-MAmidiMEmo 6.1.5.0 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.1.6.0 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -30,7 +30,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 		OS: Windows 10 or lator
 		Runtime: .NET Framework 4.7 or lator
-		         VC++ 2012 Runtime https://www.microsoft.com/en-au/download/details.aspx?id=30679
+		         VC++ 2022 Runtime
+					for 64bit: https://aka.ms/vs/17/release/vc_redist.x64.exe
+					for 32bit: https://aka.ms/vs/17/release/vc_redist.x86.exe
 
 1. Extract downloaded zip file.
 
@@ -39,7 +41,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    
    ★日本語フォルダには現状対応していません★
 
-2. Install VC++ runtime 2012 and .NET Framework 4.7 or lator.
+2. Install VC++ runtime 2022 and .NET Framework 4.7 or lator.
 
 3. Launch MAmidiMEmo.exe
 
@@ -276,7 +278,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
-- 6.1.5.0 Improved property displaying speed for FM synthesis chips.
+- 6.1.6.0 Updated VST Host libraries to the latest version. No need to install VC++ runtime 2012.
+- 6.1.5.0 Improved property displaying performance for FM synthesis chips.
 - 6.1.4.0 Improved algorithm of Praat2LPC for VLM5030.
 - 6.1.3.0 Updated template file for praat for VLM5030.
 - 6.1.2.0 Added Praat2LPC tool to the TMS5220 folder. You can create custom raw LPC data using this tool.
@@ -1009,3 +1012,7 @@ License: LGPL2.1 https://github.com/osoumen/C700/blob/master/COPYING
 *NAudio - Mark Heath
 https://github.com/naudio/NAudio
 License: MIT license https://github.com/naudio/NAudio?tab=MIT-1-ov-file#readme
+
+*VST.NET - obiwanjacobi
+https://github.com/obiwanjacobi/vst.net/tree/vstnet1
+License: LGPL-2.1 license

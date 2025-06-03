@@ -1,8 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using FastDelegate.Net;
 using FM_SoundConvertor;
-using Jacobi.Vst.Core;
-using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using NAudio.Wave.SampleProviders;
@@ -10,22 +8,15 @@ using NAudio.Wave;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Design;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
@@ -33,9 +24,7 @@ using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
-using zanac.MAmidiMEmo.VSIF;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
-using Microsoft.Win32;
+using System.Threading.Tasks;
 
 namespace zanac.MAmidiMEmo.Instruments
 {

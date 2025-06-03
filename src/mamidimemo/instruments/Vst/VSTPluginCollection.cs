@@ -1,21 +1,14 @@
 ﻿// copyright-holders:K.Ito
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
-using Melanchall.DryWetMidi.Core;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Instruments.Vst

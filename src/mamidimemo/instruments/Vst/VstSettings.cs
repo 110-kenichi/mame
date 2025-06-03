@@ -1,18 +1,13 @@
-﻿using Jacobi.Vst.Interop.Host;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 

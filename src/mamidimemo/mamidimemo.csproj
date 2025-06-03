@@ -142,31 +142,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <!-- x86 specific references -->
-  <ItemGroup Condition=" '$(Platform)' == 'x86' ">
-    <Reference Include="Jacobi.Vst.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x86\Jacobi.Vst.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Jacobi.Vst.Framework, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x86\Jacobi.Vst.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Jacobi.Vst.Interop, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x86\Jacobi.Vst.Interop.dll</HintPath>
-    </Reference>
-    <!-- any additional x86 specific references -->
-  </ItemGroup>
   <!-- x64 specific referneces -->
-  <ItemGroup Condition=" '$(Platform)' == 'x64' ">
-    <Reference Include="Jacobi.Vst.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x64\Jacobi.Vst.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Jacobi.Vst.Framework, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x64\Jacobi.Vst.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Jacobi.Vst.Interop, Version=1.1.0.0, Culture=neutral, PublicKeyToken=fa678e13c1efc859, processorArchitecture=x86">
-      <HintPath>Libs\VST.NET\x64\Jacobi.Vst.Interop.dll</HintPath>
-    </Reference>
-    <!-- any additional x64 specific references -->
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\ExpandableProgramAssignmentNumberCollectionConverter.cs" />
@@ -1583,6 +1559,18 @@
     <ProjectReference Include="..\FastDelegate.Net\FastDelegate.Net\FastDelegate.Net.csproj">
       <Project>{fa0a043b-f264-43bc-83b8-28000c7f7b08}</Project>
       <Name>FastDelegate.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vst.host\Jacobi.Vst.Core\Jacobi.Vst.Core.Clr4.csproj">
+      <Project>{5950f8a9-f413-4ace-b6e0-6f458b4c26f9}</Project>
+      <Name>Jacobi.Vst.Core.Clr4</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vst.host\Jacobi.Vst.Framework\Jacobi.Vst.Framework.Clr4.csproj">
+      <Project>{f9f64e8a-8739-4da0-b0e0-8e3ca106cd6f}</Project>
+      <Name>Jacobi.Vst.Framework.Clr4</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vst.host\Jacobi.Vst.Interop\Jacobi.Vst.Interop.Clr4.vcxproj">
+      <Project>{e0cc0ccf-a40d-4a53-8fac-b6af7e76eb08}</Project>
+      <Name>Jacobi.Vst.Interop.Clr4</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

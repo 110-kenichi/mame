@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using Jacobi.Vst.Core;
 using Jacobi.Vst.Core.Host;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
 
         /// <inheritdoc />
         public IVstPluginContext PluginContext { get; set; }
+
+        public IVstHostCommands20 Commands => throw new NotImplementedException();
 
         #endregion
 
