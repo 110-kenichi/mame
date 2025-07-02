@@ -1,4 +1,4 @@
-MAmidiMEmo 6.1.6.1 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 6.1.7.0 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -278,6 +278,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 6.1.7.0 Improved performance fo Piano pane rendering. 
+  - Fixed SSG Envelope does not sound on YM2608.
 - 6.1.6.1 Fixed an issue where sound would not stop on HuC6280. 
 - 6.1.6.0 Updated VST Host libraries to the latest version. No need to install VC++ runtime 2012.
 - 6.1.5.0 Improved property displaying performance for FM synthesis chips.

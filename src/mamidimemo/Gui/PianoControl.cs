@@ -215,7 +215,7 @@ namespace zanac.MAmidiMEmo.Gui
                 if (IsDisposed)
                     return;
 
-                bool fill;
+                //bool fill;
 
                 if (TargetTimbres != null)
                 {
@@ -239,11 +239,11 @@ namespace zanac.MAmidiMEmo.Gui
                 if (!soundKeyOn.ContainsKey(snd))
                     soundKeyOn.Add(snd, new SoundUpdatedEventArgs(nn, e.Velocity, 0));
                 else
-                {
-                    Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
                     soundKeyOn[snd] = new SoundUpdatedEventArgs(nn, e.Velocity, 0);
-                }
-                Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
+
+                Invalidate();
+                //Heavy weight operation, so we do not use Region here
+                //Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
             }));
         }
 
@@ -629,7 +629,7 @@ namespace zanac.MAmidiMEmo.Gui
         private void PianoControl_MouseHover(object sender, EventArgs e)
         {
             var pt = this.PointToClient(Cursor.Position);
-            if (0 <= pt.X && pt.X < wKeyW && 0<= pt.Y && pt.Y < Height)
+            if (0 <= pt.X && pt.X < wKeyW && 0 <= pt.Y && pt.Y < Height)
                 toolTipSlider.Show($"Data Entry: {EntryDataValue}", this, 0, Height, 3000);
         }
     }

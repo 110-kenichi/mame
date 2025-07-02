@@ -2202,7 +2202,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             OnVolumeUpdated();
 
                             if (((int)lastSoundType & 4) != 0)
-                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
+                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType, false);
                         }
                         break;
                     case ToneType.RHYTHM:
@@ -2716,9 +2716,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     }
                                 }
 
-                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(12), 0, 0, parentModule.EnvelopeFrequencyCoarse);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(11), 0, 0, parentModule.EnvelopeFrequencyFine);
+                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType, false);
                             }
                         }
                         break;

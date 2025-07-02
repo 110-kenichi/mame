@@ -217,7 +217,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
-                if (f_ProcessingInterval >= 1)
+                if (value >= 1)
                     f_ProcessingInterval = value;
             }
         }
