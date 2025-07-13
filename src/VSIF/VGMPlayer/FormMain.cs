@@ -1072,6 +1072,16 @@ namespace zanac.VGMPlayer
                         if (comPortSAA != null)
                             comPortSAA.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitSAA);
                         break;
+                    case 2:
+                        comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.SAA_Port, 0, false);
+                        break;
+                    case 3:
+                        comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.SAA_Port, 0, false);
+                        if (comPortSAA != null)
+                            comPortSAA.DeferredWriteData(0x15, (byte)0x0, (byte)127, 0);
+                        break;
                 }
 
                 checkBoxConnSAA.Checked = comPortSAA != null;
@@ -1160,6 +1170,16 @@ namespace zanac.VGMPlayer
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
                             (PortId)Settings.Default.DCSG_Port, (int)Settings.Default.DCSGDiv, false);
                         break;
+                    case 8:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.DCSG_Port, 0, false);
+                        break;
+                    case 9:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
+                            (PortId)Settings.Default.DCSG_Port, 0, false);
+                        if (comPortDCSG != null)
+                            comPortDCSG.DeferredWriteData(0x15, (byte)0x0, (byte)127, 0);
+                        break;
                 }
 
                 checkBoxConnDCSG.Checked = comPortDCSG != null;
@@ -1206,6 +1226,20 @@ namespace zanac.VGMPlayer
                             comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
                         if (comPortOPLL != null)
                             comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPLL);
+                        break;
+                    case 4:
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPLL_Port, (int)0, false);
+                        if (comPortOPLL != null)
+                            comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
+                        break;
+                    case 5:
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPLL_Port, (int)0, false);
+                        if (comPortOPLL != null)
+                            comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
+                        if (comPortOPLL != null)
+                            comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, 0);
                         break;
                 }
 
@@ -1260,6 +1294,16 @@ namespace zanac.VGMPlayer
                         comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
                             (PortId)Settings.Default.OPN2_Port, (int)Settings.Default.OPN2Div, false);
                         break;
+                    case 6:
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPN2_Port, (int)0, false);
+                        break;
+                    case 7:
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPN2_Port, (int)0, false);
+                        if (comPortOPN2 != null)
+                            comPortOPN2.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
+                        break;
                 }
                 checkBoxConnOPN2.Checked = comPortOPN2 != null;
                 comboBoxOPN2.Enabled = comPortOPN2 == null;
@@ -1298,6 +1342,14 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPN_Port, (int)Settings.Default.OPNDiv, false);
                         if (comPortOPN != null)
                             comPortOPN.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPN);
+                        break;
+                    case 3:
+                        comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPN_Port, (int)0, false);
+                        break;
+                    case 4:
+                        comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPN_Port, (int)0, false);
                         break;
                 }
                 checkBoxConnOPN.Checked = comPortOPN != null;
@@ -1348,6 +1400,32 @@ namespace zanac.VGMPlayer
                         }
                         if (comPortSCC != null)
                             comPortSCC.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitSCC);
+                        break;
+                    case 2:
+                        comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.SCC_Port, (int)0, false);
+                        if (comPortSCC != null)
+                        {
+                            comPortSCC.Tag["SCC.Type"] = (SCCType)(comboBoxSccType.SelectedIndex + 1);
+                            if (comboBoxSccSlot.SelectedIndex < 2)
+                                comPortSCC.Tag["SCC.Slot"] = comboBoxSccSlot.SelectedIndex - 2;
+                            else
+                                comPortSCC.Tag["SCC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        }
+                        break;
+                    case 3:
+                        comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.SCC_Port, (int)0, false);
+                        if (comPortSCC != null)
+                        {
+                            comPortSCC.Tag["SCC.Type"] = (SCCType)(comboBoxSccType.SelectedIndex + 1);
+                            if (comboBoxSccSlot.SelectedIndex < 2)
+                                comPortSCC.Tag["SCC.Slot"] = comboBoxSccSlot.SelectedIndex - 2;
+                            else
+                                comPortSCC.Tag["SCC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        }
+                        if (comPortSCC != null)
+                            comPortSCC.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
                         break;
                 }
                 checkBoxConnSCC.Checked = comPortSCC != null;
@@ -1424,6 +1502,16 @@ namespace zanac.VGMPlayer
                         if (comPortY8910 != null)
                             comPortY8910.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitAY8910);
                         break;
+                    case 2:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.Y8910_Port, (int)Settings.Default.PSGDiv, false);
+                        break;
+                    case 3:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.Y8910_Port, (int)Settings.Default.PSGDiv, false);
+                        if (comPortY8910 != null)
+                            comPortY8910.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitAY8910);
+                        break;
                 }
                 checkBoxConnY8910.Checked = comPortY8910 != null;
                 comboBoxY8910.Enabled = comPortY8910 == null;
@@ -1490,6 +1578,26 @@ namespace zanac.VGMPlayer
                         if (comPortOPM != null)
                             comPortOPM.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPM);
                         break;
+                    case 5:
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPM_Port, (int)0, false);
+                        if (comPortOPM != null)
+                        {
+                            comPortOPM.Tag["OPM.Slot"] = comboBoxOpmSlot.SelectedIndex;
+                            comPortOPM.DeferredWriteData(0xd, 0, (byte)comboBoxOpmSlot.SelectedIndex, (int)0);
+                        }
+                        break;
+                    case 6:
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPM_Port, (int)0, false);
+                        if (comPortOPM != null)
+                        {
+                            comPortOPM.Tag["OPM.Slot"] = comboBoxOpmSlot.SelectedIndex;
+                            comPortOPM.DeferredWriteData(0xd, 0, (byte)comboBoxOpmSlot.SelectedIndex, (int)0);
+                        }
+                        if (comPortOPM != null)
+                            comPortOPM.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
+                        break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
                 comboBoxOPM.Enabled = comPortOPM == null;
@@ -1525,6 +1633,16 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPL3_Port, (int)Settings.Default.OPL3Div, false);
                         if (comPortOPL3 != null)
                             comPortOPL3.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPL3);
+                        break;
+                    case 2:
+                        comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPL3_Port, (int)0, false);
+                        break;
+                    case 3:
+                        comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPL3_Port, (int)0, false);
+                        if (comPortOPL3 != null)
+                            comPortOPL3.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
                         break;
                 }
                 checkBoxConnOPL3.Checked = comPortOPL3 != null;
@@ -1576,6 +1694,16 @@ namespace zanac.VGMPlayer
                         if (comPortOPNA != null)
                             comPortOPNA.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPNA);
                         break;
+                    case 6:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPNA_Port, (int)0, false);
+                        break;
+                    case 7:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPNA_Port, (int)0, false);
+                        if (comPortOPNA != null)
+                            comPortOPNA.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
+                        break;
                 }
                 checkBoxConnOPNA.Checked = comPortOPNA != null;
                 comboBoxOPNA.Enabled = comPortOPNA == null;
@@ -1614,6 +1742,20 @@ namespace zanac.VGMPlayer
                             comPortY8950.Tag["Y8950.Slot"] = comboBoxY8950Slot.SelectedIndex;
                         if (comPortY8950 != null)
                             comPortY8950.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitY8950);
+                        break;
+                    case 2:
+                        comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.Y8950_Port, (int)0, false);
+                        if (comPortY8950 != null)
+                            comPortY8950.Tag["Y8950.Slot"] = comboBoxY8950Slot.SelectedIndex;
+                        break;
+                    case 3:
+                        comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.Y8950_Port, (int)0, false);
+                        if (comPortY8950 != null)
+                            comPortY8950.Tag["Y8950.Slot"] = comboBoxY8950Slot.SelectedIndex;
+                        if (comPortY8950 != null)
+                            comPortY8950.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
                         break;
                 }
                 checkBoxConnY8950.Checked = comPortY8950 != null;

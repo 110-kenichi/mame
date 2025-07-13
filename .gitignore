@@ -191,3 +191,4 @@ bin
 /src/VSIF/VGMPlay_NES_FDS/.vscode
 /src/VSIF/VGMPlay_PCE/cc65
 /src/VSIF/VGMPlay_PCE/build
+/src/VSIF/VGMPlay_SegaCD/out

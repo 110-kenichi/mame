@@ -134,7 +134,8 @@ namespace zanac.VGMPlayer
 
                 if (vsifClient != null)
                 {
-                    if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxyOKIM6295"))
+                    if ((vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI || vsifClient.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
+                        && vsifClient.Tag.ContainsKey("ProxyK053260"))
                     {
                         int dt = ((dtL + dtR) / 2) >> 8;
 

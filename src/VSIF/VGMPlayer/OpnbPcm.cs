@@ -203,7 +203,8 @@ namespace zanac.VGMPlayer
                             {
                                 case ProxyOPNType.OPNA:
                                     {
-                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                            vsifClient.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                             parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
                                         else
                                             parentSong.DeferredWriteOPNA_PseudoDAC(vsifClient, (byte)(dt + 128));
@@ -211,7 +212,8 @@ namespace zanac.VGMPlayer
                                     break;
                                 case ProxyOPNType.OPN2:
                                     {
-                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                            vsifClient.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                             parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
                                         else
                                             parentSong.DeferredWriteOPN2_DAC(vsifClient, (byte)(dt + 128));

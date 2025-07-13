@@ -118,6 +118,8 @@ namespace zanac.VGMPlayer
                         break;
                     case VsifSoundModuleType.MSX_FTDI:
                     case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
                         for (int i = 0; i < 3; i++)
                             comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
                         comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
@@ -161,15 +163,19 @@ namespace zanac.VGMPlayer
 
             if (comPortOPN2 != null)
             {
-                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                switch (comPortOPN2.SoundModuleType)
                 {
-                    // ALL KEY OFF
-                    for (int i = 0; i < 3; i++)
-                    {
-                        deferredWriteOPN2_P0(comPortOPN2, 0x28, i);
-                        deferredWriteOPN2_P0(comPortOPN2, 0x28, 0x4 | i);
-                    }
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                        // ALL KEY OFF
+                        for (int i = 0; i < 3; i++)
+                        {
+                            deferredWriteOPN2_P0(comPortOPN2, 0x28, i);
+                            deferredWriteOPN2_P0(comPortOPN2, 0x28, 0x4 | i);
+                        }
+                        break;
                 }
 
                 if (volumeOff)
@@ -189,22 +195,26 @@ namespace zanac.VGMPlayer
 
             if (comPortOPNA != null)
             {
-                if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortOPNA.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
-                    comPortOPNA.SoundModuleType == VsifSoundModuleType.PC88_FTDI)
+                switch (comPortOPNA.SoundModuleType)
                 {
-                    // ALL KEY OFF
-                    for (int i = 0; i < 3; i++)
-                    {
-                        deferredWriteOPNA_P0(comPortOPNA, 0x28, i);
-                        deferredWriteOPNA_P0(comPortOPNA, 0x28, 0x4 | i);
-                    }
-                    //RHYTHM
-                    deferredWriteOPNA_P0(comPortOPNA, 0x10, 0x80);
-                    //SSG
-                    deferredWriteOPNA_P0(comPortOPNA, 0x07, 0x3F);
-                    //ADPCM
-                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                    case VsifSoundModuleType.PC88_FTDI:
+                        // ALL KEY OFF
+                        for (int i = 0; i < 3; i++)
+                        {
+                            deferredWriteOPNA_P0(comPortOPNA, 0x28, i);
+                            deferredWriteOPNA_P0(comPortOPNA, 0x28, 0x4 | i);
+                        }
+                        //RHYTHM
+                        deferredWriteOPNA_P0(comPortOPNA, 0x10, 0x80);
+                        //SSG
+                        deferredWriteOPNA_P0(comPortOPNA, 0x07, 0x3F);
+                        //ADPCM
+                        deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
+                        break;
                 }
 
                 if (volumeOff)
@@ -236,17 +246,21 @@ namespace zanac.VGMPlayer
 
             if (comPortOPN != null)
             {
-                if (comPortOPN.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortOPN.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
-                    comPortOPN.SoundModuleType == VsifSoundModuleType.PC88_FTDI)
+                switch (comPortOPN.SoundModuleType)
                 {
-                    // ALL KEY OFF
-                    for (int i = 0; i < 3; i++)
-                    {
-                        deferredWriteOPN_P0(0x28, i);
-                    }
-                    //SSG
-                    deferredWriteOPN_P0(0x07, 0x3F);
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                    case VsifSoundModuleType.PC88_FTDI:
+                        // ALL KEY OFF
+                        for (int i = 0; i < 3; i++)
+                        {
+                            deferredWriteOPN_P0(0x28, i);
+                        }
+                        //SSG
+                        deferredWriteOPN_P0(0x07, 0x3F);
+                        break;
                 }
 
                 if (volumeOff)
@@ -323,28 +337,28 @@ namespace zanac.VGMPlayer
             //SCC
             if (comPortSCC != null)
             {
-                if (comPortSCC.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortSCC.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                switch (comPortSCC.SoundModuleType)
                 {
-                    deferredWriteSCC(3, 0xf, 00);
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                        deferredWriteSCC(3, 0xf, 00);
 
-                    if (volumeOff)
-                    {
-                        for (int i = 0; i < 5; i++)
+                        if (volumeOff)
                         {
-                            deferredWriteSCC(2, i, 00);
+                            for (int i = 0; i < 5; i++)
+                            {
+                                deferredWriteSCC(2, i, 00);
+                            }
                         }
-                    }
+                        break;
                 }
             }
 
             //Y8910
             if (comPortY8910 != null)
             {
-                if (comPortY8910.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortY8910.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                {
-                }
                 //comPortY8910?.DeferredWriteData(0x17, (byte)0x07, (byte)0xff, (int)Program.Default.BitBangWaitAY8910);
                 deferredWriteY8910(0x8, 0x00, false);
                 deferredWriteY8910(0x9, 0x00, false);
@@ -1107,6 +1121,40 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortSAA;
                         }
                         break;
+                    case 2:
+                        if (comPortSAA == null)
+                        {
+                            comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.SAA_Port);
+
+                            if (comPortSAA != null)
+                            {
+                                comPortSAA.ChipClockHz["SAA1099"] = 8000000;
+                                comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
+                                UseChipInformation += "SAA1099@8MHz ";
+                                CanLoadCoverArt = true;
+                                comPortSAA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitSAA");
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortSAA == null)
+                        {
+                            comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.SAA_Port);
+
+                            if (comPortSAA != null)
+                            {
+                                comPortSAA.ChipClockHz["SAA1099"] = 8000000;
+                                comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
+                                UseChipInformation += "SAA1099@8MHz ";
+                                CanLoadCoverArt = true;
+                                comPortSAA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitSAA");
+                            }
+                            if (comPortTurboRProxy == null && comPortSAA != null)
+                                comPortTurboRProxy = comPortSAA;
+                        }
+                        break;
                 }
                 if (comPortSAA != null)
                 {
@@ -1237,6 +1285,40 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortY8910;
                         }
                         break;
+                    case 2:
+                        if (comPortY8910 == null)
+                        {
+                            comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.Y8910_Port);
+
+                            if (comPortY8910 != null)
+                            {
+                                comPortY8910.ChipClockHz["Y8910"] = 1789773;
+                                comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
+                                UseChipInformation += "PSG@1.789773MHz ";
+                                CanLoadCoverArt = true;
+                                comPortY8910.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortY8910 == null)
+                        {
+                            comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.Y8910_Port);
+
+                            if (comPortY8910 != null)
+                            {
+                                comPortY8910.ChipClockHz["Y8910"] = 1789773;
+                                comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
+                                UseChipInformation += "PSG@1.789773MHz ";
+                                CanLoadCoverArt = true;
+                                comPortY8910.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
+                            }
+                            if (comPortTurboRProxy == null && comPortY8910 != null)
+                                comPortTurboRProxy = comPortY8910;
+                        }
+                        break;
                 }
                 if (comPortY8910 != null)
                 {
@@ -1311,6 +1393,36 @@ namespace zanac.VGMPlayer
                             }
                             if (comPortTurboRProxy == null && comPortOPLL != null)
                                 comPortTurboRProxy = comPortOPLL;
+                        }
+                        break;
+                    case 4:
+                        if (comPortOPLL == null)
+                        {
+                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPLL_Port);
+                            if (comPortOPLL != null)
+                            {
+                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
+                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
+                                UseChipInformation += "OPLL@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPLL.BitBangWait = typeof(Settings).GetProperty("BitBangWaitDCSG");
+                            }
+                        }
+                        break;
+                    case 5:
+                        if (comPortOPLL == null)
+                        {
+                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.OPLL_Port);
+                            if (comPortOPLL != null)
+                            {
+                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
+                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
+                                UseChipInformation += "OPLL@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPLL.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPLL");
+                            }
                         }
                         break;
                 }
@@ -1445,6 +1557,38 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 8:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                               (PortId)Program.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortDCSG.BitBangWait = typeof(Settings).GetProperty("BitBangWaitDCSG");
+                            }
+                        }
+                        break;
+                    case 9:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                               (PortId)Program.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortDCSG.BitBangWait = typeof(Settings).GetProperty("BitBangWaitDCSG");
+                            }
+                            if (comPortTurboRProxy == null && comPortDCSG != null)
+                                comPortTurboRProxy = comPortDCSG;
+                        }
+                        break;
                 }
                 if (comPortDCSG != null)
                 {
@@ -1464,6 +1608,8 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                     case 1:
+                    case 2:
+                    case 3:
                         if (comPortSCC == null)
                         {
                             switch (Program.Default.SCC_IF)
@@ -1473,6 +1619,12 @@ namespace zanac.VGMPlayer
                                     break;
                                 case 1:
                                     comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI, (PortId)Program.Default.SCC_Port);
+                                    break;
+                                case 2:
+                                    comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi, (PortId)Program.Default.SCC_Port);
+                                    break;
+                                case 3:
+                                    comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR, (PortId)Program.Default.SCC_Port);
                                     break;
                             }
                             if (comPortTurboRProxy == null && comPortSCC != null)
@@ -1492,6 +1644,8 @@ namespace zanac.VGMPlayer
                                 {
                                     case VsifSoundModuleType.MSX_FTDI:
                                     case VsifSoundModuleType.TurboR_FTDI:
+                                    case VsifSoundModuleType.MSX_Pi:
+                                    case VsifSoundModuleType.MSX_PiTR:
                                         SCCType type = (SCCType)comPortSCC.Tag["SCC.Type"];
                                         var slot = (int)comPortSCC.Tag["SCC.Slot"];
                                         if ((int)slot < 0)
@@ -1576,6 +1730,38 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortY8950;
                         }
                         break;
+                    case 2:
+                        if (comPortY8950 == null)
+                        {
+                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.Y8950_Port);
+                            if (comPortY8950 != null)
+                            {
+                                comPortY8950.ChipClockHz["Y8950"] = 3579545;
+                                comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
+                                UseChipInformation += "Y8950@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortY8950.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortY8950 == null)
+                        {
+                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.Y8950_Port);
+                            if (comPortY8950 != null)
+                            {
+                                comPortY8950.ChipClockHz["Y8950"] = 3579545;
+                                comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
+                                UseChipInformation += "Y8950@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortY8950.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
+                            }
+                            if (comPortTurboRProxy == null && comPortY8950 != null)
+                                comPortTurboRProxy = comPortY8950;
+                        }
+                        break;
                 }
                 if (comPortY8950 != null)
                 {
@@ -1616,6 +1802,34 @@ namespace zanac.VGMPlayer
                     case 1:
                         if (comPortOPL3 == null)
                             comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
+                                (PortId)Program.Default.OPL3_Port);
+                        if (comPortOPL3 != null)
+                        {
+                            comPortOPL3.ChipClockHz["OPL3"] = 14318180;
+                            comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
+                            UseChipInformation += "OPL3@14.318180MHz ";
+                            CanLoadCoverArt = true;
+                            comPortOPL3.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPL3");
+                        }
+                        if (comPortTurboRProxy == null && comPortOPL3 != null)
+                            comPortTurboRProxy = comPortOPL3;
+                        break;
+                    case 2:
+                        if (comPortOPL3 == null)
+                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPL3_Port);
+                        if (comPortOPL3 != null)
+                        {
+                            comPortOPL3.ChipClockHz["OPL3"] = 14318180;
+                            comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
+                            UseChipInformation += "OPL3@14.318180MHz ";
+                            CanLoadCoverArt = true;
+                            comPortOPL3.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPL3");
+                        }
+                        break;
+                    case 3:
+                        if (comPortOPL3 == null)
+                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
                                 (PortId)Program.Default.OPL3_Port);
                         if (comPortOPL3 != null)
                         {
@@ -1747,21 +1961,71 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortOPM;
                         }
                         break;
+                    case 5:
+                        if (comPortOPM == null)
+                        {
+                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                               (PortId)Program.Default.OPM_Port);
+                            if (comPortOPM != null)
+                            {
+                                comPortOPM.ChipClockHz["OPM"] = 3579545;
+                                comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                                UseChipInformation += "OPM@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPM.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPM");
+                            }
+                        }
+                        break;
+                    case 6:
+                        if (comPortOPM == null)
+                        {
+                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                               (PortId)Program.Default.OPM_Port);
+                            if (comPortOPM != null)
+                            {
+                                comPortOPM.ChipClockHz["OPM"] = 3579545;
+                                comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                                UseChipInformation += "OPM@3.579545MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPM.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPM");
+                            }
+                            if (comPortTurboRProxy == null && comPortOPM != null)
+                                comPortTurboRProxy = comPortOPM;
+                        }
+                        break;
                 }
                 if (comPortOPM != null)
                 {
                     Accepted = true;
 
-                    for (int i = 0x00; i <= 0x1F; i++)
-                        deferredWriteOPM(i, 0x00);
-                    for (int i = 0x20; i <= 0x27; i++)
-                        deferredWriteOPM(i, 0xC0);
-                    for (int i = 0x28; i <= 0x5F; i++)
-                        deferredWriteOPM(i, 0x00);
+                    //for (int i = 0x00; i <= 0x1F; i++)
+                    //deferredWriteOPM(0x8, 0x00);
+                    //deferredWriteOPM(0xF, 0x00);
+                    //deferredWriteOPM(0x18, 0x00);
+                    //deferredWriteOPM(0x19, 0x00);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+
+                    //for (int i = 0x20; i <= 0x3F; i++)
+                    //    deferredWriteOPM(i, 0x00);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    //for (int i = 0x40; i <= 0x5F; i++)
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
                     //for (int i = 0x60; i <= 0x7F; i++)
-                    //    deferredWriteOPM(i, 0xff);
-                    for (int i = 0x80; i <= 0xFF; i++)
-                        deferredWriteOPM(i, 0);
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    //for (int i = 0x80; i <= 0x9F; i++)
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    //for (int i = 0xA0; i <= 0xBF; i++)
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    //for (int i = 0xC0; i <= 0xDF; i++)
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    //for (int i = 0xE0; i <= 0xFF; i++)
+                    //    deferredWriteOPM(i, 0);
+                    //comPortOPM.FlushDeferredWriteDataAndWait();
 
                     return true;
                 }
@@ -1928,6 +2192,55 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 6:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPNA_Port);
+                            if (comPortOPNA != null)
+                            {
+                                comPortOPNA.ChipClockHz["OPNA"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
+                                UseChipInformation += "OPNA@8.000000MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
+                            }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this, ProxyOPNType.OPNA);
+                                opnbPcm.device_start_opnb(0, (int)opnb_clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                            }
+                        }
+                        break;
+                    case 7:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.OPNA_Port);
+                            if (comPortOPNA != null)
+                            {
+                                comPortOPNA.ChipClockHz["OPNA"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
+                                UseChipInformation += "OPNA@8.000000MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
+                            }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this, ProxyOPNType.OPNA);
+                                opnbPcm.device_start_opnb(0, (int)opnb_clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                                UseChipInformation += $"w/ tR DAC";
+                            }
+                            else if (comPortTurboRProxy == null && comPortOPNA != null)
+                            {
+                                comPortTurboRProxy = comPortOPNA;
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPNA != null)
                 {
@@ -2004,6 +2317,40 @@ namespace zanac.VGMPlayer
                         if (comPortOPN == null)
                         {
                             comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
+                                (PortId)Program.Default.OPN_Port);
+                            if (comPortOPN != null)
+                            {
+                                comPortOPN.ChipClockHz["OPN"] = 4000000;
+                                comPortOPN.ChipClockHz["OPN_SSG"] = 4000000;
+                                comPortOPN.ChipClockHz["OPN_org"] = 4000000;
+                                UseChipInformation += "OPN@4.000000MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPN.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN");
+                            }
+                            if (comPortTurboRProxy == null && comPortOPN != null)
+                                comPortTurboRProxy = comPortOPN;
+                        }
+                        break;
+                    case 3:
+                        if (comPortOPN == null)
+                        {
+                            comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPN_Port);
+                            if (comPortOPN != null)
+                            {
+                                comPortOPN.ChipClockHz["OPN"] = 4000000;
+                                comPortOPN.ChipClockHz["OPN_SSG"] = 4000000;
+                                comPortOPN.ChipClockHz["OPN_org"] = 4000000;
+                                UseChipInformation += "OPN@4.000000MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPN.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN");
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (comPortOPN == null)
+                        {
+                            comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
                                 (PortId)Program.Default.OPN_Port);
                             if (comPortOPN != null)
                             {
@@ -2102,6 +2449,7 @@ namespace zanac.VGMPlayer
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
                                 UseChipInformation += "OPN2@7.670453MHz ";
+                                comPortOPN2.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN2");
                             }
                             if (opnb && comPortOPN2 != null)
                             {
@@ -2146,6 +2494,53 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 UseChipInformation += "OPN2@7.670453MHz ";
+                            }
+                        }
+                        break;
+                    case 6:
+                        if (comPortOPN2 == null)
+                        {
+                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPN2_Port);
+                            if (comPortOPN2 != null)
+                            {
+                                comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPN2.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN2");
+                            }
+                            if (opnb && comPortOPN2 != null)
+                            {
+                                opnbPcm = new OpnbPcm(this, ProxyOPNType.OPN2);
+                                opnbPcm.device_start_opnb(0, (int)opnb_clock, comPortOPN2);
+                                comPortOPN2.Tag["ProxyOPNB_ADPCM"] = true;
+                            }
+                        }
+                        break;
+                    case 7:
+                        if (comPortOPN2 == null)
+                        {
+                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.OPN2_Port);
+                            if (comPortOPN2 != null)
+                            {
+                                comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPN2.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN2");
+                            }
+                            if (opnb && comPortOPN2 != null)
+                            {
+                                opnbPcm = new OpnbPcm(this, ProxyOPNType.OPN2);
+                                opnbPcm.device_start_opnb(0, (int)opnb_clock, comPortOPN2);
+                                comPortOPN2.Tag["ProxyOPNB_ADPCM"] = true;
+                                UseChipInformation += $"w/ tR DAC";
+                            }
+                            else if (comPortTurboRProxy == null && comPortOPN2 != null)
+                            {
+                                comPortTurboRProxy = comPortOPN2;
                             }
                         }
                         break;
@@ -2966,7 +3361,8 @@ namespace zanac.VGMPlayer
                                                 {
                                                     if (!(0x29 <= adrs && adrs <= 0x2f))    //ignore
                                                     {
-                                                        if (comPortOPN2.SoundModuleType != VsifSoundModuleType.TurboR_FTDI)
+                                                        if (comPortOPN2.SoundModuleType != VsifSoundModuleType.TurboR_FTDI &&
+                                                            comPortOPN2.SoundModuleType != VsifSoundModuleType.MSX_PiTR)
                                                             if (adrs >= 0x30)
                                                                 adrs--;
                                                         deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
@@ -3089,7 +3485,8 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNB"))
                                                 {
-                                                    if (comPortOPN2.SoundModuleType != VsifSoundModuleType.TurboR_FTDI)
+                                                    if (comPortOPN2.SoundModuleType != VsifSoundModuleType.TurboR_FTDI &&
+                                                        comPortOPN2.SoundModuleType != VsifSoundModuleType.MSX_PiTR)
                                                         if (adrs >= 0x30)
                                                             adrs--;
                                                     deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
@@ -3141,7 +3538,9 @@ namespace zanac.VGMPlayer
                                                 {
                                                     //HACK: ROM -> RAM
                                                     if (comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                                                        comPortY8950?.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                                        comPortY8950?.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                                        comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_Pi ||
+                                                        comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                                     {
                                                         dt -= 1;
 #if DEBUG
@@ -3187,7 +3586,9 @@ namespace zanac.VGMPlayer
                                                         if (comPortY8950 != null)
                                                         {
                                                             if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_Pi ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                                             {
                                                                 var dt2 = ((y8950_pcm_start << 3) & 0xff00) >> 8;
                                                                 writeY8950PcmAddressData(0xa, dt2);
@@ -3203,6 +3604,8 @@ namespace zanac.VGMPlayer
                                                                 {
                                                                     case VsifSoundModuleType.MSX_FTDI:
                                                                     case VsifSoundModuleType.TurboR_FTDI:
+                                                                    case VsifSoundModuleType.MSX_Pi:
+                                                                    case VsifSoundModuleType.MSX_PiTR:
                                                                     case VsifSoundModuleType.PC88_FTDI:
                                                                         var dt2 = ((y8950_pcm_start << 3) & 0xff00) >> 8;
                                                                         deferredWriteOPNA_P1(comPortOPNA, 0x03, dt2, dclk);
@@ -3222,7 +3625,9 @@ namespace zanac.VGMPlayer
                                                         if (comPortY8950 != null)
                                                         {
                                                             if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_Pi ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                                             {
                                                                 dt = ((y8950_pcm_start << 3) & 0xff00) >> 8;
                                                             }
@@ -3235,6 +3640,8 @@ namespace zanac.VGMPlayer
                                                                 {
                                                                     case VsifSoundModuleType.MSX_FTDI:
                                                                     case VsifSoundModuleType.TurboR_FTDI:
+                                                                    case VsifSoundModuleType.MSX_Pi:
+                                                                    case VsifSoundModuleType.MSX_PiTR:
                                                                     case VsifSoundModuleType.PC88_FTDI:
                                                                         dt = ((y8950_pcm_start << 3) & 0xff00) >> 8;
                                                                         break;
@@ -3252,7 +3659,9 @@ namespace zanac.VGMPlayer
                                                         if (comPortY8950 != null)
                                                         {
                                                             if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_Pi ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                                             {
                                                                 var dt2 = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
                                                                 writeY8950PcmAddressData(0xc, dt2);
@@ -3268,6 +3677,8 @@ namespace zanac.VGMPlayer
                                                                 {
                                                                     case VsifSoundModuleType.MSX_FTDI:
                                                                     case VsifSoundModuleType.TurboR_FTDI:
+                                                                    case VsifSoundModuleType.MSX_Pi:
+                                                                    case VsifSoundModuleType.MSX_PiTR:
                                                                     case VsifSoundModuleType.PC88_FTDI:
                                                                         {
                                                                             var dt2 = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
@@ -3292,7 +3703,9 @@ namespace zanac.VGMPlayer
                                                         if (comPortY8950 != null)
                                                         {
                                                             if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_Pi ||
+                                                                comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
                                                             {
                                                                 dt = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
                                                             }
@@ -3303,6 +3716,8 @@ namespace zanac.VGMPlayer
                                                             {
                                                                 case VsifSoundModuleType.MSX_FTDI:
                                                                 case VsifSoundModuleType.TurboR_FTDI:
+                                                                case VsifSoundModuleType.MSX_Pi:
+                                                                case VsifSoundModuleType.MSX_PiTR:
                                                                 case VsifSoundModuleType.PC88_FTDI:
                                                                     {
                                                                         dt = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
@@ -4807,6 +5222,8 @@ namespace zanac.VGMPlayer
                 {
                     case VsifSoundModuleType.MSX_FTDI:
                     case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
                         SCCType type = (SCCType)comPortSCC.Tag["SCC.Type"];
                         var slot = (int)comPortSCC.Tag["SCC.Slot"];
                         if ((int)slot < 0)
@@ -4940,6 +5357,8 @@ namespace zanac.VGMPlayer
                         {
                             case VsifSoundModuleType.MSX_FTDI:
                             case VsifSoundModuleType.TurboR_FTDI:
+                            case VsifSoundModuleType.MSX_Pi:
+                            case VsifSoundModuleType.MSX_PiTR:
                                 comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)adrs, (int)Program.Default.BitBangWaitSAA);
                                 comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)ret.Lo, (int)Program.Default.BitBangWaitSAA);
 
@@ -4987,6 +5406,8 @@ namespace zanac.VGMPlayer
                         {
                             case VsifSoundModuleType.MSX_FTDI:
                             case VsifSoundModuleType.TurboR_FTDI:
+                            case VsifSoundModuleType.MSX_Pi:
+                            case VsifSoundModuleType.MSX_PiTR:
                                 comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)ladr0, (int)Program.Default.BitBangWaitSAA);
                                 comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)ret0.Lo, (int)Program.Default.BitBangWaitSAA);
                                 Debug.WriteLine($"Data: \t{ladr0} {ret0.Lo}");
@@ -5019,6 +5440,8 @@ namespace zanac.VGMPlayer
                     {
                         case VsifSoundModuleType.MSX_FTDI:
                         case VsifSoundModuleType.TurboR_FTDI:
+                        case VsifSoundModuleType.MSX_Pi:
+                        case VsifSoundModuleType.MSX_PiTR:
                             comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)adrs, (int)Program.Default.BitBangWaitSAA);
                             comPortSAA.DeferredWriteData(0x1e, 0x4, dt, (int)Program.Default.BitBangWaitSAA);
                             break;
@@ -5257,6 +5680,8 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
                     if (secondChip)
                     {
                         comPortY8910.DeferredWriteData(0x1e, (byte)0x10, (byte)adrs, (int)Program.Default.BitBangWaitAY8910);
@@ -5275,9 +5700,9 @@ namespace zanac.VGMPlayer
             byte adrs = (byte)(data >> 4);
             bool sc = secondChip.Value;
             if ((data & 0x80) != 0)
-                comPortDCSG.Tag["Last1stAddress."+sc] = adrs;
-            else if (comPortDCSG.Tag.ContainsKey("Last1stAddress."+sc))
-                adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress."+sc] & 0x7);
+                comPortDCSG.Tag["Last1stAddress." + sc] = adrs;
+            else if (comPortDCSG.Tag.ContainsKey("Last1stAddress." + sc))
+                adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress." + sc] & 0x7);
 
             if (comPortDCSG != null)
             {
@@ -5341,6 +5766,8 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
                     if (!secondChip)
                         comPortDCSG.DeferredWriteData(0xF, 0, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
@@ -5419,10 +5846,14 @@ namespace zanac.VGMPlayer
             switch (comPortOPM.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
                     comPortOPM.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPM);
                     break;
                 case VsifSoundModuleType.TurboR_FTDI:
                     comPortOPM.DeferredWriteData(0x2e, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPM);
+                    break;
+                case VsifSoundModuleType.MSX_PiTR:
+                    comPortOPM.DeferredWriteData(0x2e, (byte)adrs, (byte)dt, -2);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -5458,6 +5889,22 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.SMS_FTDI:
                     comPortOPLL.DeferredWriteData(0, (byte)(adrs + 1), (byte)dt, (int)Program.Default.BitBangWaitOPLL);
+                    break;
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    {
+                        int wait = 0;
+                        if (comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
+                            wait = 0;
+
+                        var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
+                        if (slot == 1 || slot == 2)
+                            comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), -wait);
+                        if ((int)comPortOPLL.Tag["OPLL.Slot"] == 0)
+                            comPortOPLL.DeferredWriteData(1, (byte)adrs, (byte)dt, -wait);
+                        else
+                            comPortOPLL.DeferredWriteData(0xC, (byte)adrs, (byte)dt, -wait);
+                    }
                     break;
             }
         }
@@ -5652,19 +6099,25 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         private void deferredWriteY8950(int adrs, int dt)
         {
-            if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPLL.SoundModuleType)
             {
-                int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
-                switch (ytype)
-                {
-                    case 0:
-                        comPortY8950.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitY8950);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    {
+                        int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
+                        switch (ytype)
+                        {
+                            case 0:
+                                comPortY8950.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitY8950);
+                                break;
+                            case 1:
+                                comPortY8950.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitY8950);
+                                break;
+                        }
                         break;
-                    case 1:
-                        comPortY8950.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitY8950);
-                        break;
-                }
+                    }
             }
         }
 
@@ -5713,11 +6166,15 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         private void deferredWriteOPL3_P0(int adrs, int dt)
         {
-            if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPL3.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPL3.SoundModuleType)
             {
-                if (adrs != 0x10)   //ignore for Y8950 simulation
-                    comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPL3);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    if (adrs != 0x10)   //ignore for Y8950 simulation
+                        comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPL3);
+                    break;
             }
         }
 
@@ -5766,10 +6223,14 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         private void deferredWriteOPL3_P1(int adrs, int dt)
         {
-            if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPL3.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPL3.SoundModuleType)
             {
-                comPortOPL3.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPL3);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    comPortOPL3.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPL3);
+                    break;
             }
         }
 
@@ -5908,6 +6369,8 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
                     comPortOPN.DeferredWriteData(0x12, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN);
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
@@ -5929,19 +6392,25 @@ namespace zanac.VGMPlayer
         {
             if (comPortY8950 != null)
             {
-                if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortY8950.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                switch (comPortOPLL.SoundModuleType)
                 {
-                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
-                    switch (ytype)
-                    {
-                        case 0:
-                            comPortY8950.DeferredWriteData(10, (byte)adrs2, (byte)dt2, (int)Program.Default.BitBangWaitY8950);
-                            break;
-                        case 1:
-                            comPortY8950.DeferredWriteData(11, (byte)adrs2, (byte)dt2, (int)Program.Default.BitBangWaitY8950);
-                            break;
-                    }
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.TurboR_FTDI:
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                        {
+                            int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
+                            switch (ytype)
+                            {
+                                case 0:
+                                    comPortY8950.DeferredWriteData(10, (byte)adrs2, (byte)dt2, (int)Program.Default.BitBangWaitY8950);
+                                    break;
+                                case 1:
+                                    comPortY8950.DeferredWriteData(11, (byte)adrs2, (byte)dt2, (int)Program.Default.BitBangWaitY8950);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
         }

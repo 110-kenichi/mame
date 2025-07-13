@@ -149,6 +149,35 @@ namespace zanac.VGMPlayer
             }
         }
 
+        protected void SendDataBySerial(byte[] sendData, int[] wait)
+        {
+            List<byte> rawSendData = new List<byte>();
+            for (int i = 0; i < sendData.Length; i++)
+            {
+                var dt = sendData[i];
+                for (int j = 0; j < wait[i]; j++)
+                    rawSendData.Add(dt);
+            }
+
+            var sendBuffer = new Span<byte>(rawSendData.ToArray());
+            while (true)
+            {
+                uint writtenBytes = 0;
+                var stat = FtdiPort.Write(sendBuffer.ToArray(), sendBuffer.Length, ref writtenBytes);
+                if (stat != FTDI.FT_STATUS.FT_OK)
+                    break;
+                if (sendBuffer.Length == writtenBytes)
+                    break;
+
+                if (abortRequested)
+                {
+                    abortRequested = false;
+                    break;
+                }
+                sendBuffer = sendBuffer.Slice((int)writtenBytes, (int)(sendBuffer.Length - writtenBytes));
+            }
+        }
+
         // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
         // ~PortWriter()
         // {

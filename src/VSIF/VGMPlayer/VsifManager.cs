@@ -400,6 +400,21 @@ namespace zanac.VGMPlayer
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.MSX_Pi:
+                        case VsifSoundModuleType.MSX_PiTR:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.Handshake = Handshake.RequestToSend;
+                                sp.ReadTimeout = 300;
+                                sp.WriteTimeout = 300;
+                                sp.WriteBufferSize = 2;
+                                sp.BaudRate = 921600;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriterMsxPi(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -454,6 +469,8 @@ namespace zanac.VGMPlayer
         TurboR_FTDI,
         TurboEverDrive,
         NanoDrive,
+        MSX_Pi,
+        MSX_PiTR,
     }
 
 
