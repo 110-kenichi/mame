@@ -426,7 +426,6 @@ __WRITE_OPN_IO:
 
     OUT (OPNWR),A       ; 12 62 
 
-    ; Continuous Write
     INC B               ;  5 67
     CONT_WRITE
     .endm

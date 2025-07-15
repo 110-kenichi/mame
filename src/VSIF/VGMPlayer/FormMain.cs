@@ -47,6 +47,7 @@ namespace zanac.VGMPlayer
             comboBoxOpmSlot.SelectedIndex = 0;
             comboBoxOPL3.SelectedIndex = 0;
             comboBoxOPNA.SelectedIndex = 0;
+            comboBoxOPNB.SelectedIndex = 0;
             comboBoxY8950.SelectedIndex = 0;
             comboBoxOPN.SelectedIndex = 0;
             comboBoxNES.SelectedIndex = 0;
@@ -75,6 +76,7 @@ namespace zanac.VGMPlayer
             checkBoxConnOPM.Checked = false;
             checkBoxConnOPL3.Checked = false;
             checkBoxConnOPNA.Checked = false;
+            checkBoxConnOPNB.Checked = false;
             checkBoxConnY8950.Checked = false;
             checkBoxConnOPN.Checked = false;
             checkBoxConnNES.Checked = false;
@@ -184,6 +186,7 @@ namespace zanac.VGMPlayer
             comPortOPM?.Dispose();
             comPortOPL3?.Dispose();
             comPortOPNA?.Dispose();
+            comPortOPNB?.Dispose();
             comPortY8950?.Dispose();
             comPortOPN?.Dispose();
             comPortNES?.Dispose();
@@ -1482,6 +1485,7 @@ namespace zanac.VGMPlayer
             SCC1 = 1,
             SCC1_Compat = 2,
             SCC = 3,
+            SIOS_OPNB = 4,
         }
 
         private VsifClient comPortY8910;
@@ -1718,6 +1722,44 @@ namespace zanac.VGMPlayer
                 numericUpDownOPNADiv.Enabled = true;
 
                 comPortOPNA?.Dispose();
+            }
+        }
+
+
+        private VsifClient comPortOPNB;
+
+        private void checkBoxConnOPNB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnOPNB.Checked)
+            {
+                switch (Settings.Default.OPNB_IF)
+                {
+                    case 0:
+                        comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                            (PortId)Settings.Default.OPNB_Port, (int)0, false);
+                        comPortOPNB.Tag["SIOC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        break;
+                    case 1:
+                        comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                            (PortId)Settings.Default.OPNB_Port, (int)0, false);
+                        comPortOPNB.Tag["SIOC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        if (comPortOPNB != null)
+                            comPortOPNB.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
+                        break;
+                }
+                checkBoxConnOPNB.Checked = comPortOPNB != null;
+                comboBoxOPNB.Enabled = comPortOPNB == null;
+                comboBoxPortOPNB.Enabled = comPortOPNB == null;
+                //numericUpDownOPNBDiv.Enabled = comPortOPNB == null;
+
+            }
+            else
+            {
+                comboBoxOPNB.Enabled = true;
+                comboBoxPortOPNB.Enabled = true;
+                //numericUpDownOPNBDiv.Enabled = true;
+
+                comPortOPNB?.Dispose();
             }
         }
 

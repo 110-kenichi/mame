@@ -207,7 +207,19 @@ __SELECT_SCC_SLOT:
 
 ;=======================================================
     .ORG 0xB800
-    JP __VGM_LOOP       ; 
+__SELECT_SIOS_SLOT:
+    READ_ADRS           ;61
+    READ_DATA           ;50
+    LD  D,A             ; 5 55
+	LD	HL,(ROM1_S+2)   ; 17
+    P1_CHG2             ;143
+
+    ; PUSH BC
+    ; LD   A,(ROM1_S)
+    ; CALL P1_CHG          ; 48 + 300
+    ; POP  BC              ; 11
+    .globl __SELECT_SIOS_SLOT_P2
+    JP  __SELECT_SIOS_SLOT_P2  ; 11
 
 ;=======================================================
     .ORG 0xB900

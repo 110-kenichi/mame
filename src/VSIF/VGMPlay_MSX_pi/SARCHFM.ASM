@@ -571,7 +571,7 @@ S_AUD1:	POP	AF		;スロット番号を復帰
 	EXX
 
 	CP	(HL)
-	JP	NZ,S_END
+	JP	NZ,S_NTRON
 	INC	HL
 	DJNZ	S_AUD1
 
@@ -579,7 +579,7 @@ S_AUD1:	POP	AF		;スロット番号を復帰
 	INC	A
 	LD	(AUDIO_F),A
 	CP	#3
-	JP	NC,S_END	;3つ目以上は無視する
+	JP	NC,S_NTRON	;3つ目以上は無視する
 	
 	LD	HL,#0x3FFF
 	LD	E,A		;E=Ch1/Ch2
@@ -588,6 +588,34 @@ S_AUD1:	POP	AF		;スロット番号を復帰
 	CALL	WRSLT		;音源有効化
 	LD	A,#7		;A=7 MSX-AUDIO発見
 ;==========以上v0.05差分
+	JP	S_HIT
+
+	;------------------------ NEOTRONか調べる 
+S_NTRON:
+	LD	HL,#0x806C
+	EXX
+	LD	HL,#STR_NTRON
+	LD	B,#8
+
+S_NTRON_1:
+	POP	AF		;スロット番号を復帰
+	PUSH	AF
+
+	EXX
+	CALL	RDSLT		;SLOT A の806CH-を読む
+	INC	HL
+	EXX
+
+	CP	(HL)
+	JP	NZ,S_END
+	INC	HL
+	DJNZ	S_NTRON_1
+
+	LD	A,(NTRON_F)
+	INC	A
+	LD	(NTRON_F),A
+	LD	A,#8		;A=8 NEOTRON発見
+	JP	S_HIT
 
 	;----------戻り処理
 S_HIT:	LD	B,A
@@ -608,7 +636,7 @@ S_END:	POP	AF
 ;============================================================
 ;準備 :	A :スロット　(Aは保存される)
 ;	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM
-;		 6:OPL3  7:MSX-AUDIO
+;		 6:OPL3  7:MSX-AUDIO 8:NEOTRON
 ;
 ;戻り：	ワークエリアの各スロット選択レジスタの値
 ;
@@ -629,14 +657,47 @@ FM_INI:
 	JP	Z,FM_INI4	;OPLL(I)は何もしない
 	DEC	A
 	JP	Z,FM_INI1	;OPLL(E)
+	DEC	A
+	JP	Z,OPM_INI	;OPM
 
 	;==========以下v0.04差分
 	DEC	A
-	JP	NZ,FM_INI4	;OPL3,MSX-AUDIOは何もしない
+	JP	Z,FM_INI4	;OPL3は何もしない
+	DEC	A
+	JP	Z,FM_INI4	;MSX-AUDIOは何もしない
+	DEC	A
+	JP	Z,NEOTRON_INI	;NEOTRON
+
+	JP	FM_INI4
 	;==========以上v0.04差分
 
-	;========OPM
+	;========NEOTRON
+NEOTRON_INI:
+	LD	A,(NTRON_F)
+	CP	#3
+	JP	NC,FM_INI4	;3個目以上は無視
+	DEC	A
+	ADD	A,A
+	ADD	A,A
+	LD	B,#0
+	LD	C,A
+	LD	HL,#NTRON0_S
+	ADD	HL,BC		;ワークエリアのアドレス算出
 
+	POP	AF
+	PUSH	AF
+	CALL	P2_CAL		;スロット選択レジスタ事前計算
+
+
+	PUSH	AF
+    AND A   ; reset carry flag
+    CALL    SIOS_ENABLE_IO_10 ; enable register access
+	POP		AF
+
+	JR	FM_INI3
+
+	;========OPM
+OPM_INI:
 	LD	A,(OPM_F)
 	CP	#3
 	JP	NC,FM_INI4	;3個目以上は無視
@@ -1342,6 +1403,7 @@ STR_APRL:	.ascii	"APRLOPLL"
 STR_OPL3:	.ascii	"AUD3OPLL"
 STR_OPM:	.ascii	"MCHFM0"
 STR_AUDIO:	.ascii	"AUDIO"
+STR_NTRON:	.ascii	"OSC YM  OPNBYM2610"
 STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"SCC-1    $"
 	    	.ascii	"SCC      $"
@@ -1350,6 +1412,7 @@ STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"OPM (SFG)$"
 			.ascii	"OPL3     $"
 			.ascii	"MSX-AUDIO$"
+			.ascii	"NEOTRON  $"
 STR_DTCT:	.ascii	" detected on SLOT #$"
 STR_ROM:	.ascii	"ROM SLOT:$\r\n"
 STR_A:		.ascii	" A:$"

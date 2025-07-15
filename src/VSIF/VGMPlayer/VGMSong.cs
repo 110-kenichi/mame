@@ -45,6 +45,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPM;
         private VsifClient comPortOPL3;
         private VsifClient comPortOPNA;
+        private VsifClient comPortOPNB;
         private VsifClient comPortY8950;
         private VsifClient comPortOPN;
         private VsifClient comPortNES;
@@ -242,6 +243,50 @@ namespace zanac.VGMPlayer
                 }
 
                 EnableDacYM2608(comPortOPNA, false);
+            }
+
+            if (comPortOPNB != null)
+            {
+                switch (comPortOPNB.SoundModuleType)
+                {
+                    case VsifSoundModuleType.MSX_Pi:
+                    case VsifSoundModuleType.MSX_PiTR:
+                        // ALL KEY OFF
+                        for (int i = 0; i < 3; i++)
+                        {
+                            deferredWriteOPNB_P0(comPortOPNB, 0x28, i);
+                            deferredWriteOPNB_P0(comPortOPNB, 0x28, 0x4 | i);
+                        }
+                        //ADPCM-B
+                        deferredWriteOPNB_P0(comPortOPNB, 0x10, 0x01);
+                        //SSG
+                        deferredWriteOPNB_P0(comPortOPNB, 0x07, 0x3F);
+                        //ADPCM-A
+                        deferredWriteOPNB_P1(comPortOPNB, 0x00, 0xFF);
+                        break;
+                }
+
+                if (volumeOff)
+                {
+                    //TL
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPNB_P0(comPortOPNB, i, 0xFF);
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPNB_P1(comPortOPNB, i, 0xFF);
+                    //RR
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPNB_P0(comPortOPNB, i, 0xFF);
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPNB_P1(comPortOPNB, i, 0xFF);
+                    //ADPCM-B
+                    deferredWriteOPNB_P0(comPortOPNB, 0x10, 0x01);
+                    //SSG
+                    deferredWriteOPNB_P0(comPortOPNB, 0x08, 0);
+                    deferredWriteOPNB_P0(comPortOPNB, 0x09, 0);
+                    deferredWriteOPNB_P0(comPortOPNB, 0x0A, 0);
+                    //ADPCM-A
+                    deferredWriteOPNB_P1(comPortOPNB, 0x00, 0xFF);
+                }
             }
 
             if (comPortOPN != null)
@@ -775,7 +820,14 @@ namespace zanac.VGMPlayer
                 curHead.lngHzYM2610 = (uint)(curHead.lngHzYM2610 & ~0x80000000);
                 SongChipInformation += $"{chipName}@{curHead.lngHzYM2610 / 1000000f}MHz ";
 
-                if (Program.Default.OPNA_Enable)
+                if (Program.Default.OPNB_Enable)
+                {
+                    if (connectToOPNB(curHead.lngHzYM2610, true))
+                    {
+                        comPortOPNB.Tag["ProxyOPNB"] = true;
+                    }
+                }
+                else if (Program.Default.OPNA_Enable)
                 {
                     if (connectToOPNA(curHead.lngHzYM2610, true))
                     {
@@ -2026,6 +2078,83 @@ namespace zanac.VGMPlayer
                     //for (int i = 0xE0; i <= 0xFF; i++)
                     //    deferredWriteOPM(i, 0);
                     //comPortOPM.FlushDeferredWriteDataAndWait();
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool connectToOPNB(uint opnb_clock, bool opnb)
+        {
+            if (comPortOPNB == null)
+            {
+                switch (Program.Default.OPNB_IF)
+                {
+                    case 0:
+                        if (comPortOPNB == null)
+                        {
+                            comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
+                                (PortId)Program.Default.OPNB_Port);
+                            if (comPortOPNB != null)
+                            {
+                                comPortOPNB.ChipClockHz["OPNB"] = 8000000;
+                                comPortOPNB.ChipClockHz["OPNB_SSG"] = 8000000;
+                                comPortOPNB.ChipClockHz["OPNB_org"] = 8000000;
+                                UseChipInformation += "OPNB@8.000000MHz ";
+                                CanLoadCoverArt = true;
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (comPortOPNB == null)
+                        {
+                            comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
+                                (PortId)Program.Default.OPNB_Port);
+                            if (comPortOPNB != null)
+                            {
+                                comPortOPNB.ChipClockHz["OPNB"] = 8000000;
+                                comPortOPNB.ChipClockHz["OPNB_SSG"] = 8000000;
+                                comPortOPNB.ChipClockHz["OPNB_org"] = 8000000;
+                                UseChipInformation += "OPNB@8.000000MHz ";
+                                CanLoadCoverArt = true;
+                                comPortOPNB.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");  //dummy
+                            }
+                            if (comPortTurboRProxy == null && comPortOPNB != null)
+                            {
+                                comPortTurboRProxy = comPortOPNB;
+                            }
+                        }
+                        break;
+                }
+                if (comPortOPNB != null)
+                {
+                    Accepted = true;
+
+                    //LFO
+                    deferredWriteOPNB_P0(comPortOPNB, 0x22, 0x00);
+                    //channel 3 mode
+                    deferredWriteOPNB_P0(comPortOPNB, 0x27, 0x00);
+                    //Force OPN mode
+                    deferredWriteOPNB_P0(comPortOPNB, 0x29, 0x00);
+
+                    for (int i = 0x30; i <= 0x3F; i++)
+                        deferredWriteOPNB_P0(comPortOPNB, i, 0);
+                    //for (int i = 0x40; i <= 0x4F; i++)
+                    //    deferredWriteOPNB_P0(i, 0xff);
+                    for (int i = 0x50; i <= 0xB3; i++)
+                        deferredWriteOPNB_P0(comPortOPNB, i, 0);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPNB_P0(comPortOPNB, i, 0xC0);
+
+                    for (int i = 0x30; i <= 0x3F; i++)
+                        deferredWriteOPNB_P1(comPortOPNB, i, 0);
+                    //for (int i = 0x40; i <= 0x4F; i++)
+                    //    deferredWriteOPNB_P1(i, 0xff);
+                    for (int i = 0x50; i <= 0xB3; i++)
+                        deferredWriteOPNB_P1(comPortOPNB, i, 0);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPNB_P1(comPortOPNB, i, 0xC0);
 
                     return true;
                 }
@@ -3316,7 +3445,37 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            if (comPortOPNA != null)
+                                            //ignore test and unknown registers
+                                            if (adrs == 0xe || adrs == 0xf)
+                                                break;
+                                            if (0x16 <= adrs && adrs <= 0x18)
+                                                break;
+                                            if (0x1d <= adrs && adrs <= 0x1f)
+                                                break;
+                                            if (adrs > 0x20 && adrs < 0x30 && adrs != 0x27 && adrs != 0x28)
+                                                break;
+                                            if (adrs > 0xb2)
+                                                break;
+
+                                            if (comPortOPNB != null)
+                                            {
+                                                switch (adrs)
+                                                {
+                                                    case 0x2d:
+                                                        comPortOPNB.ChipClockHz["OPNB"] = (int)comPortOPNB.ChipClockHz["OPNB_org"];
+                                                        comPortOPNB.ChipClockHz["OPNB_SSG"] = (int)comPortOPNB.ChipClockHz["OPNB_org"];
+                                                        break;
+                                                    case 0x2e:
+                                                        comPortOPNB.ChipClockHz["OPNB"] = (int)comPortOPNB.ChipClockHz["OPNB_org"] / 2;
+                                                        comPortOPNB.ChipClockHz["OPNB_SSG"] = (int)comPortOPNB.ChipClockHz["OPNB_org"] / 2;
+                                                        break;
+                                                    case 0x2f:
+                                                        comPortOPNB.ChipClockHz["OPNB"] = (int)comPortOPNB.ChipClockHz["OPNB_org"] / 3;
+                                                        comPortOPNB.ChipClockHz["OPNB_SSG"] = (int)comPortOPNB.ChipClockHz["OPNB_org"] / 4;
+                                                        break;
+                                                }
+                                            }
+                                            else if (comPortOPNA != null)
                                             {
                                                 switch (adrs)
                                                 {
@@ -3335,7 +3494,11 @@ namespace zanac.VGMPlayer
                                                 }
                                             }
 
-                                            if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPNB"))
+                                            if (comPortOPNB != null)
+                                            {
+                                                deferredWriteOPNB_P0(comPortOPNB, adrs, dt, dclk);
+                                            }
+                                            else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPNB"))
                                             {
                                                 if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
                                                 {
@@ -3388,79 +3551,86 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            if (adrs >= 0 && adrs <= 0x10)
+                                            if (comPortOPNB != null)
                                             {
-                                                if (adrs == 0x1)
+                                                deferredWriteOPNB_P1(comPortOPNB, adrs, dt, dclk);
+                                            }
+                                            else
+                                            {
+                                                if (adrs >= 0 && adrs <= 0x10)
                                                 {
-                                                    if ((dt & 1) == 0)
+                                                    if (adrs == 0x1)
                                                     {
-                                                        ym2608_adpcmbit8 = (dt & 2) == 2;
+                                                        if ((dt & 1) == 0)
+                                                        {
+                                                            ym2608_adpcmbit8 = (dt & 2) == 2;
 
+                                                            if (ym2608_adpcmbit8)
+                                                            {
+                                                                //FormMain.TopForm.SetStatusText("YM2608: Set 8bit ADPCM mode");
+#if DEBUG
+                                                                Console.WriteLine("YM2608: Set 8bit ADPCM mode");
+#endif
+                                                            }
+                                                            else
+                                                            {
+                                                                //FormMain.TopForm.SetStatusText("YM2608: Set 1bit ADPCM mode");
+#if DEBUG
+                                                                Console.WriteLine("YM2608: Set 1bit ADPCM mode");
+#endif
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (adrs == 0x2)
+                                                    {
+                                                        ym2608_pcm_start = (ym2608_pcm_start & 0xff00) | dt;
+                                                    }
+                                                    else if (adrs == 0x3)
+                                                    {
+                                                        ym2608_pcm_start = (ym2608_pcm_start & 0xff) | (dt << 8);
+                                                    }
+                                                    else if (adrs == 0x4)
+                                                    {
+                                                        ym2608_pcm_stop = (ym2608_pcm_stop & 0xff00) | dt;
+                                                    }
+                                                    else if (adrs == 0x5)
+                                                    {
+                                                        ym2608_pcm_stop = (ym2608_pcm_stop & 0xff) | (dt << 8);
                                                         if (ym2608_adpcmbit8)
                                                         {
-                                                            //FormMain.TopForm.SetStatusText("YM2608: Set 8bit ADPCM mode");
 #if DEBUG
-                                                            Console.WriteLine("YM2608: Set 8bit ADPCM mode");
+                                                            Console.WriteLine("YM2608: Play 8bit ADPCM(" + (ym2608_pcm_start << 5).ToString("x") + " - " + ((ym2608_pcm_stop << 5) | 0x1f).ToString("x") + ")");
 #endif
                                                         }
                                                         else
                                                         {
-                                                            //FormMain.TopForm.SetStatusText("YM2608: Set 1bit ADPCM mode");
 #if DEBUG
-                                                            Console.WriteLine("YM2608: Set 1bit ADPCM mode");
+                                                            Console.WriteLine("YM2608: Play 1bit ADPCM mode(" + (ym2608_pcm_start << 2).ToString("x") + " - " + ((ym2608_pcm_stop << 2) | 0x3).ToString("x") + ")");
 #endif
                                                         }
                                                     }
                                                 }
-                                                else if (adrs == 0x2)
+                                                if (adrs != 0x8)    //ignore ADPCM adrs
                                                 {
-                                                    ym2608_pcm_start = (ym2608_pcm_start & 0xff00) | dt;
-                                                }
-                                                else if (adrs == 0x3)
-                                                {
-                                                    ym2608_pcm_start = (ym2608_pcm_start & 0xff) | (dt << 8);
-                                                }
-                                                else if (adrs == 0x4)
-                                                {
-                                                    ym2608_pcm_stop = (ym2608_pcm_stop & 0xff00) | dt;
-                                                }
-                                                else if (adrs == 0x5)
-                                                {
-                                                    ym2608_pcm_stop = (ym2608_pcm_stop & 0xff) | (dt << 8);
-                                                    if (ym2608_adpcmbit8)
+                                                    if (comPortOPNA != null)
                                                     {
-#if DEBUG
-                                                        Console.WriteLine("YM2608: Play 8bit ADPCM(" + (ym2608_pcm_start << 5).ToString("x") + " - " + ((ym2608_pcm_stop << 5) | 0x1f).ToString("x") + ")");
-#endif
+                                                        deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
                                                     }
-                                                    else
+                                                    else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNA"))
                                                     {
-#if DEBUG
-                                                        Console.WriteLine("YM2608: Play 1bit ADPCM mode(" + (ym2608_pcm_start << 2).ToString("x") + " - " + ((ym2608_pcm_stop << 2) | 0x3).ToString("x") + ")");
-#endif
+                                                        deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                                     }
                                                 }
-                                            }
-                                            if (adrs != 0x8)    //ignore ADPCM adrs
-                                            {
-                                                if (comPortOPNA != null)
+                                                else
                                                 {
-                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
-                                                }
-                                                else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNA"))
-                                                {
-                                                    deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (comPortOPNA != null)
-                                                {
-                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
-                                                    comPortOPNA.FlushDeferredWriteDataAndWait();
-                                                    //HACK:
-                                                    QueryPerformanceCounter(out before);
-                                                    dbefore = before;
+                                                    if (comPortOPNA != null)
+                                                    {
+                                                        deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
+                                                        comPortOPNA.FlushDeferredWriteDataAndWait();
+                                                        //HACK:
+                                                        QueryPerformanceCounter(out before);
+                                                        dbefore = before;
+                                                    }
                                                 }
                                             }
                                         }
@@ -3479,7 +3649,11 @@ namespace zanac.VGMPlayer
 
                                             if (adrs >= 0x30)    //ignore ADPCM adrs
                                             {
-                                                if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPNB"))
+                                                if (comPortOPNB != null)
+                                                {
+                                                    deferredWriteOPNB_P1(comPortOPNB, adrs, dt, dclk);
+                                                }
+                                                else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPNB"))
                                                 {
                                                     deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
                                                 }
@@ -3492,9 +3666,17 @@ namespace zanac.VGMPlayer
                                                     deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                                 }
                                             }
-                                            else if (opnbPcm != null)
+                                            else
                                             {
-                                                opnbPcm.WritRegisterADPCM_A((byte)(adrs), (byte)dt);
+                                                if (comPortOPNB != null)
+                                                {
+                                                    if (adrs != 0x02)
+                                                        deferredWriteOPNB_P1(comPortOPNB, adrs, dt, dclk);
+                                                }
+                                                else if (opnbPcm != null)
+                                                {
+                                                    opnbPcm.WritRegisterADPCM_A((byte)(adrs), (byte)dt);
+                                                }
                                             }
                                         }
                                         break;
@@ -6429,6 +6611,7 @@ namespace zanac.VGMPlayer
             comPortOPM?.FlushDeferredWriteData();
             comPortOPL3?.FlushDeferredWriteData();
             comPortOPNA?.FlushDeferredWriteData();
+            comPortOPNB?.FlushDeferredWriteData();
             comPortY8950?.FlushDeferredWriteData();
             comPortOPN?.FlushDeferredWriteData();
             comPortNES?.FlushDeferredWriteData();
@@ -6451,6 +6634,7 @@ namespace zanac.VGMPlayer
             comPortOPM?.FlushDeferredWriteDataAndWait();
             comPortOPL3?.FlushDeferredWriteDataAndWait();
             comPortOPNA?.FlushDeferredWriteDataAndWait();
+            comPortOPNB?.FlushDeferredWriteDataAndWait();
             comPortY8950?.FlushDeferredWriteDataAndWait();
             comPortOPN?.FlushDeferredWriteDataAndWait();
             comPortNES?.FlushDeferredWriteDataAndWait();
@@ -6473,6 +6657,7 @@ namespace zanac.VGMPlayer
             comPortOPM?.Abort();
             comPortOPL3?.Abort();
             comPortOPNA?.Abort();
+            comPortOPNB?.Abort();
             comPortY8950?.Abort();
             comPortOPN?.Abort();
             comPortNES?.Abort();
@@ -6531,6 +6716,8 @@ namespace zanac.VGMPlayer
                 comPortOPL3 = null;
                 comPortOPNA?.Dispose();
                 comPortOPNA = null;
+                comPortOPNB?.Dispose();
+                comPortOPNB = null;
                 comPortY8950?.Dispose();
                 comPortY8950 = null;
                 comPortOPN?.Dispose();

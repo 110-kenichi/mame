@@ -7,9 +7,9 @@ void processPlayer();
 
 //https://w.atwiki.jp/msx-sdcc/pages/49.html
 
+
 void main(void)
 {
-
 #ifdef VKEY
 __asm
 	IN      A,(#0xAA)	//PPIレジスタCを読む

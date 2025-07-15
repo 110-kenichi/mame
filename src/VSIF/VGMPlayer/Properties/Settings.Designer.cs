@@ -12,7 +12,7 @@ namespace zanac.VGMPlayer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -1243,6 +1243,97 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["BitBangWaitPCE"] = value;
+            }
+        }
+
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNB_IF
+        {
+            get
+            {
+                return ((int)(this["OPNB_IF"]));
+            }
+            set
+            {
+                this["OPNB_IF"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OPNB_Enable
+        {
+            get
+            {
+                return ((bool)(this["OPNB_Enable"]));
+            }
+            set
+            {
+                this["OPNB_Enable"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNB_Slot
+        {
+            get
+            {
+                return ((int)(this["OPNB_Slot"]));
+            }
+            set
+            {
+                this["OPNB_Slot"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNB_Port
+        {
+            get
+            {
+                return ((int)(this["OPNB_Port"]));
+            }
+            set
+            {
+                this["OPNB_Port"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public decimal BitBangWaitOPNB
+        {
+            get
+            {
+                return ((decimal)(this["BitBangWaitOPNB"]));
+            }
+            set
+            {
+                this["BitBangWaitOPNB"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPNBDiv
+        {
+            get
+            {
+                return ((decimal)(this["OPNBDiv"]));
+            }
+            set
+            {
+                this["OPNBDiv"] = value;
             }
         }
     }

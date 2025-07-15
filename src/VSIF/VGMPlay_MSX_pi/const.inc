@@ -39,9 +39,11 @@ CR	= #0xd
 ;--- MAIN-ROM内
 RDSLT	= #0x000C
 WRSLT	= #0x0014
+CALSLT	= #0x0018		;CALL SLT命令を実行するＢＩＯＳ
 ENASLT	= #0x0024
 VER_NO	= #0x002D
 INT_NO	= #0x002B
+CALLF	= #0x0030		;CALLF命令を実行するＢＩＯＳ
 RDRES	= #0x017A		;ﾘｾｯﾄｽﾃｰﾀｽをAﾚｼﾞｽﾀｰに転送するＢＩＯＳ
 RWRES	= #0x017D		;Aﾚｼﾞｽﾀｰをﾘｾｯﾄｽﾃｰﾀｽに転送するＢＩＯＳ
 INIT32	= #0x006F		;スプライトＯＦＦ（スクリーン１へ）
@@ -87,6 +89,29 @@ OPM_F	= #0xE023
 ;==========以下v0.05差分
 AUDIO_F	= #0xE024
 ;==========以上v0.05差分
+
+NTRON0_S= #0xE025
+NTRON_F = #0xE029
+NTRON_PCM_BUF	= #0xE100	; PCMバッファ 256bytes
+
+;==========以上v0.06差分
+
+
+SIOS_SMEM_A = 1
+SIOS_SMEM_B = 2
+SIOS_RESET_01 = 0x4019
+SIOS_ENABLE_IO_01 = 0x401C
+SIOS_ERASE_SMEM_01 = 0x4022
+SIOS_WRITE_SMEM_01 = 0x4025
+SIOS_SET_SMEM_01 = 0x402B
+
+SIOS_RESET_10 = 0x8019
+SIOS_ENABLE_IO_10 = 0x801C
+SIOS_ERASE_SMEM_10 = 0x8022
+SIOS_WRITE_SMEM_10 = 0x8025
+SIOS_SET_SMEM_10 = 0x802B
+SIOS_WRITE_REG0_10 = 0x80C0
+SIOS_WRITE_REG1_10 = 0x80C3
 
 ; LD  A, H
 ; ADD A, #0x30

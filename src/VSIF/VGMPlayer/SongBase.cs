@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using zanac.VGMPlayer.Properties;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using static zanac.VGMPlayer.FormMain;
 using Timer = System.Timers.Timer;
 
 namespace zanac.VGMPlayer
@@ -911,6 +912,263 @@ namespace zanac.VGMPlayer
             if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
                 ret.Item3 = true;
             return ret;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="comPortOPNB"></param>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        /// <param name="dclk"></param>
+        protected void deferredWriteOPNB_P0(VsifClient comPortOPNB, int adrs, int dt, uint dclk)
+        {
+            if (adrs == 7)
+                dt &= 0x3f;
+            comPortOPNB.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0:
+                case 2:
+                case 4:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertAy8910Frequency(comPortOPNB.RegTable[adrs + 1], dt, comPortOPNB.ChipClockHz["OPNB_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs + 1, ret.Hi);
+                    }
+                    break;
+                case 1:
+                case 3:
+                case 5:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertAy8910Frequency(dt, comPortOPNB.RegTable[adrs - 1], comPortOPNB.ChipClockHz["OPNB_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs - 1, ret.Lo);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                    }
+                    break;
+                case 6:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        var data = (int)Math.Round(dt * (dclk) / (double)comPortOPNB.ChipClockHz["OPNB_SSG"]);
+                        if (data > 32)
+                            data = 32;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, (byte)data);
+                    }
+                    break;
+                case 0xB:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertAy8910EnvFrequency(comPortOPNB.RegTable[adrs + 1], dt, comPortOPNB.ChipClockHz["OPNB_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs + 1, ret.Hi);
+                    }
+                    break;
+                case 0xC:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertAy8910EnvFrequency(dt, comPortOPNB.RegTable[adrs - 1], comPortOPNB.ChipClockHz["OPNB_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs - 1, ret.Lo);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                    }
+                    break;
+
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNB.RegTable[adrs + 4], dt, comPortOPNB.ChipClockHz["OPNB"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs + 4, ret.Hi);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNB.RegTable[adrs - 4], comPortOPNB.ChipClockHz["OPNB"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                        deferredWriteOPNB_P0(comPortOPNB, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNB_P0(comPortOPNB, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPNB_P0(VsifClient comPortOPNB, int adrs, int dt)
+        {
+            switch (comPortOPNB.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    var slot = (int)comPortOPNB.Tag["SIOC.Slot"];
+                    comPortOPNB.DeferredWriteData(0x18, (byte)SCCType.SIOS_OPNB, (byte)slot, 0);
+                    comPortOPNB.DeferredWriteData(0x1A, (byte)adrs, (byte)dt, 0);
+                    break;
+            }
+        }
+
+
+        protected void deferredWriteOPNB_P1(VsifClient comPortOPNB, int adrs, int dt, uint dclk)
+        {
+            comPortOPNB.RegTable[adrs + 0x100] = dt;
+
+            switch (adrs)
+            {
+                case 0x0e:
+
+                    break;
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNB.RegTable[adrs + 4 + 0x100], dt, comPortOPNB.ChipClockHz["OPNB"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNB_P1(comPortOPNB, adrs + 4, ret.Hi);
+                        deferredWriteOPNB_P1(comPortOPNB, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNB.ChipClockHz["OPNB"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNB.RegTable[adrs - 4 + 0x100], comPortOPNB.ChipClockHz["OPNB"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNB_P1(comPortOPNB, adrs, dt);
+                        deferredWriteOPNB_P1(comPortOPNB, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNB_P1(comPortOPNB, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPNB_P1(VsifClient comPortOPNB, int adrs, int dt)
+        {
+            switch (comPortOPNB.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_Pi:
+                case VsifSoundModuleType.MSX_PiTR:
+                    var slot = (int)comPortOPNB.Tag["SIOC.Slot"];
+                    comPortOPNB.DeferredWriteData(0x18, (byte)SCCType.SIOS_OPNB, (byte)slot, 0);
+                    comPortOPNB.DeferredWriteData(0x1B, (byte)adrs, (byte)dt, 0);
+                    break;
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        protected void sendAdpcmDataYM2610_SIOS(VsifClient comPortOPNB, byte[] transferData, int saddr, int type, FormProgress fp)
+        {
+            //Transfer
+            int len = transferData.Length;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int i = 0; i < len; i++)
+            {
+                deferredWriteOPNA_P1(comPortOPNB, 0x08, transferData[i]);
+
+                //HACK: WAIT
+                switch (comPortOPNB?.SoundModuleType)
+                {
+                    case VsifSoundModuleType.Spfm:
+                    case VsifSoundModuleType.SpfmLight:
+                    case VsifSoundModuleType.Gimic:
+                        comPortOPNB?.FlushDeferredWriteDataAndWait();
+                        break;
+                }
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                    comPortOPNB?.FlushDeferredWriteDataAndWait();
+                }
+                lastPercentage = percentage;
+                index++;
+                if (RequestedStat == SoundState.Stopped)
+                    break;
+                else updateStatusForDataTransfer();
+            }
+            FormMain.TopForm.SetStatusText("YM2610: Transferred ADPCM");
         }
 
         /// <summary>

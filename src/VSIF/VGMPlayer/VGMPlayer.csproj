@@ -178,6 +178,7 @@
     </Compile>
     <Compile Include="PortWriterMsxPi.cs" />
     <Compile Include="PortWriterNanoDrive.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="TurboLink\TurboEvedriveManager.cs" />
     <Compile Include="Gimic\GimicManager.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />

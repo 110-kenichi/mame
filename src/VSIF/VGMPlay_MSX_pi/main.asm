@@ -45,9 +45,9 @@
 	.area _CODE
 	G$main$0$0	= .
 	.globl	G$main$0$0
-	C$main.c$10$0_0$56	= .
-	.globl	C$main.c$10$0_0$56
-;main.c:10: void main(void)
+	C$main.c$11$0_0$56	= .
+	.globl	C$main.c$11$0_0$56
+;main.c:11: void main(void)
 ;	---------------------------------
 ; Function main
 ; ---------------------------------

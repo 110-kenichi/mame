@@ -368,19 +368,91 @@ __ENA_SCC:
 
 ;=======================================================
     .ORG 0x7800
+    .globl __SELECT_SIOS_SLOT_P2
+__SELECT_SIOS_SLOT:
+    READ_ADRS
+    READ_DATA
+__SELECT_SIOS_SLOT_P2:
+    LD   A,(NTRON0_S)
+    CALL P2_CHG         ; A = Page2に割り当てるスロット(0b0000_0000 ～ 0b1000_1111)
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7900
+__SIOS_WRITE_PCM_DATA1:
+    READ_ADRS           ; B:Memory ID(1:ADPCM-A, 2:ADPCM-B)
+    READ_DATA           ; A:Memory Address Hi[23..16]
+    LD      D, A
+__SIOS_WRITE_PCM_DATA2:
+    READ_DATA           ; A:Memory Address Lo[15..8]
+    LD      E, A
+
+    OR A    ; reset carry flag
+    CALL    SIOS_ENABLE_IO_10 ; enable register access
+
+    LD      A, B        ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
+;   LD      DE, 0x1000 ; address to access = 0x1000
+    CALL    SIOS_SET_SMEM_10 ; set access address
+
+    ; Receive PCM data
+    PUSH BC   ; Save B(Memory ID)
+        LD	HL,#NTRON_PCM_BUF
+        __SIOS_WRITE_PCM_DATA3:
+        LD  B,#0x00 ; B = size of data to write (0x00 means 256 bytes)
+        __SIOS_WRITE_PCM_DATA4:
+            READ_DATA           ; A:PCM DATA
+            LD  (HL), A
+            INC L
+        DJNZ __SIOS_WRITE_PCM_DATA4
+    POP BC   ; Restore B(Memory ID)
+
+    ; Tranfer PCM data to SIOS memory
+    LD      A,B    ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
+    LD      HL,#NTRON_PCM_BUF ; HL = source address
+    LD      B,#0x01 ; B = size of data to write (256 bytes)
+    LD      C,#0x00 ; C = 0 (not used in this case)
+    CALL    SIOS_WRITE_SMEM_10
+
+    CALL    SIOS_RESET_10 ; enable register access
+
+    LD  E,#0x2          ; Reset E for next
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7A00
-    JP __VGM_LOOP       ; 
+__WRITE_OPNB_IO1:
+    READ_ADRS           ; 45
+0$:
+    LD  A,B             ; 
+    LD (#0xBC00),A     ; 17 78
+;=======================
+    READ_DATA           ; 40
+
+    LD (#0xBC01),A     ; 12 62
+    ; LD  D,A
+    ; LD  A,B
+    ; CALL    SIOS_WRITE_REG0_10
+
+    INC B               ;  5 67
+    CONT_WRITE
 
 ;=======================================================
     .ORG 0x7B00
-    JP __VGM_LOOP       ; 
+__WRITE_OPNB_IO2:
+    READ_ADRS           ; 45
+0$:
+    LD  A,B             ; 
+    LD (#0xBC02),A     ; 17 78
+;=======================
+    READ_DATA           ; 40
+
+    LD (#0xBC03),A     ; 12 62
+    ; LD  D,A
+    ; LD  A,B
+    ; CALL    SIOS_WRITE_REG1_10
+
+    INC B               ;  5 67
+    CONT_WRITE
 
 ;=======================================================
     .ORG 0x7C00
