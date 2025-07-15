@@ -405,8 +405,8 @@ namespace zanac.VGMPlayer
                             {
                                 SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.Handshake = Handshake.RequestToSend;
-                                sp.ReadTimeout = 300;
-                                sp.WriteTimeout = 300;
+                                sp.ReadTimeout = 10300;
+                                sp.WriteTimeout = 10300;
                                 sp.WriteBufferSize = 2;
                                 sp.BaudRate = 921600;
                                 sp.Open();

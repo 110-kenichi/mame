@@ -1140,7 +1140,7 @@ namespace zanac.VGMPlayer
             int len = transferData.Length;
             int index = 0;
             int percentage = 0;
-            int lastPercentage = 0;
+            int lastPercentage = -1;
             for (int i = 0; i < len; i++)
             {
                 deferredWriteOPNA_P1(comPortOPNB, 0x08, transferData[i]);
@@ -1319,7 +1319,7 @@ namespace zanac.VGMPlayer
             int len = transferData.Length;
             int index = 0;
             int percentage = 0;
-            int lastPercentage = 0;
+            int lastPercentage = -1;
             for (int i = 0; i < len; i++)
             {
                 deferredWriteOPNA_P1(comPortOPNA, 0x08, transferData[i]);

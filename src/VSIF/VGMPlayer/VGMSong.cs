@@ -23,6 +23,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Net;
 using System.Windows.Media.Animation;
 using System.Windows.Markup;
+using System.Windows.Media;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -3118,6 +3119,7 @@ namespace zanac.VGMPlayer
                                 {
                                     case -1:
                                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                        adpcmMemoryErased.Clear();
                                         break;
 
                                     case 0x30:
@@ -4059,6 +4061,7 @@ namespace zanac.VGMPlayer
                                         if (!LoopByCount && !LoopByElapsed)
                                         {
                                             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                            adpcmMemoryErased.Clear();
                                             break;
                                         }
                                         else
@@ -4067,6 +4070,7 @@ namespace zanac.VGMPlayer
                                                 vgmReader.BaseStream?.Seek((vgmHead.cur.lngLoopOffset + 0x1c) - (vgmDataOffset), SeekOrigin.Begin);
                                             else
                                                 vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                            adpcmMemoryErased.Clear();
                                         }
                                         break;
 
@@ -4103,7 +4107,7 @@ namespace zanac.VGMPlayer
                                                             {
                                                                 byte prevbank = 0xff;
                                                                 int percentage = 0;
-                                                                int lastPercentage = 0;
+                                                                int lastPercentage = -1;
                                                                 for (var i = saddr; i < dd.Count; i++)
                                                                 {
                                                                     if (i < 0x20)
@@ -4244,7 +4248,11 @@ namespace zanac.VGMPlayer
                                                             if (0 <= size && size <= Int32.MaxValue)
                                                             {
                                                                 byte[] romData = vgmReader.ReadBytes((int)size);
-                                                                if (opnbPcm != null)
+                                                                if (comPortOPNB != null)
+                                                                {
+                                                                    saddr = transferAdpcmDataForNeotron(size, saddr, romData, 1, "A");
+                                                                }
+                                                                else if (opnbPcm != null)
                                                                 {
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_a_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_A, saddr + i, romData[i]);
@@ -4262,7 +4270,11 @@ namespace zanac.VGMPlayer
                                                             if (0 <= size && size <= Int32.MaxValue)
                                                             {
                                                                 byte[] romData = vgmReader.ReadBytes((int)size);
-                                                                if (opnbPcm != null)
+                                                                if (comPortOPNB != null)
+                                                                {
+                                                                    saddr = transferAdpcmDataForNeotron(size, saddr, romData, 2, "B");
+                                                                }
+                                                                else if (opnbPcm != null)
                                                                 {
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_b_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_B, saddr + i, romData[i]);
@@ -4354,7 +4366,7 @@ namespace zanac.VGMPlayer
                                                             {
                                                                 byte prevbank = 0xff;
                                                                 int percentage = 0;
-                                                                int lastPercentage = 0;
+                                                                int lastPercentage = -1;
                                                                 for (var i = 0; i < dd.Count; i++)
                                                                 {
                                                                     byte bank = (byte)(0x00 | (((saddr + i) >> 12) & 0xf));
@@ -5194,6 +5206,7 @@ namespace zanac.VGMPlayer
                         if (LoopedCount >= 0)
                             CurrentLoopedCount++;
                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                        adpcmMemoryErased.Clear();
                     }
 
                     if (streamWaitDelta < vgmWaitDelta)
@@ -5264,6 +5277,65 @@ namespace zanac.VGMPlayer
             StopAllSounds(true);
             State = SoundState.Stopped;
             NotifyFinished();
+        }
+
+        private Dictionary<uint, bool> adpcmMemoryErased = new Dictionary<uint, bool>();
+
+        private uint transferAdpcmDataForNeotron(uint size, uint saddr, byte[] romData, int memoryType, string memoryTypeName)
+        {
+            if (romData.Length == 0)
+                return saddr;
+
+            FormMain.TopForm.SetStatusText("YM2610: No ADPCM-" + memoryTypeName + " data to transfer.");
+            FormMain.TopForm.SetStatusText("YM2610: Transferring ADPCM-" + memoryTypeName + "(" +
+            (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+            " (" + size.ToString("x") + ")");
+
+#if DEBUG
+            Console.WriteLine("YM2610: Transferring ADPCM-" + memoryTypeName + "(" +
+                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                " (" + size.ToString("x") + ")");
+#endif
+            uint chunkSize = 256;
+            int lastPercentage = -1;
+            for (uint oi = 0; oi < romData.Length; oi += chunkSize)
+            {
+                int percentage = (100 * (int)oi) / romData.Length;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("YM2610: Transferring ADPCM-" + memoryTypeName + "(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                    lastPercentage = percentage;
+                }
+
+                uint sz = Math.Min(chunkSize, (uint)romData.Length - oi);
+                byte[] chunkData = new byte[chunkSize];
+                Array.Copy(romData, oi, chunkData, 0, sz);
+
+                // ‚±‚±‚Åchunk‚ðŽg‚Á‚Äˆ—‚ðs‚¤
+                bool erase = false;
+                if (!adpcmMemoryErased.ContainsKey((saddr >> 16)))
+                {
+                    adpcmMemoryErased[(saddr >> 16)] = true;
+                    erase = true;
+                }
+                comPortOPNB.DataWriter.RawWrite(new byte[] { 0x19, (byte)memoryType, (byte)(saddr >> 16), (byte)(saddr >> 8),
+                    (byte)(erase ? 1 : 0)}, null);
+                comPortOPNB.DataWriter.RawWrite(chunkData, null);
+                comPortOPNB.FlushDeferredWriteDataAndWait();
+                saddr += chunkSize;
+            }
+
+            FormMain.TopForm.SetStatusText("YM2610: Transferred ADPCM-" + memoryTypeName + "(" +
+                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                " (" + size.ToString("x") + ")");
+
+#if DEBUG
+            Console.WriteLine("YM2610: Transferred ADPCM-" + memoryTypeName + "(" +
+                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                " (" + size.ToString("x") + ")");
+#endif
+            return saddr;
         }
 
         private void deferredWriteY8950(int adrs, int dt, uint dclk)
@@ -6209,7 +6281,7 @@ namespace zanac.VGMPlayer
             int len = transferData.Length;
             int index = 0;
             int percentage = 0;
-            int lastPercentage = 0;
+            int lastPercentage = -1;
             for (int i = 0; i < transferData.Length; i++)
             {
                 Y8950WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true, wait);

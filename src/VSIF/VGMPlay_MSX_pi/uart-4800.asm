@@ -387,17 +387,28 @@ __SIOS_WRITE_PCM_DATA2:
     READ_DATA           ; A:Memory Address Lo[15..8]
     LD      E, A
 
-    OR A    ; reset carry flag
-    CALL    SIOS_ENABLE_IO_10 ; enable register access
+;    OR A    ; reset carry flag
+;    CALL    SIOS_ENABLE_IO_10 ; enable register access
 
-    LD      A, B        ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
+    LD      A,B        ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
 ;   LD      DE, 0x1000 ; address to access = 0x1000
     CALL    SIOS_SET_SMEM_10 ; set access address
 
-    ; Receive PCM data
+__SIOS_ERASE_SIOS_MEM:
+    PUSH DE   ; Save Memory Address 
     PUSH BC   ; Save B(Memory ID)
-        LD	HL,#NTRON_PCM_BUF
+        LD  E,#0x2          ; Reset E for next
+        READ_DATA
+        AND #1
+        JP  Z, __SIOS_WRITE_PCM_DATA3 ; if bit0=1, erase SIOS memory
+        LD      A,B  ; Memory ID(1:ADPCM-A, 2:ADPCM-B)
+        LD      B,#1 ; B = size of data to write (B*64K bytes) 
+        CALL    SIOS_ERASE_SMEM_10 ; erase SIOS memory
         __SIOS_WRITE_PCM_DATA3:
+
+        ; Receive PCM data
+        LD  E,#0x2          ; Reset E for next
+        LD	HL,#NTRON_PCM_BUF
         LD  B,#0x00 ; B = size of data to write (0x00 means 256 bytes)
         __SIOS_WRITE_PCM_DATA4:
             READ_DATA           ; A:PCM DATA
@@ -405,15 +416,22 @@ __SIOS_WRITE_PCM_DATA2:
             INC L
         DJNZ __SIOS_WRITE_PCM_DATA4
     POP BC   ; Restore B(Memory ID)
+    POP DE   ; Restore Memory Address 
+
+    LD      A,B    ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
+;   LD      DE, 0x1000 ; address to access = 0x1000
+    CALL    SIOS_SET_SMEM_10 ; set access address
 
     ; Tranfer PCM data to SIOS memory
     LD      A,B    ;Memory ID(1:ADPCM-A, 2:ADPCM-B)
     LD      HL,#NTRON_PCM_BUF ; HL = source address
-    LD      B,#0x01 ; B = size of data to write (256 bytes)
-    LD      C,#0x00 ; C = 0 (not used in this case)
+    LD      BC,#0x0100 ; BC = size of data to write (256 bytes)
     CALL    SIOS_WRITE_SMEM_10
 
     CALL    SIOS_RESET_10 ; enable register access
+
+    AND A   ; reset carry flag
+    CALL    SIOS_ENABLE_IO_10 ; enable register access
 
     LD  E,#0x2          ; Reset E for next
     JP __VGM_LOOP       ; 
