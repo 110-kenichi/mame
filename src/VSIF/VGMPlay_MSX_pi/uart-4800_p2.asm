@@ -13,16 +13,24 @@ _uart_processVgm_P2:
  	; CALL	CHPUT
 
     DI
-    LD  E,#0x2
+.if UART_MODE_135
+    LD  E,#135
+.else
+    LD  E,#2
+.endif
+
 
 __VGM_LOOP:
 __VGM_TYPE:
-    IN  A,(UART_STAT)   ; 12
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, __VGM_TYPE  ; 11 28
+.else
     AND E               ;  5
     JP  Z, __VGM_TYPE   ; 11
+.endif
     IN  A,(UART_READ)   ; 12
-    ; CP  #0x05           ;  8 86
-    ; JP  C, _END_VGM2           ; 11 97
     OR  #JPOFST         ;  8
     LD  H,A             ;  5
     LD  L,#0            ;  8

@@ -1050,9 +1050,24 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_Pi:
                 case VsifSoundModuleType.MSX_PiTR:
-                    var slot = (int)comPortOPNB.Tag["SIOC.Slot"];
+                    int type = (int)comPortOPNB.Tag["OPNB.Type"];
+                    if (type == 0)
+                    {
+                        if (adrs == 0x28 && ((dt & 0x7) == 1 || (dt & 0x7) == 4))
+                            return; //Skip OPNB Type 0
+                    }
+                    var slot = (int)0;
                     comPortOPNB.DeferredWriteData(0x18, (byte)SCCType.SIOS_OPNB, (byte)slot, 0);
-                    comPortOPNB.DeferredWriteData(0x1A, (byte)adrs, (byte)dt, 0);
+
+                    switch (comPortOPNB.SoundModuleType)
+                    {
+                        case VsifSoundModuleType.MSX_Pi:
+                            comPortOPNB.DeferredWriteData(0x1A, (byte)adrs, (byte)dt, 0);
+                            break;
+                        case VsifSoundModuleType.MSX_PiTR:
+                            comPortOPNB.DeferredWriteData(0x3A, (byte)adrs, (byte)dt, -1);
+                            break;
+                    }
                     break;
             }
         }
@@ -1120,9 +1135,21 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_Pi:
                 case VsifSoundModuleType.MSX_PiTR:
-                    var slot = (int)comPortOPNB.Tag["SIOC.Slot"];
+                    //int type = (int)comPortOPNB.Tag["OPNB.Type"];
+                    //if (type == 0)
+                    //{
+                    //}
+                    var slot = (int)0;
                     comPortOPNB.DeferredWriteData(0x18, (byte)SCCType.SIOS_OPNB, (byte)slot, 0);
-                    comPortOPNB.DeferredWriteData(0x1B, (byte)adrs, (byte)dt, 0);
+                    switch (comPortOPNB.SoundModuleType)
+                    {
+                        case VsifSoundModuleType.MSX_Pi:
+                            comPortOPNB.DeferredWriteData(0x1B, (byte)adrs, (byte)dt, 0);
+                            break;
+                        case VsifSoundModuleType.MSX_PiTR:
+                            comPortOPNB.DeferredWriteData(0x3B, (byte)adrs, (byte)dt, -2);
+                            break;
+                    }
                     break;
             }
         }

@@ -1,11 +1,20 @@
 
 ;=======================================================
+    .macro READ_UART_STAT
+    IN  A,(UART_STAT)   ; 12
+    IN  A,(UART_STAT)   ; 12
+    .endm
 
     .macro READ_ADRS
 5$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 5$           ; 11 28
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, 5$          ; 11 28
+.else
+    AND E               ;  5
+    JP  Z, 5$   ; 11
+.endif
     IN  A,(UART_READ)   ; 12 40
     LD  B, A            ;  5 45
     .endm
@@ -13,9 +22,14 @@
 
     .macro READ_DATA
 3$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 3$           ; 11 28
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, 3$          ; 11 28
+.else
+    AND E               ;  5
+    JP  Z, 3$           ; 11
+.endif
     IN  A,(UART_READ)   ; 12 40
     .endm
 ;=======================================================
@@ -24,9 +38,14 @@
     LD  L,#0            ;  8 67
 ;=======================
 1$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 1$           ; 11 28
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, 1$          ; 11 28
+.else
+    AND E               ;  5
+    JP  Z, 1$           ; 11
+.endif
     IN  A,(UART_READ)   ; 12 40
     AND	#0x1F           ;  8 48
     JP  Z,0$            ; 11 59 ; Continuous Write
@@ -78,27 +97,20 @@ __WRITE_OPLL_IO:
 
     ; Continuous Write
     INC B               ;  5 67
-    LD  L,#0            ;  8 75
-;=======================
-1$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 1$           ; 11 28
-    IN  A,(UART_READ)   ; 12 40
-    AND	#0x1F           ;  8 48
-    JP  Z,0$            ; 11 59 ; Continuous Write
-
-    OR  #JPOFST         ;  8 67
-    LD  H,A             ;  5 72
-    JP  (HL)            ;  5 75 ; Jump to other ID
+    CONT_WRITE
     .endm
 
 ;=======================================================
     .macro WRITE_SCC_2BYTES
 1$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 1$           ; 11 28
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, 1$          ; 11 28
+.else
+    AND E               ;  5
+    JP  Z, 1$           ; 11
+.endif
     IN  A,(UART_READ)   ; 12 40
 
     ;WRITE BOTH 1st BYTE AND 2nd BYTE
@@ -172,9 +184,14 @@ __WRITE_SCC_2BYTES:
     .macro WRITE_SCC_31_BYTES
     LD  B,#31           ;  8  8
 1$:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5 17
-    JP  Z, 1$           ; 11 28
+    READ_UART_STAT
+.if UART_MODE_135
+    CP  E               ;  5
+    JP  NZ, 1$          ; 11 28
+.else
+    AND E               ;  5
+    JP  Z, 1$           ; 11
+.endif
     IN  A,(UART_READ)   ; 12 40
 
     ;WRITE NEXT BYTE

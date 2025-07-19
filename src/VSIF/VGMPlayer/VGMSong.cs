@@ -24,6 +24,7 @@ using System.Net;
 using System.Windows.Media.Animation;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.IO.Ports;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -2051,34 +2052,34 @@ namespace zanac.VGMPlayer
                 {
                     Accepted = true;
 
-                    //for (int i = 0x00; i <= 0x1F; i++)
-                    //deferredWriteOPM(0x8, 0x00);
-                    //deferredWriteOPM(0xF, 0x00);
-                    //deferredWriteOPM(0x18, 0x00);
-                    //deferredWriteOPM(0x19, 0x00);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0x00; i <= 0x1F; i++)
+                        deferredWriteOPM(0x8, 0x00);
+                    deferredWriteOPM(0xF, 0x00);
+                    deferredWriteOPM(0x18, 0x00);
+                    deferredWriteOPM(0x19, 0x00);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
 
-                    //for (int i = 0x20; i <= 0x3F; i++)
-                    //    deferredWriteOPM(i, 0x00);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0x40; i <= 0x5F; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0x60; i <= 0x7F; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0x80; i <= 0x9F; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0xA0; i <= 0xBF; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0xC0; i <= 0xDF; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
-                    //for (int i = 0xE0; i <= 0xFF; i++)
-                    //    deferredWriteOPM(i, 0);
-                    //comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0x20; i <= 0x3F; i++)
+                        deferredWriteOPM(i, 0x00);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0x40; i <= 0x5F; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0x60; i <= 0x7F; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0x80; i <= 0x9F; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0xA0; i <= 0xBF; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0xC0; i <= 0xDF; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
+                    for (int i = 0xE0; i <= 0xFF; i++)
+                        deferredWriteOPM(i, 0);
+                    comPortOPM.FlushDeferredWriteDataAndWait();
 
                     return true;
                 }
@@ -3041,6 +3042,7 @@ namespace zanac.VGMPlayer
             double wait = 0;
             double vgmWaitDelta = 0;
             double streamWaitDelta = 0;
+            bool looped = false;
             //double lastDiff = 0;
             {
                 //bool firstKeyon = false;    //TODO: true
@@ -3119,7 +3121,7 @@ namespace zanac.VGMPlayer
                                 {
                                     case -1:
                                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                        adpcmMemoryErased.Clear();
+                                        looped = true;
                                         break;
 
                                     case 0x30:
@@ -4061,7 +4063,7 @@ namespace zanac.VGMPlayer
                                         if (!LoopByCount && !LoopByElapsed)
                                         {
                                             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                            adpcmMemoryErased.Clear();
+                                            looped = true;
                                             break;
                                         }
                                         else
@@ -4070,7 +4072,7 @@ namespace zanac.VGMPlayer
                                                 vgmReader.BaseStream?.Seek((vgmHead.cur.lngLoopOffset + 0x1c) - (vgmDataOffset), SeekOrigin.Begin);
                                             else
                                                 vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                            adpcmMemoryErased.Clear();
+                                            looped = true;
                                         }
                                         break;
 
@@ -4210,15 +4212,13 @@ namespace zanac.VGMPlayer
 #endif
                                                             var dat = vgmReader.ReadBytes((int)size);
                                                             segaPcm?.sega_pcm_write_rom(0, (int)romSize, (int)saddr, (int)size, dat);
-
-                                                            break;
                                                         }
+                                                        break;
                                                     case 0x81:  //YM2608
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
                                                             uint saddr = vgmReader.ReadUInt32();
                                                             size -= 8;
-
 #if DEBUG
                                                             Console.WriteLine("YM2608: Transferring ADPCM(" +
                                                                 (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
@@ -4250,7 +4250,8 @@ namespace zanac.VGMPlayer
                                                                 byte[] romData = vgmReader.ReadBytes((int)size);
                                                                 if (comPortOPNB != null)
                                                                 {
-                                                                    saddr = transferAdpcmDataForNeotron(size, saddr, romData, 1, "A");
+                                                                    if(!looped)
+                                                                        transferAdpcmDataForNeotron(size, saddr, romData, 1, "A");
                                                                 }
                                                                 else if (opnbPcm != null)
                                                                 {
@@ -4260,7 +4261,6 @@ namespace zanac.VGMPlayer
                                                             }
                                                         }
                                                         break;
-
                                                     case 0x83:  //YM2610 DELTA-T ROM data
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -4272,7 +4272,8 @@ namespace zanac.VGMPlayer
                                                                 byte[] romData = vgmReader.ReadBytes((int)size);
                                                                 if (comPortOPNB != null)
                                                                 {
-                                                                    saddr = transferAdpcmDataForNeotron(size, saddr, romData, 2, "B");
+                                                                    if (!looped)
+                                                                        transferAdpcmDataForNeotron(size, saddr, romData, 2, "B");
                                                                 }
                                                                 else if (opnbPcm != null)
                                                                 {
@@ -4282,7 +4283,6 @@ namespace zanac.VGMPlayer
                                                             }
                                                         }
                                                         break;
-
                                                     case 0x88:  //YM8950
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -5206,7 +5206,7 @@ namespace zanac.VGMPlayer
                         if (LoopedCount >= 0)
                             CurrentLoopedCount++;
                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                        adpcmMemoryErased.Clear();
+                        looped = true;
                     }
 
                     if (streamWaitDelta < vgmWaitDelta)
@@ -5281,10 +5281,20 @@ namespace zanac.VGMPlayer
 
         private Dictionary<uint, bool> adpcmMemoryErased = new Dictionary<uint, bool>();
 
+        /// <summary>
+        /// Transfers ADPCM data to the YM2610 for a specific memory type.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="saddr"></param>
+        /// <param name="romData"></param>
+        /// <param name="memoryType"></param>
+        /// <param name="memoryTypeName"></param>
+        /// <returns></returns>
         private uint transferAdpcmDataForNeotron(uint size, uint saddr, byte[] romData, int memoryType, string memoryTypeName)
         {
             if (romData.Length == 0)
                 return saddr;
+            //return saddr;
 
             FormMain.TopForm.SetStatusText("YM2610: No ADPCM-" + memoryTypeName + " data to transfer.");
             FormMain.TopForm.SetStatusText("YM2610: Transferring ADPCM-" + memoryTypeName + "(" +
@@ -5318,12 +5328,19 @@ namespace zanac.VGMPlayer
                 {
                     adpcmMemoryErased[(saddr >> 16)] = true;
                     erase = true;
+#if DEBUG
+                    Console.WriteLine("YM2610: Erase ADPCM-" + memoryTypeName + "(" +
+                        (saddr & 0xff0000).ToString("x") + " - " + (((saddr & 0xff0000) + 0xffff)).ToString("x") +
+                        " (" + size.ToString("x") + ")");
+#endif
                 }
                 comPortOPNB.DataWriter.RawWrite(new byte[] { 0x19, (byte)memoryType, (byte)(saddr >> 16), (byte)(saddr >> 8),
                     (byte)(erase ? 1 : 0)}, null);
                 comPortOPNB.DataWriter.RawWrite(chunkData, null);
-                comPortOPNB.FlushDeferredWriteDataAndWait();
                 saddr += chunkSize;
+
+                //if(erase)
+                //    comPortOPNB.DataWriter.WaitAck();
             }
 
             FormMain.TopForm.SetStatusText("YM2610: Transferred ADPCM-" + memoryTypeName + "(" +

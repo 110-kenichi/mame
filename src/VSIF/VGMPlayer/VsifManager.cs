@@ -405,10 +405,10 @@ namespace zanac.VGMPlayer
                             {
                                 SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.Handshake = Handshake.RequestToSend;
-                                sp.ReadTimeout = 10300;
-                                sp.WriteTimeout = 10300;
+                                sp.ReadTimeout = 1000;
+                                sp.WriteTimeout = 1000;
                                 sp.WriteBufferSize = 2;
-                                sp.BaudRate = 921600;
+                                sp.BaudRate = 2400;
                                 sp.Open();
                                 var client = new VsifClient(soundModule, new PortWriterMsxPi(sp));
                                 client.Disposed += Client_Disposed;

@@ -1737,12 +1737,14 @@ namespace zanac.VGMPlayer
                     case 0:
                         comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi,
                             (PortId)Settings.Default.OPNB_Port, (int)0, false);
-                        comPortOPNB.Tag["SIOC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        if (comPortOPNB != null)
+                            comPortOPNB.Tag["OPNB.Type"] = comboBoxOPNBType.SelectedIndex;
                         break;
                     case 1:
                         comPortOPNB = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR,
                             (PortId)Settings.Default.OPNB_Port, (int)0, false);
-                        comPortOPNB.Tag["SIOC.Slot"] = SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2];
+                        if(comPortOPNB != null)
+                            comPortOPNB.Tag["OPNB.Type"] = comboBoxOPNBType.SelectedIndex;
                         if (comPortOPNB != null)
                             comPortOPNB.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)0);
                         break;

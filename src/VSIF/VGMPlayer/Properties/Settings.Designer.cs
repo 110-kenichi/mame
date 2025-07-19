@@ -1245,95 +1245,76 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWaitPCE"] = value;
             }
         }
-
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OPNB_IF
-        {
-            get
-            {
+        public int OPNB_IF {
+            get {
                 return ((int)(this["OPNB_IF"]));
             }
-            set
-            {
+            set {
                 this["OPNB_IF"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OPNB_Enable
-        {
-            get
-            {
+        public bool OPNB_Enable {
+            get {
                 return ((bool)(this["OPNB_Enable"]));
             }
-            set
-            {
+            set {
                 this["OPNB_Enable"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OPNB_Slot
-        {
-            get
-            {
+        public int OPNB_Slot {
+            get {
                 return ((int)(this["OPNB_Slot"]));
             }
-            set
-            {
+            set {
                 this["OPNB_Slot"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OPNB_Port
-        {
-            get
-            {
+        public int OPNB_Port {
+            get {
                 return ((int)(this["OPNB_Port"]));
             }
-            set
-            {
+            set {
                 this["OPNB_Port"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25")]
-        public decimal BitBangWaitOPNB
-        {
-            get
-            {
-                return ((decimal)(this["BitBangWaitOPNB"]));
-            }
-            set
-            {
-                this["BitBangWaitOPNB"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public decimal OPNBDiv
-        {
-            get
-            {
+        public decimal OPNBDiv {
+            get {
                 return ((decimal)(this["OPNBDiv"]));
             }
-            set
-            {
+            set {
                 this["OPNBDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNB_Type {
+            get {
+                return ((int)(this["OPNB_Type"]));
+            }
+            set {
+                this["OPNB_Type"] = value;
             }
         }
     }

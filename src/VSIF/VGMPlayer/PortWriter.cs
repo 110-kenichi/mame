@@ -51,6 +51,21 @@ namespace zanac.VGMPlayer
             private set;
         }
 
+        private bool errorReceived;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool ErrorReceived
+        {
+            get
+            {
+                if (ftdiPort != null && !ftdiPort.IsOpen)
+                    return false;
+                return errorReceived;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -66,6 +81,10 @@ namespace zanac.VGMPlayer
         public PortWriter(SerialPort serialPort)
         {
             this.serialPort = serialPort;
+            this.serialPort.ErrorReceived += (sender, e) =>
+            {
+                errorReceived = true;
+            };  
             PortName = serialPort.PortName;
         }
 
@@ -108,7 +127,16 @@ namespace zanac.VGMPlayer
         public void Purge()
         {
             ftdiPort?.Purge(FTD2XX_NET.FTDI.FT_PURGE.FT_PURGE_TX);
-            serialPort?.BaseStream.Flush();
+            while (serialPort?.BytesToWrite > 0);
+        }
+
+        public int WaitAck()
+        {
+            //ftdiPort?.Purge(FTD2XX_NET.FTDI.FT_PURGE.FT_PURGE_TX);
+            if(serialPort != null)
+                return serialPort.ReadByte();
+
+            return -1;
         }
 
         private bool abortRequested;

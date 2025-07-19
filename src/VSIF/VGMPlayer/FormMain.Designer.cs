@@ -191,11 +191,11 @@ namespace zanac.VGMPlayer
             this.label23 = new System.Windows.Forms.Label();
             this.comboBoxPortPCE = new System.Windows.Forms.ComboBox();
             this.checkBoxConnOPNB = new System.Windows.Forms.CheckBox();
-            this.label24 = new System.Windows.Forms.Label();
             this.comboBoxOPNB = new System.Windows.Forms.ComboBox();
             this.comboBoxPortOPNB = new System.Windows.Forms.ComboBox();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.comboBoxOPNBType = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
@@ -958,7 +958,7 @@ namespace zanac.VGMPlayer
             // 
             this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 224);
+            this.splitter1.Location = new System.Drawing.Point(0, 362);
             this.splitter1.Margin = new System.Windows.Forms.Padding(2);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(759, 6);
@@ -1165,9 +1165,9 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.label23, 1, 14);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortPCE, 4, 14);
             this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnOPNB, 0, 15);
-            this.tableLayoutPanelPort.Controls.Add(this.label24, 1, 15);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxOPNB, 2, 15);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortOPNB, 4, 15);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxOPNBType, 1, 15);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 24);
@@ -6195,19 +6195,6 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPNB.UseVisualStyleBackColor = true;
             this.checkBoxConnOPNB.CheckedChanged += new System.EventHandler(this.checkBoxConnOPNB_CheckedChanged);
             // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label24.Location = new System.Drawing.Point(43, 385);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(114, 26);
-            this.label24.TabIndex = 73;
-            this.label24.Text = "YM261&0(OPNB)";
-            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label24.Click += new System.EventHandler(this.label3_Click);
-            this.label24.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
-            // 
             // comboBoxOPNB
             // 
             this.comboBoxOPNB.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNB_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -6502,9 +6489,9 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 230);
+            this.listViewList.Location = new System.Drawing.Point(0, 368);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(759, 231);
+            this.listViewList.Size = new System.Drawing.Size(759, 93);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
@@ -6522,6 +6509,21 @@ namespace zanac.VGMPlayer
             // 
             this.columnHeaderFile.Text = "File name";
             this.columnHeaderFile.Width = 325;
+            // 
+            // comboBoxOPNBType
+            // 
+            this.comboBoxOPNBType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNB_Type", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxOPNBType.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxOPNBType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxOPNBType.FormattingEnabled = true;
+            this.comboBoxOPNBType.Items.AddRange(new object[] {
+            "YM2610(OPNB)",
+            "YM2610B(OPNB-B)"});
+            this.comboBoxOPNBType.Location = new System.Drawing.Point(42, 387);
+            this.comboBoxOPNBType.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxOPNBType.Name = "comboBoxOPNBType";
+            this.comboBoxOPNBType.Size = new System.Drawing.Size(116, 20);
+            this.comboBoxOPNBType.TabIndex = 25;
             // 
             // FormMain
             // 
@@ -6756,8 +6758,8 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.ComboBox comboBoxPCE;
         private System.Windows.Forms.ComboBox comboBoxPortPCE;
         private System.Windows.Forms.CheckBox checkBoxConnOPNB;
-        private System.Windows.Forms.Label label24;
         private System.Windows.Forms.ComboBox comboBoxOPNB;
         private System.Windows.Forms.ComboBox comboBoxPortOPNB;
+        private System.Windows.Forms.ComboBox comboBoxOPNBType;
     }
 }

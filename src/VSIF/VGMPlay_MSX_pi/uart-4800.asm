@@ -120,20 +120,37 @@ Z80B_mode:
 endCheckCPU:
 
     DI
-    LD  E,#0x2
+.if UART_MODE_135
+    LD  E,#135
+.else
+    LD  E,#2
+.endif
 
 __VGM_LOOP:
 __VGM_TYPE:
-    IN  A,(UART_STAT)   ; 12
-    AND E               ;  5
-    JP  Z, __VGM_TYPE   ; 11
-    IN  A,(UART_READ)   ; 12
-    ; CP  #0x05           ;  8 86
-    ; JP  C, _END_VGM2           ; 11 97
+    READ_DATA
+;     IN  A,(UART_STAT)   ; 12
+;     IN  A,(UART_STAT)   ; 12
+; ; CP  #50
+; ; JP  Z, _TEST
+; .if UART_MODE_135
+;     CP  E               ;  5
+;     JP  NZ, __VGM_TYPE  ; 11
+; .else
+;     AND E               ;  5
+;     JP  Z, __VGM_TYPE   ; 11
+; .endif
+;     IN  A,(UART_READ)   ; 12
+; ; IN  A,(UART_STAT)   ; 12
+; ; JP  __VGM_TYPE  ; 11
     OR  #JPOFST         ;  8
     LD  H,A             ;  5
     LD  L,#0            ;  8
     JP  (HL)            ;  5 77
+
+_TEST:
+ 	CALL	CHPUT
+    JP  __VGM_TYPE  ; 11
 
 _END_VGM2:
 	LD	A,#'E'
@@ -397,17 +414,29 @@ __SIOS_WRITE_PCM_DATA2:
 __SIOS_ERASE_SIOS_MEM:
     PUSH DE   ; Save Memory Address 
     PUSH BC   ; Save B(Memory ID)
-        LD  E,#0x2          ; Reset E for next
+.if UART_MODE_135
+        LD  E,#135
+.else
+        LD  E,#2
+.endif
         READ_DATA
         AND #1
         JP  Z, __SIOS_WRITE_PCM_DATA3 ; if bit0=1, erase SIOS memory
         LD      A,B  ; Memory ID(1:ADPCM-A, 2:ADPCM-B)
         LD      B,#1 ; B = size of data to write (B*64K bytes) 
         CALL    SIOS_ERASE_SMEM_10 ; erase SIOS memory
+        ; ACK
+        ;LD  A, #0xFF
+        ;OUT (UART_STAT),A
         __SIOS_WRITE_PCM_DATA3:
 
         ; Receive PCM data
-        LD  E,#0x2          ; Reset E for next
+.if UART_MODE_135
+        LD  E,#135
+.else
+        LD  E,#2
+.endif
+
         LD	HL,#NTRON_PCM_BUF
         LD  B,#0x00 ; B = size of data to write (0x00 means 256 bytes)
         __SIOS_WRITE_PCM_DATA4:
@@ -430,10 +459,14 @@ __SIOS_ERASE_SIOS_MEM:
 
     CALL    SIOS_RESET_10 ; enable register access
 
-    AND A   ; reset carry flag
-    CALL    SIOS_ENABLE_IO_10 ; enable register access
+    ;AND A   ; reset carry flag
+    ;CALL    SIOS_ENABLE_IO_10 ; enable register access
 
-    LD  E,#0x2          ; Reset E for next
+.if UART_MODE_135
+    LD  E,#135
+.else
+    LD  E,#2
+.endif
     JP __VGM_LOOP       ; 
 
 ;=======================================================
