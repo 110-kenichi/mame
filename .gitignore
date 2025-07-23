@@ -192,3 +192,5 @@ bin
 /src/VSIF/VGMPlay_PCE/cc65
 /src/VSIF/VGMPlay_PCE/build
 /src/VSIF/VGMPlay_SegaCD/out
+/src/Praat2Lpc/.vs
+/src/VSIF/VGMPlay_MSX_pi/.vscode

@@ -21,6 +21,9 @@ namespace zanac.MAmidiMEmo.VSIF
         private int lastOpmType = -1;
         private int lastOpmSlot = -1;
 
+        private byte lastDataType = 0xff;
+        private byte lastWriteAddress;
+
         /// <summary>
         /// 
         /// </summary>
@@ -36,9 +39,6 @@ namespace zanac.MAmidiMEmo.VSIF
         public PortWriterMsx(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
         {
         }
-
-        private byte lastDataType = 0xff;
-        private byte lastWriteAddress;
 
         public override void ClearDataCache()
         {

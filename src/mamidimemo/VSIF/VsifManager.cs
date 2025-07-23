@@ -364,6 +364,21 @@ namespace zanac.MAmidiMEmo.VSIF
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.MSX_Pi:
+                        case VsifSoundModuleType.MSX_PiTR:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.Handshake = Handshake.RequestToSend;
+                                sp.ReadTimeout = 1000;
+                                sp.WriteTimeout = 1000;
+                                sp.WriteBufferSize = 2;
+                                sp.BaudRate = 2400;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriterMsxPi(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -417,6 +432,8 @@ namespace zanac.MAmidiMEmo.VSIF
         TurboEverDrive,
         NanoDrive,
         AMIGA,
+        MSX_Pi,
+        MSX_PiTR,
     }
 
 

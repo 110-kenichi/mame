@@ -1,6 +1,6 @@
 .INCLUDE "const.inc"
 
-tR = 0
+tR = 1
 .INCLUDE "macro.inc"
 
     JPOFST = 0xA0

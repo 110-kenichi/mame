@@ -2,6 +2,10 @@ export PATH := $(PATH):"/mnt/c/Program Files/SDCC/bin"
 
 PROGRAM = VGM_mpi.rom
 PROGRAMV = VGM_mpi_VKey.rom
+# for tR-nization kit(tentative)
+PROGRAMtR = VGM_mpitr.rom
+# for tR-nization kit(tentative)
+PROGRAMVtR = VGM_mpitr_VKey.rom
 CC = sdcc.exe
 CFLAGS = -c -mz80 --std-c2x --opt-code-speed --debug 
 OBJS =  main.rel player_code.rel 
@@ -10,15 +14,13 @@ OBJSV =  main_v.rel player_code.rel
 .SUFFIXES: .c .rel .asm
 
 .PHONY: all
-all: depend $(PROGRAM) $(PROGRAMV)
+all: depend $(PROGRAM) $(PROGRAMV) $(PROGRAMtR) $(PROGRAMVtR)
 
 #ihx2bin http://www5d.biglobe.ne.jp/~hra/note/msx_game/chapter0B.htm
 
 $(PROGRAM): $(OBJS) uart-4800.rel uart-4800_p2.rel SARCHFM.rel start.rel
 	$(CC) -o VGM_mpi.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
 	makebin.exe -s 65536 VGM_mpi.hex > VGM_mpi.bin
-#	./ihx2bin.exe VGM_msx.hex VGM_msx.bin
-#	./hex2rom.exe VGM_msx.hex VGM_msx.rom
 	perl romout.pl VGM_mpi.bin > VGM_mpi.rom
 	cmd.exe /C copy.bat
 
@@ -26,6 +28,17 @@ $(PROGRAMV): $(OBJSV) uart-4800.rel uart-4800_p2.rel SARCHFM.rel start.rel
 	$(CC) -o VGM_mpi_VKey.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
 	makebin.exe -s 65536 VGM_mpi_VKey.hex > VGM_mpi_VKey.bin
 	perl romout.pl VGM_mpi_VKey.bin > VGM_mpi_VKey.rom
+
+$(PROGRAMtR): $(OBJS) uart-4800tR.rel uart-4800_p2tR.rel SARCHFM.rel start.rel
+	$(CC) -o VGM_mpitr.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
+	makebin.exe -s 65536 VGM_mpitr.hex > VGM_mpitr.bin
+	perl romout.pl VGM_mpitr.bin > VGM_mpitr.rom
+	cmd.exe /C copy.bat
+
+$(PROGRAMVtR): $(OBJSV) uart-4800tR.rel uart-4800_p2tR.rel SARCHFM.rel start.rel
+	$(CC) -o VGM_mpitr_VKey.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
+	makebin.exe -s 65536 VGM_mpitr_VKey.hex > VGM_mpitr_VKey.bin
+	perl romout.pl VGM_mpitr_VKey.bin > VGM_mpitr_VKey.rom
 
 #	/mnt/e/Emu/blueMSX/blueMSX.exe VGM_msx.rom
 
@@ -42,6 +55,12 @@ uart-4800.rel: uart-4800.asm const.inc macro.inc
 
 uart-4800_p2.rel: uart-4800_p2.asm const.inc macro.inc
 	sdasz80.exe -y -o uart-4800_p2.rel uart-4800_p2.asm
+
+uart-4800tR.rel: uart-4800tR.asm uart-4800.asm const.inc macro.inc
+	sdasz80.exe -y -o uart-4800tR.rel uart-4800tR.asm
+
+uart-4800_p2tR.rel: uart-4800_p2tR.asm uart-4800_p2.asm const.inc macro.inc
+	sdasz80.exe -y -o uart-4800_p2tR.rel uart-4800_p2tR.asm
 
 SARCHFM.rel: SARCHFM.asm const.inc macro.inc
 	sdasz80.exe -y -o SARCHFM.rel SARCHFM.asm

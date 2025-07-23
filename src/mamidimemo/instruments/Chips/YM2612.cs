@@ -328,6 +328,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_MSX_Pi:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_PiTr:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -825,6 +851,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
                             vsifClient.WriteData((byte)(0x10 + (port1 - 1)), (byte)address, (byte)data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.GIMIC:
@@ -896,6 +924,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
                             vsifClient.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.SPFM:

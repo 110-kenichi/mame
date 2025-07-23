@@ -311,6 +311,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_MSX_Pi:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_PiTr:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -580,6 +606,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0, 0x04 * 5, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
                             vsifClient.WriteData(0xF, 0, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.SPFM:
@@ -1363,6 +1391,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.SPFM,
                     SoundEngineType.GIMIC,
                     SoundEngineType.NanoDrive,
+                    SoundEngineType.VSIF_MSX_Pi,
+                    SoundEngineType.VSIF_MSX_PiTr,
                });
 
                 return sc;

@@ -696,6 +696,7 @@
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterC64.cs" />
     <Compile Include="VSIF\PortWriterAMIGA.cs" />
+    <Compile Include="VSIF\PortWriterMsxPi.cs" />
     <Compile Include="VSIF\PortWriterSms.cs" />
     <Compile Include="VSIF\PortWriterPC88.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />

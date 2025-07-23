@@ -5341,6 +5341,8 @@ namespace zanac.VGMPlayer
 
                 //if(erase)
                 //    comPortOPNB.DataWriter.WaitAck();
+                if (RequestedStat == SoundState.Stopped)
+                    break;
             }
 
             FormMain.TopForm.SetStatusText("YM2610: Transferred ADPCM-" + memoryTypeName + "(" +
@@ -6166,7 +6168,7 @@ namespace zanac.VGMPlayer
                     {
                         int wait = 0;
                         if (comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_PiTR)
-                            wait = 0;
+                            wait = 1;
 
                         var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
                         if (slot == 1 || slot == 2)

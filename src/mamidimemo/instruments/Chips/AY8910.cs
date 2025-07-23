@@ -137,6 +137,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
                     SoundEngineType.GIMIC,
+                    SoundEngineType.VSIF_MSX_Pi,
+                    SoundEngineType.VSIF_MSX_PiTr,
                 });
 
                 return sc;
@@ -234,6 +236,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_MSX_Pi:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_PiTr:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
                 ClearWrittenDataCache();
                 PrepareSound();
@@ -257,7 +285,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH)]
         [Description("Set FTDI Clock Width[%].\r\n" +
             "MSX FT232R:25~\r\n" +
             "MSX FT232H:32~")]
@@ -273,6 +300,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_ftdiClkWidth = value;
             }
         }
+
+        public bool ShouldSerializeFtdiClkWidth()
+        {
+            switch (f_SoundEngineType)
+            {
+                case SoundEngineType.VSIF_MSX_FTDI:
+                case SoundEngineType.VSIF_P6_FTDI:
+                    return f_ftdiClkWidth != VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;
+            }
+            return f_ftdiClkWidth != VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
+
+        public void ResetFtdiClkWidth()
+        {
+            switch (f_SoundEngineType)
+            {
+                case SoundEngineType.VSIF_MSX_FTDI:
+                case SoundEngineType.VSIF_P6_FTDI:
+                    f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;
+                    return;
+            }
+            f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
+
 
         /// <summary>
         /// 
@@ -531,6 +582,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
                             vsifClient.WriteData(0x17, (byte)offset, (byte)data, f_ftdiClkWidth);
                             break;
                     }

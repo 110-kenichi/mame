@@ -54,5 +54,9 @@ namespace zanac.MAmidiMEmo.Instruments
         NanoDrive,
         [Description("Real(VSIF AMIGA(UART)")]
         VSIF_AMIGA,
+        [Description("Real(VSIF turboR(MSXπ UART)")]
+        VSIF_MSX_PiTr,
+        [Description("Real(VSIF MSX(MSXπ UART)")]
+        VSIF_MSX_Pi,
     }
 }

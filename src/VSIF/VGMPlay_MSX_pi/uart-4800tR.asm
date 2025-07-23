@@ -30,7 +30,7 @@
 ;bit1=RXRDY(受信バッファにデータがあれば1)
 ;bit0=TXRDY(送信可能(送信バッファに空きがあれば)なら1)
 
-tR = 0
+tR = 1
 .INCLUDE "macro.inc"
 
 SUPPORT_Z80B = 0

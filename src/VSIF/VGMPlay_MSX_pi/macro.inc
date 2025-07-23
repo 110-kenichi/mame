@@ -1,8 +1,9 @@
-
 ;=======================================================
     .macro READ_UART_STAT
     IN  A,(UART_STAT)   ; 12
+.if tR
     IN  A,(UART_STAT)   ; 12
+.endif
     .endm
 
     .macro READ_ADRS
