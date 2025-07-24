@@ -1,6 +1,6 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
-; Version 4.1.0 #12072 (MINGW64)
+; Version 4.0.0 #11528 (Linux)
 ;--------------------------------------------------------
 	.module main
 	.optsdcc -mz80
@@ -83,25 +83,25 @@ _main::
 ; Function print
 ; ---------------------------------
 _print::
-	ex	de, hl
 	C$main.c$46$1_0$58	= .
 	.globl	C$main.c$46$1_0$58
 ;main.c:46: while (* pc != '\0')
 00101$:
-	ld	a, (de)
-	ld	l, a
+	ld	c, (hl)
+	ld	a, c
 	or	a, a
 	ret	Z
 	C$main.c$48$2_0$59	= .
 	.globl	C$main.c$48$2_0$59
 ;main.c:48: putchar(*pc);
-	push	de
+	push	hl
+	ld	l, c
 	call	_putchar
-	pop	de
+	pop	hl
 	C$main.c$49$2_0$59	= .
 	.globl	C$main.c$49$2_0$59
 ;main.c:49: pc++;
-	inc	de
+	inc	hl
 	C$main.c$51$1_0$58	= .
 	.globl	C$main.c$51$1_0$58
 ;main.c:51: }

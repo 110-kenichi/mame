@@ -1,4 +1,4 @@
-export PATH := $(PATH):"/mnt/c/Program Files/SDCC/bin"
+#export PATH := $(PATH):"/mnt/c/Program Files/SDCC/bin"
 
 PROGRAM = VGM_mpi.rom
 PROGRAMV = VGM_mpi_VKey.rom
@@ -6,7 +6,7 @@ PROGRAMV = VGM_mpi_VKey.rom
 PROGRAMtR = VGM_mpitr.rom
 # for tR-nization kit(tentative)
 PROGRAMVtR = VGM_mpitr_VKey.rom
-CC = sdcc.exe
+CC = sdcc
 CFLAGS = -c -mz80 --std-c2x --opt-code-speed --debug 
 OBJS =  main.rel player_code.rel 
 OBJSV =  main_v.rel player_code.rel 
@@ -48,22 +48,22 @@ run:
 #	/mnt/e/Emu/blueMSX/blueMSX.exe "E:\mame_src\mami_dev\mame\src\VSIF\VGMPlay_MSX\VGM_msx.rom"
 
 start.rel: start.asm
-	sdasz80.exe -y -o start.rel start.asm
+	sdasz80 -y -o start.rel start.asm
 
-uart-4800.rel: uart-4800.asm const.inc macro.inc
-	sdasz80.exe -y -o uart-4800.rel uart-4800.asm
+uart-4800.rel: uart-4800.asm const.inc macro.inc page1.asm
+	sdasz80 -y -o uart-4800.rel uart-4800.asm
 
-uart-4800_p2.rel: uart-4800_p2.asm const.inc macro.inc
-	sdasz80.exe -y -o uart-4800_p2.rel uart-4800_p2.asm
+uart-4800_p2.rel: uart-4800_p2.asm const.inc macro.inc page2.asm
+	sdasz80 -y -o uart-4800_p2.rel uart-4800_p2.asm
 
-uart-4800tR.rel: uart-4800tR.asm uart-4800.asm const.inc macro.inc
-	sdasz80.exe -y -o uart-4800tR.rel uart-4800tR.asm
+uart-4800tR.rel: uart-4800tR.asm uart-4800.asm const.inc macro.inc page1.asm
+	sdasz80 -y -o uart-4800tR.rel uart-4800tR.asm
 
-uart-4800_p2tR.rel: uart-4800_p2tR.asm uart-4800_p2.asm const.inc macro.inc
-	sdasz80.exe -y -o uart-4800_p2tR.rel uart-4800_p2tR.asm
+uart-4800_p2tR.rel: uart-4800_p2tR.asm uart-4800_p2.asm const.inc macro.inc page2.asm
+	sdasz80 -y -o uart-4800_p2tR.rel uart-4800_p2tR.asm
 
 SARCHFM.rel: SARCHFM.asm const.inc macro.inc
-	sdasz80.exe -y -o SARCHFM.rel SARCHFM.asm
+	sdasz80 -y -o SARCHFM.rel SARCHFM.asm
 
 main_v.rel: 
 	$(CC) $(CFLAGS) -DVKEY -o main_v.rel main.c
