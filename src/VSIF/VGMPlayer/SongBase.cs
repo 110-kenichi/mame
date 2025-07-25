@@ -1065,7 +1065,7 @@ namespace zanac.VGMPlayer
                             comPortOPNB.DeferredWriteData(0x1A, (byte)adrs, (byte)dt, 0);
                             break;
                         case VsifSoundModuleType.MSX_PiTR:
-                            comPortOPNB.DeferredWriteData(0x3A, (byte)adrs, (byte)dt, -1);
+                            comPortOPNB.DeferredWriteData(0x3A, (byte)adrs, (byte)dt, -2);
                             break;
                     }
                     break;
