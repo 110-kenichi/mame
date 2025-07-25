@@ -818,6 +818,14 @@
       <Link>VSIF\VGMPlay_PCE.pce</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\VSIF\VGMPlay_MSX_pi\VGM_mpi.rom">
+      <Link>VSIF\VGM_mpi.rom</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_MSX_pi\VGM_mpi_VKey.rom">
+      <Link>VSIF\VGM_mpi_VKey.rom</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\VSIF\VSIF_AMIGA\res\VSIF_AMIGA.exe.info">
       <Link>VSIF\AMIGA\VSIF_AMIGA.exe.info</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
