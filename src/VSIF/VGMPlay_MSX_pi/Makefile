@@ -33,7 +33,6 @@ $(PROGRAMtR): $(OBJS) uart-4800tR.rel uart-4800_p2tR.rel SARCHFM.rel start.rel
 	$(CC) -o VGM_mpitr.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
 	makebin.exe -s 65536 VGM_mpitr.hex > VGM_mpitr.bin
 	perl romout.pl VGM_mpitr.bin > VGM_mpitr.rom
-	cmd.exe /C copy.bat
 
 $(PROGRAMVtR): $(OBJSV) uart-4800tR.rel uart-4800_p2tR.rel SARCHFM.rel start.rel
 	$(CC) -o VGM_mpitr_VKey.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
