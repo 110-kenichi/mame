@@ -1024,3 +1024,6 @@ License: MIT license https://github.com/naudio/NAudio?tab=MIT-1-ov-file#readme
 *VST.NET - obiwanjacobi
 https://github.com/obiwanjacobi/vst.net/tree/vstnet1
 License: LGPL-2.1 license
+
+*Neo-Geo ADPCM-A sample encoder - AJ Kelly
+https://github.com/freem/adpcma/blob/master/LICENSE

@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Util;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2608;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2610B;
 
@@ -40,73 +41,6 @@ namespace zanac.MAmidiMEmo.Gui
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
             return UITypeEditorEditStyle.Modal;
-        }
-
-
-        static long[] stepSizeTable = new long[16]
-        {
-             57,  57,  57,  57,  77, 102, 128, 153,
-             57,  57,  57,  57,  77, 102, 128, 153
-        };
-
-        private static byte[] encodeAdpcm(short[] srcWave, int maxSize)
-        {
-            List<byte> dest = new List<byte>();
-            int lpc, flag;
-            long i, dn, xn, stepSize;
-            byte adpcm;
-            byte adpcmPack = 0;
-
-            xn = 0;
-            stepSize = 127;
-            flag = 0;
-
-            int srcidx = 0;
-            for (lpc = 0; lpc < srcWave.Length; lpc++)
-            {
-                dn = srcWave[srcidx] - xn;
-                srcidx++;
-
-                i = (Math.Abs(dn) << 16) / (stepSize << 14);
-                if (i > 7)
-                    i = 7;
-                adpcm = (byte)i;
-
-                i = (adpcm * 2 + 1) * stepSize / 8;
-
-                if (dn < 0)
-                {
-                    adpcm |= 0x8;
-                    xn -= i;
-                }
-                else
-                {
-                    xn += i;
-                }
-
-                stepSize = (stepSizeTable[adpcm] * stepSize) / 64;
-
-                if (stepSize < 127)
-                    stepSize = 127;
-                else if (stepSize > 24576)
-                    stepSize = 24576;
-
-                if (flag == 0)
-                {
-                    adpcmPack = (byte)(adpcm << 4);
-                    flag = 1;
-                }
-                else
-                {
-                    adpcmPack |= adpcm;
-                    dest.Add(adpcmPack);
-                    if (dest.Count - 1 == maxSize)
-                        break;
-                    flag = 0;
-                }
-            }
-
-            return dest.ToArray();
         }
 
         /// <summary>
@@ -220,7 +154,7 @@ namespace zanac.MAmidiMEmo.Gui
                                     int max = 0;
                                     if (att != null && att.MaxSize != 0)
                                         max = att.MaxSize;
-                                    byte[] adpcmData = encodeAdpcm(wav.ToArray(), max);
+                                    byte[] adpcmData = OpnPcmConverter.EncodeAdpcmB(wav.ToArray(), max);
 
                                     switch (context.Instance)
                                     {

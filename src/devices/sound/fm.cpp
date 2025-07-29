@@ -2433,7 +2433,6 @@ struct ADPCM_CH
 	int8_t        vol_mul;        /* volume in "0.75dB" steps */
 	uint8_t       vol_shift;      /* volume in "-6dB" steps   */
 	int32_t       *pan;           /* &out_adpcm[OPN_xxxx]     */
-	uint8_t       program_no;     /* prog no mamidimemo */
 
 };
 
@@ -2496,7 +2495,7 @@ struct ym2610_state
 					data = ch->now_data & 0x0f;
 				else
 				{
-					ch->now_data = read_byte(device, (ch->program_no << 24) | ch->now_addr>>1);
+					ch->now_data = read_byte(device, (0 << 24) | ch->now_addr>>1);
 					data = (ch->now_data >> 4) & 0x0f;
 				}
 
@@ -2579,14 +2578,6 @@ struct ym2610_state
 				/* calc pcm * volume data */
 				adpcm[c].adpcm_out = ((adpcm[c].adpcm_acc * adpcm[c].vol_mul) >> adpcm[c].vol_shift) & ~3;  /* multiply, shift and mask out low 2 bits */
 			}
-			break;
-		case 0x02:
-		case 0x03:
-		case 0x04:
-		case 0x05:
-		case 0x06:
-		case 0x07:
-			adpcm[r - 2].program_no = v;
 			break;
 		default:
 			c = r&0x07;

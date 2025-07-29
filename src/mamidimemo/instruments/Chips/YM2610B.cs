@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
@@ -11,23 +12,30 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
+using NAudio.Gui;
+using NAudio.SoundFont;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2414;
+using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.VSIF;
+using static System.Windows.Forms.AxHost;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2608;
 
 //http://www.ajworld.net/neogeodev/ym2610am2.html
@@ -73,16 +81,216 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set COM Port No. for \"VSIF - MSXπ UART\".")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+
+        private object sndEnginePtrLock = new object();
+
+        private IntPtr spfmPtr;
+
+        private int gimicPtr = -1;
+
+        private VsifClient vsifClient;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports Software and MSXπ(UART)")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                    setSoundEngine(value);
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeSPFM : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_MSX_Pi,
+                    SoundEngineType.VSIF_MSX_PiTr,
+                });
+
+                return sc;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
+
+            lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_MSX_Pi:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_Pi, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_PiTr:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_PiTR, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum ChipType
+        {
+            YM2610B,
+            YM2610,
+        }
+
+        private ChipType f_ChipType = ChipType.YM2610B;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Chip variation")]
+        [DefaultValue(ChipType.YM2610B)]
+        public ChipType ChipVariation
+        {
+            get
+            {
+                return f_ChipType;
+            }
+            set
+            {
+                if (f_ChipType != value)
+                {
+                    f_ChipType = value;
+                }
+            }
+        }
+
+        private YM2610BAdpcmSoundTable adpcmASoundTable;
+
         [DataMember]
         [Category("Chip(ADPCM)")]
         [Description("YM2610 ADPCM-A DATA. 18.5 kHz sampling rate at 12-bit from 4-bit data.")]
-        [Editor(typeof(PcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [PcmTableEditor("ADPCM Audio File(*.pcma)|*.pcma")]
+        [Editor(typeof(OpnbPcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [PcmTableEditor("ADPCM Audio File(*.pcma, *.wav)|*.pcma;*.wav")]
         [TypeConverter(typeof(CustomObjectTypeConverter))]
-        public AdpcmSoundTable AdpcmASoundTable
+        public YM2610BAdpcmSoundTable AdpcmASoundTable
         {
-            get;
-            set;
+            get
+            {
+                return adpcmASoundTable;
+            }
+            set
+            {
+                if (adpcmASoundTable != value)
+                {
+                    adpcmASoundTable = value;
+                    if (adpcmASoundTable != null)
+                    {
+                        adpcmASoundTable.Parent = this;
+                        adpcmASoundTable.Submit();
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -90,31 +298,98 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [DataContract]
         [InstLock]
-        public class AdpcmSoundTable : PcmTimbreTableBase
+        public class YM2610BAdpcmSoundTable : PcmTimbreTableBase
         {
+            private YM2610B parent;
 
+            public YM2610B Parent
+            {
+                get
+                {
+                    return parent;
+                }
+                set
+                {
+                    parent = value;
+                }
+            }
             /// <summary>
             /// 
             /// </summary>
-            public AdpcmSoundTable()
+            public YM2610BAdpcmSoundTable(YM2610B inst)
             {
+                this.parent = inst;
                 for (int i = 0; i < 128; i++)
                 {
-                    var pt = new AdpcmTimbre(i);
+                    var pt = new YM2610BAdpcmTimbre(inst, i);
                     PcmTimbres[i] = pt;
                 }
             }
 
-        }
+            /// <summary>
+            /// Submit changes to the PCM timbre table.
+            /// </summary>
+            public override void Submit()
+            {
+                if (Parent == null || !Parent.IsSoundPrepared)
+                    return;
 
+                for (int i = 0; i < PcmTimbres.Length; i++)
+                {
+                    var t = (YM2610BAdpcmTimbre)PcmTimbres[i];
+
+                    Parent?.adpcmManagers[ADPCM_A].DeletePCM(i);
+                    if (t.PcmData != null && t.PcmData.Length != 0)
+                    {
+                        var pe = Parent?.adpcmManagers[ADPCM_A].RegisterPCM(i, t.PcmData);
+                        if (pe != null)
+                        {
+                            t.PcmAddressStart = (uint)pe.StartAddress;
+                            t.PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
+                        }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
         [DataContract]
         [InstLock]
-        public class AdpcmTimbre : PcmTimbreBase
+        public class YM2610BAdpcmTimbre : PcmTimbreBase
         {
+            private YM2610B parent;
+
+            private YM2610B Parent
+            {
+                get
+                {
+                    if (parent == null)
+                    {
+                        bool found = false;
+                        foreach (YM2610B inst in InstrumentManager.GetInstruments(19))
+                        {
+                            if (found)
+                                break;
+                            Parallel.ForEach(inst.AdpcmASoundTable.PcmTimbres, (t, state) =>
+                            {
+                                if (t == this)
+                                {
+                                    parent = inst;
+                                    found = true;
+                                    state.Break();
+                                }
+                            });
+                        }
+                    }
+                    return parent;
+                }
+                set
+                {
+                    parent = value;
+                }
+            }
 
             private byte[] f_PcmData;
 
@@ -131,19 +406,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    if (value != null)
-                    {
-                        f_PcmData = value;
-                    }
+                    f_PcmData = value;
                 }
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressStart
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressEnd
+            {
+                get;
+                set;
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="noteNumber"></param>
-            public AdpcmTimbre(int noteNumber) : base(noteNumber)
+            public YM2610BAdpcmTimbre(YM2610B inst, int noteNumber) : base(noteNumber)
             {
+                this.parent = inst;
             }
         }
 
@@ -319,7 +608,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM2610B>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 YM2610BSetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
@@ -353,11 +642,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        private void YM2610BWriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        {
+            YM2610BWriteData(unitNumber, address, op, slot, data, true);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        private void YM2610BWriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache)
+        {
+            YM2610BWriteData(unitNumber, address, op, slot, data, useCache, false);
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        private static void YM2610BWriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        private void YM2610BWriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache, bool internalOnly)
         {
             switch (op)
             {
@@ -375,20 +675,48 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
             }
 
-            uint yreg = (uint)(slot / 3) * 2;
-            DeferredWriteData(YM2610B_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
-            DeferredWriteData(YM2610B_write, unitNumber, yreg + 1, data);
+            uint reg = (uint)(slot / 3) << 8;
+            uint adrs = (uint)(reg + address + (op * 4) + (slot % 3));
 
-            //try
-            //{
-            //    Program.SoundUpdating();
-            //    YM2610B_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
-            //    YM2610B_write(unitNumber, reg + 1, data);
-            //}
-            //finally
-            //{
-            //    Program.SoundUpdated();
-            //}
+            WriteData(adrs, data, useCache, new Action(() =>
+            {
+                if (!internalOnly)
+                {
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.VSIF_MSX_Pi:
+                                if (adrs < 0x100)
+                                    vsifClient.WriteData(0x1A, (byte)adrs, (byte)data, 0);
+                                else
+                                    vsifClient.WriteData(0x1B, (byte)(adrs & 0xff), (byte)data, 0);
+                                break;
+                            case SoundEngineType.VSIF_MSX_PiTr:
+                                if (adrs < 0x100)
+                                    vsifClient.WriteData(0x3A, (byte)adrs, (byte)data, -2);
+                                else
+                                    vsifClient.WriteData(0x3B, (byte)(adrs & 0xff), (byte)data, -2);
+                                break;
+                        }
+                    }
+                }
+
+                uint yreg = (uint)(slot / 3) * 2;
+                DeferredWriteData(YM2610B_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                DeferredWriteData(YM2610B_write, unitNumber, yreg + 1, data);
+
+                //try
+                //{
+                //    Program.SoundUpdating();
+                //    YM2610B_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                //    YM2610B_write(unitNumber, reg + 1, data);
+                //}
+                //finally
+                //{
+                //    Program.SoundUpdated();
+                //}
+            }));
         }
 
 
@@ -554,9 +882,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
-        private Dictionary<int, byte[]> tmpPcmDataTable = new Dictionary<int, byte[]>();
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -584,12 +909,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        private const int ADPCM_A = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private const int ADPCM_B = 1;
+
+        private YM2610BPcmManager[] adpcmManagers = new YM2610BPcmManager[2];
+
+        /// <summary>
+        /// 
+        /// </summary>
         public YM2610B(uint unitNumber) : base(unitNumber)
         {
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            AdpcmASoundTable = new AdpcmSoundTable();
+            adpcmManagers[ADPCM_A] = new YM2610BPcmManager(this, ADPCM_A);
+            adpcmManagers[ADPCM_B] = new YM2610BPcmManager(this, ADPCM_B);
+
+            AdpcmASoundTable = new YM2610BAdpcmSoundTable(this);
 
             Timbres = new YM2610BTimbre[128];
             for (int i = 0; i < 128; i++)
@@ -614,21 +954,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="pn"></param>
-        /// <param name="pos"></param>
-        private byte read_byte_callback(byte pn, int pos)
+        /// <param name="memoryType"></param>
+        /// <param name="address"></param>
+        private byte read_byte_callback(byte memoryType, int address)
         {
-            lock (tmpPcmDataTable)
+            lock (adpcmManagers[memoryType])
             {
-                if (tmpPcmDataTable.ContainsKey(pn))
-                {
-                    //HACK: Thread UNSAFE
-                    byte[] pd = tmpPcmDataTable[pn];
-                    if (pd != null && pd.Length != 0 && pos < pd.Length)
-                        return pd[pos];
-                }
+                //Debug.WriteLine(" address=" + address.ToString("X6"));
+                return adpcmManagers[memoryType].ReadFlashMemory(address);
             }
-            return 0x80;
         }
 
         internal override void PrepareSound()
@@ -638,12 +972,59 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             initGlobalRegisters();
         }
 
+        private bool ignoreUpdatePcmData;
+
         private void initGlobalRegisters()
         {
             //SSG OFF
             YM2610BWriteData(UnitNumber, (byte)(7), 0, 0, (byte)(0x3f));
             //ADPCMA TOTAL LEVEL MAX
             YM2610BWriteData(UnitNumber, (byte)(1), 0, 3, (byte)(0x3f));
+            //LFO
+            YM2610BWriteData(UnitNumber, 0x22, 0, 0, 0x00);
+
+            if (!IsDisposing && !ignoreUpdatePcmData)
+            {
+                adpcmManagers[ADPCM_A].Reset();
+                adpcmManagers[ADPCM_B].Reset();
+
+                for (int i = 0; i < Timbres.Length; i++)
+                {
+                    if (Timbres[i] is YM2610BTimbre t)
+                    {
+                        adpcmManagers[ADPCM_B].DeletePCM(i);
+                        t.PcmAddressStart = 0;
+                        t.PcmAddressEnd = 0;
+                        if (t.PcmData.Length != 0)
+                        {
+                            var pe = adpcmManagers[ADPCM_B].RegisterPCM(i, t.PcmData);
+                            if (pe != null)
+                            {
+                                t.PcmAddressStart = (uint)pe.StartAddress;
+                                t.PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < AdpcmASoundTable.PcmTimbres.Length; i++)
+                {
+                    if (AdpcmASoundTable.PcmTimbres[i] is YM2610BAdpcmTimbre t)
+                    {
+                        adpcmManagers[ADPCM_A].DeletePCM(i);
+                        t.PcmAddressStart = 0;
+                        t.PcmAddressEnd = 0;
+                        if (t.PcmData != null && t.PcmData.Length != 0)
+                        {
+                            var pe = adpcmManagers[ADPCM_A].RegisterPCM(i, t.PcmData);
+                            if (pe != null)
+                            {
+                                t.PcmAddressStart = (uint)pe.StartAddress;
+                                t.PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -841,6 +1222,334 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[1].Ops[3].TL = 10;
         }
 
+        public class YM2610BPcmEntry
+        {
+            public bool Valid;
+            public int StartAddress;
+            public int Size;
+            public int Id;
+        }
+
+        public enum MemoryState
+        {
+            Unused,
+            Used,
+            Dirty
+        }
+
+        public class YM2610BPcmManager
+        {
+
+
+            const int FlashSize = 16 * 1024 * 1024; // 16MB
+            const int BlockSize = 64 * 1024;       // 64KB
+            const int PageSize = 256;              // 256B
+            const int MaxBlocks = FlashSize / BlockSize;
+
+            private byte[] flashMemory = new byte[FlashSize]; // 仮想フラッシュメモリ
+            private MemoryState[] pageUsed = new MemoryState[FlashSize / PageSize];
+            private bool[] blockErased = new bool[MaxBlocks];
+
+            private Dictionary<int, YM2610BPcmEntry> pcmEntries = new Dictionary<int, YM2610BPcmEntry>();
+
+            private YM2610B parentInst;
+            private int memoryType;
+
+            private int getBlockIndex(int address) => address / BlockSize;
+            private int getBlockStart(int address) => address & ~(BlockSize - 1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="inst"></param>
+            /// <param name="memoryType">0:ADPCM-A, 1:ADPCM-B</param>
+            public YM2610BPcmManager(YM2610B inst, int memoryType)
+            {
+                parentInst = inst;
+                this.memoryType = memoryType;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void Reset()
+            {
+                Array.Clear(flashMemory, 0, flashMemory.Length);
+                Array.Clear(pageUsed, 0, pageUsed.Length);
+                Array.Clear(blockErased, 0, blockErased.Length);
+                pcmEntries.Clear();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="address"></param>
+            /// <returns></returns>
+            /// <exception cref="ArgumentOutOfRangeException"></exception>
+            public byte ReadFlashMemory(int address)
+            {
+                if (address < 0 || address >= flashMemory.Length)
+                    throw new ArgumentOutOfRangeException(nameof(address), "Address out of range");
+                return flashMemory[address];
+            }
+
+            private void eraseBlock(int blockIdx)
+            {
+                for (int i = 0; i < BlockSize; i++)
+                    flashMemory[blockIdx + i] = 0xFF;
+
+                int pageIdx = blockIdx / PageSize;
+                for (int i = 0; i < BlockSize / PageSize; i++)
+                {
+                    pageUsed[pageIdx + i] = MemoryState.Unused;
+                }
+
+                blockErased[getBlockIndex(blockIdx)] = true;
+            }
+
+            private bool safeWrite(int address, byte[] data)
+            {
+                if (address % PageSize != 0)// || data.Length % PageSize != 0)
+                    throw new ArgumentException("Write must be 256-byte aligned and sized");
+
+                //int startBlock = GetBlockIndex(address);
+                //int endBlock = GetBlockIndex(address + data.Length - 1);
+
+                //for (int blk = startBlock; blk <= endBlock; blk++)
+                //{
+                //    if (!blockErased[blk])
+                //    {
+                //        EraseBlock(blk * BlockSize);
+                //    }
+                //}
+
+                for (int i = 0; i < data.Length; i += PageSize)
+                {
+                    int saddr = address + i;
+
+                    int pageIndex = saddr / PageSize;
+                    if (pageUsed[pageIndex] == MemoryState.Used)
+                    {
+                        Debug.WriteLine("Page already used: cannot overwrite at " + saddr);
+                        return false;
+                    }
+
+                    bool erase = !blockErased[getBlockIndex(saddr)];
+                    if (erase)
+                        eraseBlock(getBlockStart(saddr));
+
+                    byte[] chunkData = new byte[PageSize];
+                    // Fill with 0x80 to silence
+                    for (int j = 0; j < PageSize; j++)
+                        chunkData[j] = 0x80;
+                    int sz = Math.Min(PageSize, data.Length - i);
+
+                    Array.Copy(data, i, chunkData, 0, sz);
+                    Array.Copy(chunkData, 0, flashMemory, address + i, PageSize);
+
+                    //Write to the flash memory
+                    switch (parentInst.SoundEngine)
+                    {
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
+                            parentInst.vsifClient.DataWriter.
+                                RawWrite(new byte[] { 0x19, (byte)(memoryType + 1), (byte)((saddr) >> 16), (byte)(saddr >> 8), (byte)(erase ? 1 : 0) }, null);
+                            parentInst.vsifClient.DataWriter.
+                                RawWrite(chunkData, null);
+                            break;
+                    }
+                    if (erase)
+                        Debug.WriteLine($"Erase Page:{pageIndex}-{pageIndex + (BlockSize / PageSize) - 1} Adr:{saddr}-{saddr + 0xffff}");
+                    Debug.WriteLine($"Write PCM Type:{memoryType} Page:{pageIndex} Adr:{saddr}");
+
+                    pageUsed[pageIndex] = MemoryState.Used;
+
+
+                }
+
+                return true;
+            }
+
+            private int findFreeRegion(int size, bool gc)
+            {
+                int requiredPages = (size + PageSize - 1) / PageSize;
+                int totalPages = flashMemory.Length / PageSize;
+
+                for (int pageIdx = 0; pageIdx <= totalPages - requiredPages; pageIdx++)
+                {
+                    bool spaceAvailable = true;
+                    for (int i = 0; i < requiredPages; i++)
+                    {
+                        if (pageUsed[pageIdx + i] != MemoryState.Unused)
+                        {
+                            spaceAvailable = false;
+                            break;
+                        }
+                    }
+
+                    if (spaceAvailable)
+                    {
+                        Debug.WriteLine($"Found Page:{pageIdx} - {pageIdx + (requiredPages - 1)}");
+                        return pageIdx * PageSize;
+                    }
+                }
+
+                if (gc) // If no space found and GC is allowed
+                {
+                    //GC
+                    bool rescanAvailable = false;
+                    for (int blockIdx = 0; blockIdx < MaxBlocks; blockIdx++)
+                    {
+                        int pageIdx = blockIdx / PageSize;
+
+                        if (blockErased[blockIdx])
+                        {
+                            bool canErase = true;
+                            for (int i = 0; i < BlockSize / PageSize; i++)
+                            {
+                                if (pageUsed[pageIdx + i] == MemoryState.Used)
+                                {
+                                    canErase = false;
+                                    break;
+                                }
+                            }
+                            if (canErase)
+                            {
+                                for (int i = 0; i < BlockSize / PageSize; i++)
+                                    pageUsed[pageIdx + i] = MemoryState.Unused;
+                                blockErased[blockIdx] = false;
+                                rescanAvailable = true;
+                                Debug.WriteLine($"GCed Block:{blockIdx}");
+                            }
+                        }
+                    }
+                    if (rescanAvailable)
+                        return findFreeRegion(size, false);
+                }
+
+                return -1;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <param name="data"></param>
+            /// <returns></returns>
+            public YM2610BPcmEntry RegisterPCM(int id, byte[] data)
+            {
+                if (data.Length == 0)
+                    return null;
+
+                int address = findFreeRegion(data.Length, true);
+                if (address == -1)
+                {
+                    Debug.WriteLine("No space for PCM");
+                    return null;
+                }
+
+                if (!safeWrite(address, data))
+                {
+                    Debug.WriteLine("Write failed");
+                    return null;
+                }
+
+                DeletePCM(id);
+                pcmEntries[id] = new YM2610BPcmEntry { Id = id, StartAddress = address, Size = data.Length, Valid = true };
+                int requiredPages = (data.Length + PageSize - 1) / PageSize;
+                Debug.WriteLine($"Registered PCM No:{id} Type:{memoryType} Page:{address / PageSize}-{(address / PageSize) + (requiredPages - 1)} Adr:{address} Sz:{data.Length}");
+
+                return pcmEntries[id];
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <returns></returns>
+            public bool DeletePCM(int id)
+            {
+                if (!pcmEntries.ContainsKey(id))
+                    return false;
+
+                var entry = pcmEntries[id];
+                if (entry == null || !entry.Valid)
+                    return false;
+
+                int startPageIdx = entry.StartAddress / PageSize;
+                int pageCount = entry.Size / PageSize;
+
+                for (int i = 0; i < pageCount; i++)
+                {
+                    pageUsed[startPageIdx + i] = MemoryState.Dirty;
+                    Debug.WriteLine($"Page{startPageIdx + i} = Dirty");
+                }
+
+                entry.Valid = false;
+                return true;
+            }
+
+            //public void GarbageCollect()
+            //{
+            //    for (int block = 0; block < MaxBlocks; block++)
+            //    {
+            //        int blockStart = block * BlockSize;
+            //        int blockEnd = blockStart + BlockSize;
+
+            //        // そのブロック内のPCMエントリを列挙
+            //        var entriesInBlock = pcmEntries.Values.ToList().FindAll(e =>
+            //            e.Valid &&
+            //            e.StartAddress >= blockStart &&
+            //            e.StartAddress < blockEnd);
+
+            //        // 有効なPCMが1つもなければ消去して空き領域に
+            //        if (entriesInBlock.Count == 0)
+            //        {
+            //            eraseBlock(blockStart);
+            //            Console.WriteLine($"GC: Erased unused block at 0x{blockStart:X}");
+            //            continue;
+            //        }
+
+            //        // 有効なPCMが一部しかない場合 → 移動してから消去
+            //        int totalValidSize = 0;
+            //        foreach (var e in entriesInBlock)
+            //            totalValidSize += e.Size;
+
+            //        if (totalValidSize < BlockSize)
+            //        {
+            //            Console.WriteLine($"GC: Compacting block at 0x{blockStart:X}");
+
+            //            foreach (var e in entriesInBlock)
+            //            {
+            //                byte[] data = new byte[e.Size];
+            //                Array.Copy(flashMemory, e.StartAddress, data, 0, e.Size);
+
+            //                // 新しい場所に書き込み
+            //                int newAddress = findFreeRegion(data.Length);
+            //                if (newAddress == -1)
+            //                {
+            //                    Console.WriteLine("GC: Out of memory");
+            //                    continue;
+            //                }
+
+            //                if (safeWrite(newAddress, data))
+            //                {
+            //                    int oldPage = e.StartAddress / PageSize;
+            //                    int pageCount = e.Size / PageSize;
+            //                    for (int i = 0; i < pageCount; i++)
+            //                        pageUsed[oldPage + i] = MemoryState.Used;
+
+            //                    e.StartAddress = newAddress;
+            //                }
+            //            }
+
+            //            // 最後に古いブロック消去
+            //            eraseBlock(blockStart);
+            //        }
+            //    }
+            //}
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -982,19 +1691,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case ToneType.ADPCM_A:
                             pcmaOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn PCM-A ch" + emptySlot + " " + note.ToString());
-
-                            //HACK: store pcm data to local buffer to avoid "thread lock"
-                            var pct = (AdpcmTimbre)parentModule.AdpcmASoundTable.PcmTimbres[note.NoteNumber];
-                            lock (parentModule.tmpPcmDataTable)
-                                parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
                             break;
                         case ToneType.ADPCM_B:
                             pcmbOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
-
-                            //HACK: store pcm data to local buffer to avoid "thread lock"
-                            lock (parentModule.tmpPcmDataTable)
-                                parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
                             break;
                         case ToneType.SSG:
                             ssgOnSounds.Add(snd);
@@ -1032,7 +1732,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.ChipVariation == ChipType.YM2610B ? 6 : 4);
                             break;
                         }
                     case ToneType.ADPCM_A:
@@ -1064,14 +1764,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < 6; i++)
                 {
                     uint reg = (uint)(i / 3) * 2;
-                    YM2610BWriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(i % 3)));
+                    parentModule.YM2610BWriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(i % 3)));
 
                     for (int op = 0; op < 4; op++)
-                        YM2610BWriteData(parentModule.UnitNumber, 0x40, op, i, 127);
+                        parentModule.YM2610BWriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
-                YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0x3f);
-                YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)0xff);
-                YM2610BWriteData(parentModule.UnitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
+                parentModule.YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0x3f);
+                parentModule.YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)0xff);
+                parentModule.YM2610BWriteData(parentModule.UnitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
             }
         }
 
@@ -1115,6 +1815,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 baseFreq = this.timbre.BaseFreqency;
             }
 
+            public int ConvertSlot(int slot)
+            {
+                if (parentModule.ChipVariation == ChipType.YM2610)
+                {
+                    if (slot >= 0)
+                        slot++;
+                    if (slot >= 3)
+                        slot++;
+                }
+                return slot;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1148,9 +1860,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             //Volume
                             OnVolumeUpdated();
                             //On
-                            uint reg = (uint)(Slot / 3) * 2;
+                            uint reg = (uint)(ConvertSlot(Slot) / 3) * 2;
                             byte op = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
-                            YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(op | (reg << 1) | (byte)(Slot % 3)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(op | (reg << 1) | (byte)(ConvertSlot(Slot) % 3)));
                         }
                         break;
                     case ToneType.SSG:
@@ -1161,45 +1873,60 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_A:
                         {
-                            //Volume
-                            OnVolumeUpdated();
-
-                            //prognum
                             int nn = NoteOnEvent.NoteNumber;
-                            YM2610BWriteData(unitNumber, (byte)(0x02 + Slot), 0, 3, (byte)(nn + 128));
-                            //pcm start
-                            YM2610BWriteData(unitNumber, (byte)(0x10 + Slot), 0, 3, (byte)(0));
-                            YM2610BWriteData(unitNumber, (byte)(0x18 + Slot), 0, 3, (byte)(0));
-                            //pcm end
-                            var pd = parentModule.AdpcmASoundTable.PcmTimbres[nn].PcmData;
+                            YM2610BAdpcmTimbre pt = (YM2610BAdpcmTimbre)parentModule.AdpcmASoundTable.PcmTimbres[nn];
+                            var pd = pt.PcmData;
+                            if (pd == null)
+                                break;
                             ushort len = 0;
                             if (pd != null && pd.Length > 0)
                                 len = (ushort)(((pd.Length - 1) & 0xffffff) >> 8);
-                            YM2610BWriteData(unitNumber, (byte)(0x20 + Slot), 0, 3, (byte)(len & 0xff));
-                            YM2610BWriteData(unitNumber, (byte)(0x28 + Slot), 0, 3, (byte)(len >> 8));
+                            if (len == 0)
+                                break;
+
+                            //Volume
+                            OnVolumeUpdated();
+                            //Pan
+                            OnPanpotUpdated();
+
+                            //pcm start
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10 + Slot), 0, 3, (byte)(pt.PcmAddressStart >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x18 + Slot), 0, 3, (byte)(pt.PcmAddressStart >> 16));
+                            //pcm end
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x20 + Slot), 0, 3, (byte)(pt.PcmAddressEnd >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x28 + Slot), 0, 3, (byte)(pt.PcmAddressEnd >> 16));
                             //KeyOn
-                            YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(1 << Slot));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(1 << Slot), false);
                         }
                         break;
                     case ToneType.ADPCM_B:
                         {
+                            var pd = timbre.PcmData;
+                            if (pd == null)
+                                break;
+                            ushort len = 0;
+                            if (pd != null && pd.Length > 0)
+                                len = (ushort)(((pd.Length - 1) & 0xffffff) >> 8);
+                            if (len == 0)
+                                break;
+
+                            //Pitch
                             OnPitchUpdated();
                             //Volume
                             OnVolumeUpdated();
-                            //prognum
-                            YM2610BWriteData(unitNumber, (byte)(0x16), 0, 0, (byte)timbreIndex);   //HACK:
+                            //Pan
+                            OnPanpotUpdated();
+
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x16), 0, 0, (byte)ADPCM_B, false, true);   //HACK:
                             //pcm start
-                            YM2610BWriteData(unitNumber, (byte)(0x12), 0, 0, (byte)(0));
-                            YM2610BWriteData(unitNumber, (byte)(0x13), 0, 0, (byte)(0));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x12), 0, 0, (byte)(timbre.PcmAddressStart >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x13), 0, 0, (byte)(timbre.PcmAddressStart >> 16));
                             //pcm end
-                            ushort len = 0;
-                            if (timbre.PcmData.Length > 0)
-                                len = (ushort)(((timbre.PcmData.Length - 1) & 0xffffff) >> 8);
-                            YM2610BWriteData(unitNumber, (byte)(0x14), 0, 0, (byte)(len & 0xff));
-                            YM2610BWriteData(unitNumber, (byte)(0x15), 0, 0, (byte)(len >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x14), 0, 0, (byte)(timbre.PcmAddressEnd >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x15), 0, 0, (byte)(timbre.PcmAddressEnd >> 16));
                             //KeyOn
                             byte loop = timbre.LoopEnable ? (byte)0x10 : (byte)0x00;
-                            YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x80 | loop));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x80 | loop), false);
                         }
                         break;
                 }
@@ -1230,62 +1957,62 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         for (int op = 0; op < 4; op++)
                         {
                             //$30+: multiply and detune
-                            YM2610BWriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x30, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                             //$40+: total level
                             switch (timbre.ALG)
                             {
                                 case 0:
                                     if (op != 3)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 1:
                                     if (op != 3)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 2:
                                     if (op != 3)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 3:
                                     if (op != 3)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 4:
                                     if (op != 1 && op != 3)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 5:
                                     if (op == 4)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 6:
                                     if (op == 4)
-                                        YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                        parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                                     break;
                                 case 7:
                                     break;
                             }
                             //$50+: attack rate and rate scaling
-                            YM2610BWriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x50, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                             //$60+: 1st decay rate and AM enable
-                            YM2610BWriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x60, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                             //$70+: 2nd decay rate
-                            YM2610BWriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
+                            parentModule.YM2610BWriteData(unitNumber, 0x70, op, ConvertSlot(Slot), (byte)timbre.Ops[op].D2R);
                             //$80+: release rate and sustain level
-                            YM2610BWriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x80, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                             //$90+: SSG-EG
-                            YM2610BWriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
+                            parentModule.YM2610BWriteData(unitNumber, 0x90, op, ConvertSlot(Slot), (byte)timbre.Ops[op].SSG_EG);
                         }
 
                         //$B0+: algorithm and feedback
-                        YM2610BWriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
+                        parentModule.YM2610BWriteData(unitNumber, 0xB0, 0, ConvertSlot(Slot), (byte)(timbre.FB << 3 | timbre.ALG));
 
                         if (!IsKeyOff)
                         {
                             //On
-                            uint reg = (uint)(Slot / 3) * 2;
+                            uint reg = (uint)(ConvertSlot(Slot) / 3) * 2;
                             byte open = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
-                            YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(Slot % 3)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(ConvertSlot(Slot) % 3)));
                         }
 
                         break;
@@ -1366,7 +2093,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         foreach (int op in ops)
                         {
                             //$40+: total level
-                            YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
+                            parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
                         }
                         if (timbre.UseExprForModulator)
                         {
@@ -1383,7 +2110,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 else if (mul < 0)
                                     vol = vol + ((vol) * mul);
                                 vol = Math.Round(vol);
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)vol);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)vol);
                             }
                         }
                         break;
@@ -1399,10 +2126,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             pan = 0x1;
                         else
                             pan = 0x3;
-                        YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 3, (byte)(pan << 6 | fv));
+                        parentModule.YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 3, (byte)(pan << 6 | fv));
                         break;
                     case ToneType.ADPCM_B:
-                        YM2610BWriteData(unitNumber, (byte)(0x1b), 0, 0, (byte)(Math.Round(127 * CalcCurrentVolume())));
+                        parentModule.YM2610BWriteData(unitNumber, (byte)(0x1b), 0, 0, (byte)(Math.Round(127 * CalcCurrentVolume())));
                         break;
                 }
             }
@@ -1423,10 +2150,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (((int)st & 4) == 0)
                     // PSG/Noise
-                    YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(fv & 0xf));
+                    parentModule.YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(fv & 0xf));
                 else
                     //Envelope
-                    YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(0x10 | fv));
+                    parentModule.YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(0x10 | fv));
 
                 //key on
                 byte data = YM2610BReadData(unitNumber, (byte)(7), 0, 0);
@@ -1443,7 +2170,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         data &= (byte)(~((1 | 8) << Slot));
                         break;
                 }
-                YM2610BWriteData(unitNumber, (byte)(7), 0, 0, data);
+                parentModule.YM2610BWriteData(unitNumber, (byte)(7), 0, 0, data);
             }
 
             /// <summary>
@@ -1490,8 +2217,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             ushort dfreq = (ushort)Math.Round(freq);
                             octave = octave << 3;
 
-                            YM2610BWriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)));
-                            YM2610BWriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq));
+                            parentModule.YM2610BWriteData(unitNumber, 0xa4, 0, ConvertSlot(Slot), (byte)(octave | ((dfreq >> 8) & 7)));
+                            parentModule.YM2610BWriteData(unitNumber, 0xa0, 0, ConvertSlot(Slot), (byte)(0xff & dfreq));
                         }
                         break;
                     case ToneType.SSG:
@@ -1513,7 +2240,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     data &= (byte)(~((1 | 8) << Slot));
                                     break;
                             }
-                            YM2610BWriteData(unitNumber, (byte)(7), 0, 0, data);
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(7), 0, 0, data);
 
                             if (((int)st & 1) == 1)
                                 updatePsgPitch();
@@ -1524,9 +2251,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (((int)st & 4) != 0)
                             {
 
-                                YM2610BWriteData(unitNumber, (byte)(12), 0, 0, parentModule.EnvelopeFrequencyCoarse);
-                                YM2610BWriteData(unitNumber, (byte)(11), 0, 0, parentModule.EnvelopeFrequencyFine);
-                                YM2610BWriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
+                                parentModule.YM2610BWriteData(unitNumber, (byte)(12), 0, 0, parentModule.EnvelopeFrequencyCoarse);
+                                parentModule.YM2610BWriteData(unitNumber, (byte)(11), 0, 0, parentModule.EnvelopeFrequencyFine);
+                                parentModule.YM2610BWriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
                                 break;
                             }
                         }
@@ -1537,8 +2264,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (freq > 0xffff)
                                 freq = 0xffff;
 
-                            YM2610BWriteData(unitNumber, (byte)(0x19), 0, 0, (byte)(freq & 0xff));
-                            YM2610BWriteData(unitNumber, (byte)(0x1a), 0, 0, (byte)(freq >> 8));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x19), 0, 0, (byte)(freq & 0xff));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x1a), 0, 0, (byte)(freq >> 8));
                         }
                         break;
                 }
@@ -1558,8 +2285,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     freq = 0xfff;
                 ushort tp = (ushort)freq;
 
-                YM2610BWriteData(unitNumber, (byte)(0 + (Slot * 2)), 0, 0, (byte)(tp & 0xff));
-                YM2610BWriteData(unitNumber, (byte)(1 + (Slot * 2)), 0, 0, (byte)((tp >> 8) & 0xf));
+                parentModule.YM2610BWriteData(unitNumber, (byte)(0 + (Slot * 2)), 0, 0, (byte)(tp & 0xff));
+                parentModule.YM2610BWriteData(unitNumber, (byte)(1 + (Slot * 2)), 0, 0, (byte)((tp >> 8) & 0xf));
             }
 
             /// <summary>
@@ -1575,7 +2302,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 int v = nn % 15;
 
-                YM2610BWriteData(unitNumber, (byte)(6), 0, 0, (byte)v);
+                parentModule.YM2610BWriteData(unitNumber, (byte)(6), 0, 0, (byte)v);
             }
 
             /// <summary>
@@ -1604,14 +2331,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         //$B4+: panning, FMS, AMS
-                        YM2610BWriteData(unitNumber, 0xB4, 0, Slot, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
+                        parentModule.YM2610BWriteData(unitNumber, 0xB4, 0, ConvertSlot(Slot), (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
                         break;
                     case ToneType.ADPCM_A:
                         byte fv = (byte)(((byte)Math.Round(31 * CalcCurrentVolume()) & 0x1f));
-                        YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 3, (byte)(pan << 6 | fv));
+                        parentModule.YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 3, (byte)(pan << 6 | fv));
                         break;
                     case ToneType.ADPCM_B:
-                        YM2610BWriteData(unitNumber, (byte)(0x11), 0, 0, (byte)(pan << 6));
+                        parentModule.YM2610BWriteData(unitNumber, (byte)(0x11), 0, 0, (byte)(pan << 6));
                         break;
                 }
             }
@@ -1624,55 +2351,55 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int op = 0; op < 4; op++)
                 {
                     //$30+: multiply and detune
-                    YM2610BWriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    parentModule.YM2610BWriteData(unitNumber, 0x30, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     //$40+: total level
                     switch (timbre.ALG)
                     {
                         case 0:
                             if (op != 3 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 1:
                             if (op != 3 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 2:
                             if (op != 3 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 3:
                             if (op != 3 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 4:
                             if (op != 1 && op != 3 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 5:
                             if (op == 0 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 6:
                             if (op == 0 && !timbre.UseExprForModulator)
-                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2610BWriteData(unitNumber, 0x40, op, ConvertSlot(Slot), (byte)timbre.Ops[op].TL);
                             break;
                         case 7:
                             break;
                     }
                     //$50+: attack rate and rate scaling
-                    YM2610BWriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                    parentModule.YM2610BWriteData(unitNumber, 0x50, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     //$60+: 1st decay rate and AM enable
-                    YM2610BWriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                    parentModule.YM2610BWriteData(unitNumber, 0x60, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     //$70+: 2nd decay rate
-                    YM2610BWriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
+                    parentModule.YM2610BWriteData(unitNumber, 0x70, op, ConvertSlot(Slot), (byte)timbre.Ops[op].D2R);
                     //$80+: release rate and sustain level
-                    YM2610BWriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                    parentModule.YM2610BWriteData(unitNumber, 0x80, op, ConvertSlot(Slot), (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                     //$90+: SSG-EG
-                    YM2610BWriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
+                    parentModule.YM2610BWriteData(unitNumber, 0x90, op, ConvertSlot(Slot), (byte)timbre.Ops[op].SSG_EG);
                 }
 
                 //$B0+: algorithm and feedback
-                YM2610BWriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
+                parentModule.YM2610BWriteData(unitNumber, 0xB0, 0, ConvertSlot(Slot), (byte)(timbre.FB << 3 | timbre.ALG));
 
                 OnPanpotUpdated();
             }
@@ -1687,24 +2414,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (lastToneType)
                 {
                     case ToneType.FM:
-                        uint reg = (uint)(Slot / 3) * 2;
-                        YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(Slot % 3)));
+                        uint reg = (uint)(ConvertSlot(Slot) / 3) * 2;
+                        parentModule.YM2610BWriteData(unitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(ConvertSlot(Slot) % 3)));
                         break;
                     case ToneType.SSG:
                         byte data = YM2610BReadData(unitNumber, 7, 0, 0);
                         data |= (byte)((1 | 8) << Slot);
-                        YM2610BWriteData(unitNumber, 7, 0, 0, (byte)data);
+                        parentModule.YM2610BWriteData(unitNumber, 7, 0, 0, (byte)data);
 
-                        YM2610BWriteData(unitNumber, (byte)(8 + Slot), 0, 0, (byte)0);
+                        parentModule.YM2610BWriteData(unitNumber, (byte)(8 + Slot), 0, 0, (byte)0);
                         break;
                     case ToneType.ADPCM_A:
                         {
-                            YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(0x80 | (1 << Slot)));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(0x80 | (1 << Slot)));
                         }
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
                         }
                         break;
                 }
@@ -1753,17 +2480,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public ToneType toneType;
+
             [DataMember]
             [Category("Sound")]
             [Description("Sound Type")]
             [DefaultValue(ToneType.FM)]
             public ToneType ToneType
             {
-                get;
-                set;
+                get
+                {
+                    return toneType;
+                }
+                set
+                {
+                    if (toneType != value)
+                        toneType = value;
+                }
             }
 
-#region SSG
+            #region SSG
 
             [DataMember]
             [Category("Sound(SSG)")]
@@ -2274,7 +3010,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(ADPCM-B)")]
             [Description("YM2610 ADPCM-B DATA. 55.5 kHz sampling rate at 12-bit from 4-bit data.\r\n" +
-                "Or, wave file 16bit mono. MAX 16MB.")]
+                "Or, wave file 16bit mono. MAX 16MB. (NEOTRON is 8MB) ")]
             [PcmFileLoaderEditor("Audio File(*.pcmb, *.wav)|*.pcmb;*.wav", 0, 16, 1, 16777215)]
             public byte[] PcmData
             {
@@ -2284,7 +3020,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_PcmData = value;
+                    if (!Util.Utility.IsEquals(f_PcmData, value))
+                    {
+                        f_PcmData = value;
+                        if (Instrument != null && Instrument.IsSoundPrepared)
+                        {
+                            var inst = (YM2610B)this.Instrument;
+                            if (inst != null)
+                            {
+                                inst.adpcmManagers[ADPCM_B].DeletePCM(Index);
+                                PcmAddressStart = 0;
+                                PcmAddressEnd = 0;
+                                var pe = inst.adpcmManagers[ADPCM_B].RegisterPCM(Index, PcmData);
+                                if (pe != null)
+                                {
+                                    PcmAddressStart = (uint)pe.StartAddress;
+                                    PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2316,6 +3071,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     pcmDataInfo = value;
                 }
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressStart
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressEnd
+            {
+                get;
+                set;
             }
 
             /// <summary>
@@ -2407,7 +3178,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2610BTimbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2739,7 +3510,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-#region Etc
+            #region Etc
 
             [DataMember]
             [Description("Memo")]
@@ -2861,7 +3632,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2610BOperator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2875,7 +3646,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-#endregion
+            #endregion
 
         }
 
@@ -3066,11 +3837,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        [Editor(typeof(EnumTypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(EnumConverter<ToneType>))]
         public enum ToneType
         {
+            [Description("FM")]
             FM,
+            [Description("SSG")]
             SSG,
+            [Description("ADPCM-A(Use AdpcmASoundTable)")]
             ADPCM_A,
+            [Description("ADPCM-B(Use PcmData)")]
             ADPCM_B,
         }
 

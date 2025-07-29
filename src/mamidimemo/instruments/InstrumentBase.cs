@@ -2692,8 +2692,21 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
+        internal bool IsSoundPrepared
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         internal virtual void PrepareSound()
         {
+            IsSoundPrepared = true;
             set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
         }
 

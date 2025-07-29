@@ -31,5 +31,12 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             PcmTimbres = new PcmTimbreBase[128];
         }
+
+        /// <summary>
+        /// Submit changes to the PCM timbre table.
+        /// </summary>
+        public virtual void Submit()
+        {
+        }
     }
 }

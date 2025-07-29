@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using MetroFramework.Forms;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,15 +8,17 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Util;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormPcmTableEditor : FormBase
+    public partial class FormOpnbPcmTableEditor : FormBase
     {
         public PcmTimbreBase[] f_PcmData;
 
@@ -88,7 +91,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <summary>
         /// 
         /// </summary>
-        public FormPcmTableEditor()
+        public FormOpnbPcmTableEditor()
         {
             InitializeComponent();
 
@@ -120,19 +123,64 @@ namespace zanac.MAmidiMEmo.Gui
         private void loadPcmData(ListViewItem fi, string fn)
         {
             byte[] data = null;
-            try
+            if (Path.GetExtension(fn).Equals(".wav", StringComparison.OrdinalIgnoreCase))
             {
-                data = File.ReadAllBytes(fn);
+                try
+                {
+                    using (var reader = new NAudio.Wave.WaveFileReader(fn))
+                    {
+                        var wf = reader.WaveFormat;
+
+                        //18.5 kHz sampling rate at 12-bit from 4-bit data
+                        WaveFormat format = new WaveFormat(18500, 16, 1);
+                        using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
+                        {
+                            using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
+                            {
+                                var tmpdata = new byte[converter.Length];
+                                int rd = stream.Read(tmpdata, 0, tmpdata.Length);
+                                data = new byte[rd];
+                                Array.Copy(tmpdata, data, rd);
+                            }
+                        }
+
+                        if (data != null)
+                        {
+                            // byte[] -> short[]
+                            List<short> wav = new List<short>();
+                            for (int i = 0; i < data.Length; i += 2)
+                                wav.Add((short)((data[i + 1] << 8) | data[i]));
+                            data = OpnPcmConverter.EncodeAdpcmA(wav.ToArray());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+
+                    MessageBox.Show(ex.ToString());
+                }
             }
-            catch (Exception ex)
+            else
             {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
+                try
+                {
+                    data = File.ReadAllBytes(fn);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
 
 
-                MessageBox.Show(ex.ToString());
+                    MessageBox.Show(ex.ToString());
+                }
             }
             if (data != null)
             {

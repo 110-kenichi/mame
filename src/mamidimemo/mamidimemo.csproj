@@ -188,7 +188,14 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Gui\FormOpnbPcmTableEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormOpnbPcmTableEditor.Designer.cs">
+      <DependentUpon>FormOpnbPcmTableEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\LpcFileLoaderUITypeEditor.cs" />
+    <Compile Include="Gui\OpnbPcmTableUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\PAULA_8364.cs" />
     <Compile Include="Instruments\Chips\TIA.cs" />
     <Compile Include="Instruments\Chips\VLM5030.cs" />
@@ -688,6 +695,7 @@
     <Compile Include="Util\FM-SoundConvertor\Vgi.cs" />
     <Compile Include="Util\FM-SoundConvertor\FFOPM.cs" />
     <Compile Include="Util\FM-SoundConvertor\FF.cs" />
+    <Compile Include="Util\OpnPcmConverter.cs" />
     <Compile Include="Util\PcmMixer.cs" />
     <Compile Include="Util\PropertyGridUtility.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
@@ -1099,6 +1107,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormInputNumber.resx">
       <DependentUpon>FormInputNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormOpnbPcmTableEditor.resx">
+      <DependentUpon>FormOpnbPcmTableEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormProp.ja-JP.resx">
       <DependentUpon>FormProp.cs</DependentUpon>

@@ -2135,10 +2135,6 @@ namespace zanac.VGMPlayer
 
                     //LFO
                     deferredWriteOPNB_P0(comPortOPNB, 0x22, 0x00);
-                    //channel 3 mode
-                    deferredWriteOPNB_P0(comPortOPNB, 0x27, 0x00);
-                    //Force OPN mode
-                    deferredWriteOPNB_P0(comPortOPNB, 0x29, 0x00);
 
                     for (int i = 0x30; i <= 0x3F; i++)
                         deferredWriteOPNB_P0(comPortOPNB, i, 0);
@@ -4250,7 +4246,7 @@ namespace zanac.VGMPlayer
                                                                 byte[] romData = vgmReader.ReadBytes((int)size);
                                                                 if (comPortOPNB != null)
                                                                 {
-                                                                    if(!looped)
+                                                                    if (!looped)
                                                                         transferAdpcmDataForNeotron(size, saddr, romData, 1, "A");
                                                                 }
                                                                 else if (opnbPcm != null)
@@ -5279,7 +5275,11 @@ namespace zanac.VGMPlayer
             NotifyFinished();
         }
 
-        private Dictionary<uint, bool> adpcmMemoryErased = new Dictionary<uint, bool>();
+        private Dictionary<uint, bool>[] adpcmMemoryErased =
+            new Dictionary<uint, bool>[]{
+            new Dictionary<uint, bool>(), // ADPCM-A
+            new Dictionary<uint, bool>() // ADPCM-B
+        };
 
         /// <summary>
         /// Transfers ADPCM data to the YM2610 for a specific memory type.
@@ -5324,9 +5324,9 @@ namespace zanac.VGMPlayer
 
                 // ‚±‚±‚Åchunk‚ðŽg‚Á‚Äˆ—‚ðs‚¤
                 bool erase = false;
-                if (!adpcmMemoryErased.ContainsKey((saddr >> 16)))
+                if (!adpcmMemoryErased[memoryType - 1].ContainsKey((saddr >> 16)))
                 {
-                    adpcmMemoryErased[(saddr >> 16)] = true;
+                    adpcmMemoryErased[memoryType - 1][(saddr >> 16)] = true;
                     erase = true;
 #if DEBUG
                     Console.WriteLine("YM2610: Erase ADPCM-" + memoryTypeName + "(" +

@@ -1154,50 +1154,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="transferData"></param>
-        /// <param name="saddr"></param>
-        /// <param name="fp"></param>
-        protected void sendAdpcmDataYM2610_SIOS(VsifClient comPortOPNB, byte[] transferData, int saddr, int type, FormProgress fp)
-        {
-            //Transfer
-            int len = transferData.Length;
-            int index = 0;
-            int percentage = 0;
-            int lastPercentage = -1;
-            for (int i = 0; i < len; i++)
-            {
-                deferredWriteOPNA_P1(comPortOPNB, 0x08, transferData[i]);
-
-                //HACK: WAIT
-                switch (comPortOPNB?.SoundModuleType)
-                {
-                    case VsifSoundModuleType.Spfm:
-                    case VsifSoundModuleType.SpfmLight:
-                    case VsifSoundModuleType.Gimic:
-                        comPortOPNB?.FlushDeferredWriteDataAndWait();
-                        break;
-                }
-
-                percentage = (100 * index) / len;
-                if (percentage != lastPercentage)
-                {
-                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
-                    //fp.Percentage = percentage;
-                    comPortOPNB?.FlushDeferredWriteDataAndWait();
-                }
-                lastPercentage = percentage;
-                index++;
-                if (RequestedStat == SoundState.Stopped)
-                    break;
-                else updateStatusForDataTransfer();
-            }
-            FormMain.TopForm.SetStatusText("YM2610: Transferred ADPCM");
-        }
-
         /// <summary>
         /// 
         /// </summary>
