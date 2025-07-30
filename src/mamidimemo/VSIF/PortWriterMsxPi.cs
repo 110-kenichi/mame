@@ -275,26 +275,13 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             lock (LockObject)
             {
-                if (!SerialPort.IsOpen)
-                    return;
-
                 try
                 {
-                    int chunkSize = 8;
-                    int offset = 0;
-                    while (offset < sendData.Length)
-                    {
-                        if (!SerialPort.IsOpen)
-                            break;
-                        int size = Math.Min(chunkSize, sendData.Length - offset);
-                        byte[] chunk = new byte[size];
-                        Array.Copy(sendData, offset, chunk, 0, size);
-                        SerialPort?.Write(chunk, 0, size);
-                        offset += size;
-                    }
+                    SerialPort?.Write(sendData, 0, sendData.Length);
                 }
                 catch (Exception ex)
                 {
+                    SerialPort.Close();
                     if (ex.GetType() == typeof(Exception))
                         throw;
                     else if (ex.GetType() == typeof(SystemException))

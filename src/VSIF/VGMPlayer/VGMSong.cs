@@ -25,6 +25,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.IO.Ports;
+using System.Windows;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -3457,6 +3458,11 @@ namespace zanac.VGMPlayer
                                             if (adrs > 0xb2)
                                                 break;
 
+#if DEBUG
+                                            if (adrs >= 0x10 && adrs <= 0x1c)
+                                                Console.WriteLine("YM2610: ADPCM B write " + (adrs).ToString("x") + "=" + (dt).ToString("x"));
+#endif
+
                                             if (comPortOPNB != null)
                                             {
                                                 switch (adrs)
@@ -4254,6 +4260,11 @@ namespace zanac.VGMPlayer
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_a_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_A, saddr + i, romData[i]);
                                                                 }
+#if DEBUG
+                                                                Console.WriteLine("YM2610: Transferred ADPCM A(" +
+                                                                    (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                    " (" + size.ToString("x") + ")");
+#endif
                                                             }
                                                         }
                                                         break;
@@ -4276,6 +4287,11 @@ namespace zanac.VGMPlayer
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_b_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_B, saddr + i, romData[i]);
                                                                 }
+#if DEBUG
+                                                                Console.WriteLine("YM2610: Transferred ADPCM B(" +
+                                                                    (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                    " (" + size.ToString("x") + ")");
+#endif
                                                             }
                                                         }
                                                         break;

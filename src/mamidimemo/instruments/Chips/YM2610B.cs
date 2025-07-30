@@ -26,17 +26,13 @@ using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
-using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
-using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
-using static System.Windows.Forms.AxHost;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2608;
 
 //http://www.ajworld.net/neogeodev/ym2610am2.html
 //https://wiki.neogeodev.org/index.php?title=YM2610_registers
@@ -103,12 +99,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-
         private object sndEnginePtrLock = new object();
-
-        private IntPtr spfmPtr;
-
-        private int gimicPtr = -1;
 
         private VsifClient vsifClient;
 
@@ -167,16 +158,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
-                if (spfmPtr != IntPtr.Zero)
-                {
-                    ScciManager.ReleaseSoundChip(spfmPtr);
-                    spfmPtr = IntPtr.Zero;
-                }
-                if (gimicPtr != -1)
-                {
-                    GimicManager.ReleaseModule(gimicPtr);
-                    gimicPtr = -1;
-                }
                 if (vsifClient != null)
                 {
                     vsifClient.Dispose();
@@ -290,149 +271,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         adpcmASoundTable.Submit();
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataContract]
-        [InstLock]
-        public class YM2610BAdpcmSoundTable : PcmTimbreTableBase
-        {
-            private YM2610B parent;
-
-            public YM2610B Parent
-            {
-                get
-                {
-                    return parent;
-                }
-                set
-                {
-                    parent = value;
-                }
-            }
-            /// <summary>
-            /// 
-            /// </summary>
-            public YM2610BAdpcmSoundTable(YM2610B inst)
-            {
-                this.parent = inst;
-                for (int i = 0; i < 128; i++)
-                {
-                    var pt = new YM2610BAdpcmTimbre(inst, i);
-                    PcmTimbres[i] = pt;
-                }
-            }
-
-            /// <summary>
-            /// Submit changes to the PCM timbre table.
-            /// </summary>
-            public override void Submit()
-            {
-                if (Parent == null || !Parent.IsSoundPrepared)
-                    return;
-
-                for (int i = 0; i < PcmTimbres.Length; i++)
-                {
-                    var t = (YM2610BAdpcmTimbre)PcmTimbres[i];
-
-                    Parent?.adpcmManagers[ADPCM_A].DeletePCM(i);
-                    if (t.PcmData != null && t.PcmData.Length != 0)
-                    {
-                        var pe = Parent?.adpcmManagers[ADPCM_A].RegisterPCM(i, t.PcmData);
-                        if (pe != null)
-                        {
-                            t.PcmAddressStart = (uint)pe.StartAddress;
-                            t.PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataContract]
-        [InstLock]
-        public class YM2610BAdpcmTimbre : PcmTimbreBase
-        {
-            private YM2610B parent;
-
-            private YM2610B Parent
-            {
-                get
-                {
-                    if (parent == null)
-                    {
-                        bool found = false;
-                        foreach (YM2610B inst in InstrumentManager.GetInstruments(19))
-                        {
-                            if (found)
-                                break;
-                            Parallel.ForEach(inst.AdpcmASoundTable.PcmTimbres, (t, state) =>
-                            {
-                                if (t == this)
-                                {
-                                    parent = inst;
-                                    found = true;
-                                    state.Break();
-                                }
-                            });
-                        }
-                    }
-                    return parent;
-                }
-                set
-                {
-                    parent = value;
-                }
-            }
-
-            private byte[] f_PcmData;
-
-            /// <summary>
-            /// 
-            /// </summary>
-            [DataMember]
-            [Browsable(false)]
-            public override byte[] PcmData
-            {
-                get
-                {
-                    return f_PcmData;
-                }
-                set
-                {
-                    f_PcmData = value;
-                }
-            }
-
-            [DataMember]
-            [Browsable(false)]
-            public uint PcmAddressStart
-            {
-                get;
-                set;
-            }
-
-            [DataMember]
-            [Browsable(false)]
-            public uint PcmAddressEnd
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="noteNumber"></param>
-            public YM2610BAdpcmTimbre(YM2610B inst, int noteNumber) : base(noteNumber)
-            {
-                this.parent = inst;
             }
         }
 
@@ -995,7 +833,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         adpcmManagers[ADPCM_B].DeletePCM(i);
                         t.PcmAddressStart = 0;
                         t.PcmAddressEnd = 0;
-                        if (t.PcmData.Length != 0)
+                        if (t.PcmData != null && t.PcmData.Length != 0)
                         {
                             var pe = adpcmManagers[ADPCM_B].RegisterPCM(i, t.PcmData);
                             if (pe != null)
@@ -1239,12 +1077,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         public class YM2610BPcmManager
         {
-
-
-            const int FlashSize = 16 * 1024 * 1024; // 16MB
-            const int BlockSize = 64 * 1024;       // 64KB
-            const int PageSize = 256;              // 256B
-            const int MaxBlocks = FlashSize / BlockSize;
+            private static readonly int FlashSize = 16 * 1024 * 1024; // 16MB
+            private static readonly int BlockSize = 64 * 1024;       // 64KB
+            private static readonly int PageSize = 256;              // 256B
+            private static readonly int MaxBlocks = FlashSize / BlockSize;
 
             private byte[] flashMemory = new byte[FlashSize]; // 仮想フラッシュメモリ
             private MemoryState[] pageUsed = new MemoryState[FlashSize / PageSize];
@@ -1253,6 +1089,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private Dictionary<int, YM2610BPcmEntry> pcmEntries = new Dictionary<int, YM2610BPcmEntry>();
 
             private YM2610B parentInst;
+
+            /// <summary>
+            /// 0: ADPCM-A 1: ADPCM-B
+            /// </summary>
             private int memoryType;
 
             private int getBlockIndex(int address) => address / BlockSize;
@@ -1370,6 +1210,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return true;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="size"></param>
+            /// <param name="gc"></param>
+            /// <returns>Start address</returns>
             private int findFreeRegion(int size, bool gc)
             {
                 int requiredPages = (size + PageSize - 1) / PageSize;
@@ -1389,8 +1235,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     if (spaceAvailable)
                     {
-                        Debug.WriteLine($"Found Page:{pageIdx} - {pageIdx + (requiredPages - 1)}");
-                        return pageIdx * PageSize;
+                        //同じバンクのみ可能
+                        if (((pageIdx * PageSize) & 0xF00000) ==
+                            (((pageIdx + requiredPages - 1) * PageSize) & 0xF00000))
+                        {
+                            Debug.WriteLine($"Found Page:{pageIdx} - {pageIdx + (requiredPages - 1)}");
+                            return pageIdx * PageSize;
+                        }
                     }
                 }
 
@@ -1398,7 +1249,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     //GC
                     bool rescanAvailable = false;
-                    for (int blockIdx = 0; blockIdx < MaxBlocks; blockIdx++)
+                    var mb = MaxBlocks;
+                    switch (parentInst.SoundEngine)
+                    {
+                        case SoundEngineType.Software:
+                            break;
+                        case SoundEngineType.VSIF_MSX_Pi:
+                        case SoundEngineType.VSIF_MSX_PiTr:
+                            mb = 8 * 1024 * 1024 / BlockSize;
+                            break;
+                    }
+
+                    for (int blockIdx = 0; blockIdx < mb; blockIdx++)
                     {
                         int pageIdx = blockIdx / PageSize;
 
@@ -1423,6 +1285,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
                     }
+
                     if (rescanAvailable)
                         return findFreeRegion(size, false);
                 }
@@ -1488,66 +1351,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 entry.Valid = false;
                 return true;
             }
-
-            //public void GarbageCollect()
-            //{
-            //    for (int block = 0; block < MaxBlocks; block++)
-            //    {
-            //        int blockStart = block * BlockSize;
-            //        int blockEnd = blockStart + BlockSize;
-
-            //        // そのブロック内のPCMエントリを列挙
-            //        var entriesInBlock = pcmEntries.Values.ToList().FindAll(e =>
-            //            e.Valid &&
-            //            e.StartAddress >= blockStart &&
-            //            e.StartAddress < blockEnd);
-
-            //        // 有効なPCMが1つもなければ消去して空き領域に
-            //        if (entriesInBlock.Count == 0)
-            //        {
-            //            eraseBlock(blockStart);
-            //            Console.WriteLine($"GC: Erased unused block at 0x{blockStart:X}");
-            //            continue;
-            //        }
-
-            //        // 有効なPCMが一部しかない場合 → 移動してから消去
-            //        int totalValidSize = 0;
-            //        foreach (var e in entriesInBlock)
-            //            totalValidSize += e.Size;
-
-            //        if (totalValidSize < BlockSize)
-            //        {
-            //            Console.WriteLine($"GC: Compacting block at 0x{blockStart:X}");
-
-            //            foreach (var e in entriesInBlock)
-            //            {
-            //                byte[] data = new byte[e.Size];
-            //                Array.Copy(flashMemory, e.StartAddress, data, 0, e.Size);
-
-            //                // 新しい場所に書き込み
-            //                int newAddress = findFreeRegion(data.Length);
-            //                if (newAddress == -1)
-            //                {
-            //                    Console.WriteLine("GC: Out of memory");
-            //                    continue;
-            //                }
-
-            //                if (safeWrite(newAddress, data))
-            //                {
-            //                    int oldPage = e.StartAddress / PageSize;
-            //                    int pageCount = e.Size / PageSize;
-            //                    for (int i = 0; i < pageCount; i++)
-            //                        pageUsed[oldPage + i] = MemoryState.Used;
-
-            //                    e.StartAddress = newAddress;
-            //                }
-            //            }
-
-            //            // 最後に古いブロック消去
-            //            eraseBlock(blockStart);
-            //        }
-            //    }
-            //}
         }
 
         /// <summary>
@@ -1926,6 +1729,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             parentModule.YM2610BWriteData(unitNumber, (byte)(0x15), 0, 0, (byte)(timbre.PcmAddressEnd >> 16));
                             //KeyOn
                             byte loop = timbre.LoopEnable ? (byte)0x10 : (byte)0x00;
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
                             parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x80 | loop), false);
                         }
                         break;
@@ -2431,7 +2235,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
+                            parentModule.YM2610BWriteData(unitNumber, (byte)(0x10), 0, 0, (byte)(0x01));
                         }
                         break;
                 }
@@ -3023,14 +2827,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (!Util.Utility.IsEquals(f_PcmData, value))
                     {
                         f_PcmData = value;
+                        PcmAddressStart = 0;
+                        PcmAddressEnd = 0;
                         if (Instrument != null && Instrument.IsSoundPrepared)
                         {
                             var inst = (YM2610B)this.Instrument;
                             if (inst != null)
                             {
                                 inst.adpcmManagers[ADPCM_B].DeletePCM(Index);
-                                PcmAddressStart = 0;
-                                PcmAddressEnd = 0;
                                 var pe = inst.adpcmManagers[ADPCM_B].RegisterPCM(Index, PcmData);
                                 if (pe != null)
                                 {
@@ -4032,5 +3836,151 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return null;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataContract]
+        [InstLock]
+        public class YM2610BAdpcmSoundTable : PcmTimbreTableBase
+        {
+            private YM2610B parent;
+
+            public YM2610B Parent
+            {
+                get
+                {
+                    return parent;
+                }
+                set
+                {
+                    parent = value;
+                }
+            }
+            /// <summary>
+            /// 
+            /// </summary>
+            public YM2610BAdpcmSoundTable(YM2610B inst)
+            {
+                this.parent = inst;
+                for (int i = 0; i < 128; i++)
+                {
+                    var pt = new YM2610BAdpcmTimbre(inst, i);
+                    PcmTimbres[i] = pt;
+                }
+            }
+
+            /// <summary>
+            /// Submit changes to the PCM timbre table.
+            /// </summary>
+            public override void Submit()
+            {
+                if (Parent == null || !Parent.IsSoundPrepared)
+                    return;
+
+                for (int i = 0; i < PcmTimbres.Length; i++)
+                {
+                    var t = (YM2610BAdpcmTimbre)PcmTimbres[i];
+
+                    Parent?.adpcmManagers[ADPCM_A].DeletePCM(i);
+                    t.PcmAddressStart = 0;
+                    t.PcmAddressEnd = 0;
+                    if (t.PcmData != null && t.PcmData.Length != 0)
+                    {
+                        var pe = Parent?.adpcmManagers[ADPCM_A].RegisterPCM(i, t.PcmData);
+                        if (pe != null)
+                        {
+                            t.PcmAddressStart = (uint)pe.StartAddress;
+                            t.PcmAddressEnd = (uint)(pe.StartAddress + pe.Size - 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataContract]
+        [InstLock]
+        public class YM2610BAdpcmTimbre : PcmTimbreBase
+        {
+            private YM2610B parent;
+
+            private YM2610B Parent
+            {
+                get
+                {
+                    if (parent == null)
+                    {
+                        bool found = false;
+                        foreach (YM2610B inst in InstrumentManager.GetInstruments(19))
+                        {
+                            if (found)
+                                break;
+                            Parallel.ForEach(inst.AdpcmASoundTable.PcmTimbres, (t, state) =>
+                            {
+                                if (t == this)
+                                {
+                                    parent = inst;
+                                    found = true;
+                                    state.Break();
+                                }
+                            });
+                        }
+                    }
+                    return parent;
+                }
+                set
+                {
+                    parent = value;
+                }
+            }
+
+            private byte[] f_PcmData;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Browsable(false)]
+            public override byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    f_PcmData = value;
+                }
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressStart
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressEnd
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="noteNumber"></param>
+            public YM2610BAdpcmTimbre(YM2610B inst, int noteNumber) : base(noteNumber)
+            {
+                this.parent = inst;
+            }
+        }
+
     }
 }
