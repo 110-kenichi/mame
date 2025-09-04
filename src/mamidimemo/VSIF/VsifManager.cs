@@ -372,7 +372,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 sp.ReadTimeout = 1000;
                                 sp.WriteTimeout = 1000;
                                 sp.WriteBufferSize = 2;
-                                sp.BaudRate = 2400;
+                                sp.BaudRate = 921600;
                                 sp.Open();
                                 var client = new VsifClient(soundModule, new PortWriterMsxPi(sp));
                                 client.Disposed += Client_Disposed;

@@ -187,6 +187,7 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gimic\SpcControlDevice.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
     <Compile Include="Gui\FormOpnbPcmTableEditor.cs">
       <SubType>Form</SubType>

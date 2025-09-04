@@ -58,5 +58,7 @@ namespace zanac.MAmidiMEmo.Instruments
         VSIF_MSX_PiTr,
         [Description("Real(VSIF MSX(MSXπ UART)")]
         VSIF_MSX_Pi,
+        [Description("Real(SPC700_for_MeSX)")]
+        SPC700_for_MeSX
     }
 }

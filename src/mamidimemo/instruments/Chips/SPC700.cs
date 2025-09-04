@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -73,9 +74,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set COM Port No for SPC700_for_MeSX")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
         private object sndEnginePtrLock = new object();
 
         private int gimicPtr = -1;
+
+        private SpcControlDevice spcControlDeviceMeSX;
 
         private SoundEngineType f_SoundEngineType;
 
@@ -84,7 +109,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports Software and SPFM/VSIF/G.I.M.I.C .")]
+            "Supports Software and G.I.M.I.C/SPC700_for_MeSX.")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
         public SoundEngineType SoundEngine
@@ -97,7 +122,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
-                    value == SoundEngineType.GIMIC))
+                    value == SoundEngineType.GIMIC ||
+                    value == SoundEngineType.SPC700_for_MeSX))
                 {
                     setSoundEngine(value);
                 }
@@ -111,6 +137,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.GIMIC,
+                    SoundEngineType.SPC700_for_MeSX,
                 });
 
                 return sc;
@@ -132,6 +159,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     GimicManager.ReleaseModule(gimicPtr);
                     gimicPtr = -1;
                 }
+                spcControlDeviceMeSX?.Dispose();
+                spcControlDeviceMeSX = null;
 
                 f_SoundEngineType = value;
 
@@ -148,6 +177,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             //GimicManager.SetClock(gimicPtr, (uint)(2.048*1000*1000));
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
+                        }
+                        break;
+                    case SoundEngineType.SPC700_for_MeSX:
+                        {
+                            var sp = new SerialPort("COM" + ((int)portId + 1));
+                            sp.Handshake = Handshake.RequestToSend;
+                            sp.ReadTimeout = 1000;
+                            sp.WriteTimeout = 1000;
+                            sp.WriteBufferSize = 2;
+                            sp.BaudRate = 921600;
+                            sp.Open();
+
+                            spcControlDeviceMeSX =
+                                new SpcControlDevice(new Spc700MeSX(sp));
+                            int ret = spcControlDeviceMeSX.Init();
+                            if (ret >= 0)
+                            {
+                                f_CurrentSoundEngineType = f_SoundEngineType;
+                                SetDevicePassThru(true);
+                            }
+                            else
+                            {
+                                spcControlDeviceMeSX.Dispose();
+                                spcControlDeviceMeSX = null;
+                            }
                         }
                         break;
                 }
@@ -694,6 +748,62 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        private void SPC700RamWriteData(uint unitNumber, uint address, byte[] data, byte dest)
+        {
+            if ((dest & 1) != 0)
+            {
+
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.GIMIC:
+                            for (int i = 0; i < data.Length; i++)
+                            {
+                                WriteData(address, data[i], true, new Action(() =>
+                                {
+                                    GimicManager.SetRegister2(gimicPtr, address, data[i], 1);
+                                }));
+                            }
+                            break;
+                        case SoundEngineType.SPC700_for_MeSX:
+                            spcControlDeviceMeSX.SetRamData((int)address, data);
+                            for (int i = 0; i < data.Length; i++)
+                            {
+                                WriteData(address, data[i], true, new Action(() =>
+                                {
+                                }));
+                            }
+                            break;
+                    }
+                }
+            }
+            if ((dest & 2) != 0)
+            {
+                for (int i = 0; i < data.Length; i++)
+                {
+                    WriteData(0x10000 + address, data[i], true, new Action(() =>
+                    {
+                        DeferredWriteData(spc_ram_w, unitNumber, address, data[i]);
+
+                    }));
+                }
+            }
+            /*
+            try
+            {
+                Program.SoundUpdating();
+                spc_ram_w(unitNumber, address, data);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }*/
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void SPC700RamWriteData(uint unitNumber, uint address, byte data, byte dest)
         {
             if ((dest & 1) != 0)
@@ -706,6 +816,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.GIMIC:
                                 GimicManager.SetRegister2(gimicPtr, address, data, 1);
+                                break;
+                            case SoundEngineType.SPC700_for_MeSX:
+                                spcControlDeviceMeSX.SetRamData((int)address, data);
                                 break;
                         }
                     }
@@ -751,6 +864,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.GIMIC:
                                 GimicManager.SetRegister2(gimicPtr, reg, data, 0);
+                                break;
+                            case SoundEngineType.SPC700_for_MeSX:
+                                spcControlDeviceMeSX.SetDspData(reg, data);
                                 break;
                         }
                     }
@@ -1024,6 +1140,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     GimicManager.ReleaseModule(gimicPtr);
                     gimicPtr = -1;
                 }
+                spcControlDeviceMeSX?.Dispose();
+                spcControlDeviceMeSX = null;
             }
 
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
@@ -1157,8 +1275,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             if (pcmData.Count != 0 && CurrentSoundEngine != SoundEngineType.Software)
             {
                 //transferPcmOnlyDiffData(pcmData.ToArray(), null);
-
-                FormMain.OutputLog(this, Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")");
+                if (timbre != null)
+                    FormMain.OutputLog(this, Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")");
+                else
+                    FormMain.OutputLog(this, Resources.UpdatingADPCM);
                 //if (Program.IsWriteLockHeld())
                 //{
                 try
@@ -1167,7 +1287,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     using (FormProgress f = new FormProgress())
                     {
                         f.StartPosition = FormStartPosition.CenterScreen;
-                        f.Message = Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")";
+                        if (timbre != null)
+                            f.Message = Resources.UpdatingADPCM + " (" + timbre.DisplayName + ")";
+                        else
+                            f.Message = Resources.UpdatingADPCM;
                         f.Show();
                         transferPcmOnlyDiffData(pcmData.ToArray(), f);
                     }
@@ -1213,28 +1336,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //Transfer
             int startAddress = (i / 9) * 9;
             int len = endAddress - startAddress;
-            int index = 0;
-            int percentage = 0;
-            int lastPercentage = 0;
             //uint baseAddress = (uint)(0x600 + (f_ECEN * f_EDL * 2048));
             uint baseAddress = (uint)(0x600 + (f_EDL * 2048));
 
-            for (int adr = startAddress; adr < endAddress; adr++)
-            {
-                SPC700RamWriteData(UnitNumber, (uint)(baseAddress + adr), transferData[adr], 0x1);
-
-                percentage = (100 * index) / len;
-                if (percentage != lastPercentage)
-                {
-                    if (fp != null)
-                    {
-                        fp.Percentage = percentage;
-                        Application.DoEvents();
-                    }
-                }
-                lastPercentage = percentage;
-                index++;
-            }
+            SPC700RamWriteData(UnitNumber,
+                (uint)(baseAddress + startAddress),
+                transferData.Skip(startAddress).Take(len).ToArray(), 0x1);
 
             //Zero padding
             for (int j = endAddress; j < endAddress + (9 - (endAddress % 9)); j++)
@@ -2921,6 +3028,104 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         #endregion
-    }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private class Spc700MeSX : ISpc700
+        {
+            private SerialPort _port;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="port"></param>
+            public Spc700MeSX(SerialPort port)
+            {
+                _port = port;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void Dispose()
+            {
+                _port.Dispose();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="portAddr"></param>
+            /// <returns></returns>
+            public byte Read(byte portAddr)
+            {
+                try
+                {
+                    byte[] buf = { (byte)(0b01000000 | portAddr) };
+
+                    _port.Write(buf, 0, buf.Length);
+
+                    int data = _port.ReadByte();
+                    if (data < 0)
+                        return 0;
+
+                    return (byte)data;
+                }
+                catch (Exception ex)
+                {
+                    _port.Close();
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
+                return 0;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void Reset()
+            {
+                try
+                {
+                    byte[] buf = { 0b11000000 };
+
+                    _port.Write(buf, 0, buf.Length);
+                }
+                catch (Exception ex)
+                {
+                    _port.Close();
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="portAddr"></param>
+            /// <param name="data"></param>
+            public void Write(byte portAddr, byte data)
+            {
+                try
+                {
+                    byte[] buf = { (byte)(0b00000000 | portAddr), data };
+
+                    _port.Write(buf, 0, buf.Length);
+                }
+                catch (Exception ex)
+                {
+                    _port.Close();
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
+            }
+        }
+    }
 }
