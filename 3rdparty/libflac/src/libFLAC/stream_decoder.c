@@ -551,10 +551,10 @@ static FLAC__StreamDecoderInitStatus init_FILE_internal_(
 	FLAC__ASSERT(0 != file);
 
 	if(decoder->protected_->state != FLAC__STREAM_DECODER_UNINITIALIZED)
-		return decoder->protected_->state = FLAC__STREAM_DECODER_INIT_STATUS_ALREADY_INITIALIZED;
+		return (FLAC__StreamDecoderInitStatus)(decoder->protected_->state = (FLAC__StreamDecoderState)FLAC__STREAM_DECODER_INIT_STATUS_ALREADY_INITIALIZED);
 
 	if(0 == write_callback || 0 == error_callback)
-		return decoder->protected_->state = FLAC__STREAM_DECODER_INIT_STATUS_INVALID_CALLBACKS;
+		return (FLAC__StreamDecoderInitStatus)(decoder->protected_->state = (FLAC__StreamDecoderState)FLAC__STREAM_DECODER_INIT_STATUS_INVALID_CALLBACKS);
 
 	/*
 	 * To make sure that our file does not go unclosed after an error, we
@@ -625,10 +625,10 @@ static FLAC__StreamDecoderInitStatus init_file_internal_(
 	 * in FLAC__stream_decoder_init_FILE() before the FILE* is assigned.
 	 */
 	if(decoder->protected_->state != FLAC__STREAM_DECODER_UNINITIALIZED)
-		return decoder->protected_->state = FLAC__STREAM_DECODER_INIT_STATUS_ALREADY_INITIALIZED;
+		return (FLAC__StreamDecoderInitStatus)(decoder->protected_->state = (FLAC__StreamDecoderState)FLAC__STREAM_DECODER_INIT_STATUS_ALREADY_INITIALIZED);
 
 	if(0 == write_callback || 0 == error_callback)
-		return decoder->protected_->state = FLAC__STREAM_DECODER_INIT_STATUS_INVALID_CALLBACKS;
+		return (FLAC__StreamDecoderInitStatus)(decoder->protected_->state = (FLAC__StreamDecoderState)FLAC__STREAM_DECODER_INIT_STATUS_INVALID_CALLBACKS);
 
 	file = filename? fopen(filename, "rb") : stdin;
 

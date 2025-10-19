@@ -1459,6 +1459,9 @@
     <None Include="Samples\YM2608_GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Samples\YM2610B_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\YM2612_GM%28from OPNA%29.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

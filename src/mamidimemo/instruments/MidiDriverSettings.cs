@@ -48,6 +48,27 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        private int? f_PitchOverride;
+
+        [DataMember]
+        [Description("Override Pitch value when key on")]
+        [DefaultValue(null)]
+        [SlideParametersAttribute(-1, 16383)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int? PitchOverride
+        {
+            get => f_PitchOverride;
+            set
+            {
+                f_PitchOverride = value;
+                if (f_PitchOverride < 0)
+                    f_PitchOverride = null;
+                else if (f_PitchOverride > 16383)
+                    f_PitchOverride = 16383;
+            }
+        }
+
         private int f_PitchShift;
 
         [DataMember]
@@ -66,6 +87,27 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_PitchShift = -1200;
                 else if (f_PitchShift > 1200)
                     f_PitchShift = 1200;
+            }
+        }
+
+        private int? f_PanOverride;
+
+        [DataMember]
+        [Description("Override Pan value when key on")]
+        [DefaultValue(null)]
+        [SlideParametersAttribute(-1, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int? PanOverride
+        {
+            get => f_PanOverride;
+            set
+            {
+                f_PanOverride = value;
+                if (f_PanOverride < 0)
+                    f_PanOverride = null;
+                else if (f_PanOverride > 127)
+                    f_PanOverride = 127;
             }
         }
 
@@ -183,6 +225,27 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get;
             set;
+        }
+
+        private int? f_ModulationOverride;
+
+        [DataMember]
+        [Description("Override Modulation value when key on")]
+        [DefaultValue(null)]
+        [SlideParametersAttribute(-1, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int? ModulationOverride
+        {
+            get => f_ModulationOverride;
+            set
+            {
+                f_ModulationOverride = value;
+                if (f_ModulationOverride < 0)
+                    f_ModulationOverride = null;
+                else if (f_ModulationOverride > 127)
+                    f_ModulationOverride = 127;
+            }
         }
 
         private int f_ModulationShift;

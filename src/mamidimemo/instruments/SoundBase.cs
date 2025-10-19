@@ -171,8 +171,16 @@ namespace zanac.MAmidiMEmo.Instruments
             IsKeyOff = false;
             IsSoundOff = false;
 
+            if (Timbre.MDS.ModulationOverride != null)
+                ParentModule.Modulations[NoteOnEvent.Channel] = (byte)Timbre.MDS.ModulationOverride.Value;
+            if (Timbre.MDS.PitchOverride != null)
+                ParentModule.Pitchs[NoteOnEvent.Channel] = (ushort)Timbre.MDS.PitchOverride.Value;
+            if (Timbre.MDS.PanOverride != null)
+                ParentModule.Panpots[NoteOnEvent.Channel] = (byte)Timbre.MDS.PanOverride.Value;
+
             if (validateMidiControlValue(ParentModule.ModulationDepthes[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthShift) > 64 ||
                 validateMidiControlValue(ParentModule.Modulations[NoteOnEvent.Channel] + Timbre.MDS.ModulationShift) > 0)
+
                 ModulationEnabled = true;
 
             int ln = ParentManager.GetLastNoteNumber(NoteOnEvent.Channel);
