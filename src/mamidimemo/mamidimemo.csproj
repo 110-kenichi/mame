@@ -189,6 +189,12 @@
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\SpcControlDevice.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Gui\FormMidiController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormMidiController.Designer.cs">
+      <DependentUpon>FormMidiController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormOpnbPcmTableEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1108,6 +1114,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormInputNumber.resx">
       <DependentUpon>FormInputNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormMidiController.resx">
+      <DependentUpon>FormMidiController.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormOpnbPcmTableEditor.resx">
       <DependentUpon>FormOpnbPcmTableEditor.cs</DependentUpon>

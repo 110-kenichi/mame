@@ -221,5 +221,119 @@
     <Setting Name="ExtTool1Path" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MidiConPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConCh1" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MidiConCh2" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh3" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh4" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh5" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh6" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh7" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh8" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh9" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh10" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh11" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh12" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh13" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh14" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh15" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConCh16" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MidiConPitch" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">8192</Value>
+    </Setting>
+    <Setting Name="MidiConPitchRange" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="MidiConFineTune" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">8192</Value>
+    </Setting>
+    <Setting Name="MidiConProgNo" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConVolume" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">127</Value>
+    </Setting>
+    <Setting Name="MidiConExpression" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">127</Value>
+    </Setting>
+    <Setting Name="MidiConPanpot" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">64</Value>
+    </Setting>
+    <Setting Name="MidiConModulation" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConModRate" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">64</Value>
+    </Setting>
+    <Setting Name="MidiConModDepth" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">64</Value>
+    </Setting>
+    <Setting Name="MidiConModDelay" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">64</Value>
+    </Setting>
+    <Setting Name="MidiConModDepthRangeNote" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConModDepthRangeCent" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">64</Value>
+    </Setting>
+    <Setting Name="MidiConHold" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConPortament" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConPortamentTime" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConLegatoFootSw" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConMonoMode" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConPolyMode" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="設定" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MidiConOutPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

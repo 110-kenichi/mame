@@ -12,7 +12,7 @@ namespace zanac.MAmidiMEmo.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -894,6 +894,462 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["ExtTool1Path"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MidiConPort {
+            get {
+                return ((int)(this["MidiConPort"]));
+            }
+            set {
+                this["MidiConPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MidiConCh1 {
+            get {
+                return ((bool)(this["MidiConCh1"]));
+            }
+            set {
+                this["MidiConCh1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh2 {
+            get {
+                return ((bool)(this["MidiConCh2"]));
+            }
+            set {
+                this["MidiConCh2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh3 {
+            get {
+                return ((bool)(this["MidiConCh3"]));
+            }
+            set {
+                this["MidiConCh3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh4 {
+            get {
+                return ((bool)(this["MidiConCh4"]));
+            }
+            set {
+                this["MidiConCh4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh5 {
+            get {
+                return ((bool)(this["MidiConCh5"]));
+            }
+            set {
+                this["MidiConCh5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh6 {
+            get {
+                return ((bool)(this["MidiConCh6"]));
+            }
+            set {
+                this["MidiConCh6"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh7 {
+            get {
+                return ((bool)(this["MidiConCh7"]));
+            }
+            set {
+                this["MidiConCh7"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh8 {
+            get {
+                return ((bool)(this["MidiConCh8"]));
+            }
+            set {
+                this["MidiConCh8"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh9 {
+            get {
+                return ((bool)(this["MidiConCh9"]));
+            }
+            set {
+                this["MidiConCh9"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh10 {
+            get {
+                return ((bool)(this["MidiConCh10"]));
+            }
+            set {
+                this["MidiConCh10"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh11 {
+            get {
+                return ((bool)(this["MidiConCh11"]));
+            }
+            set {
+                this["MidiConCh11"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh12 {
+            get {
+                return ((bool)(this["MidiConCh12"]));
+            }
+            set {
+                this["MidiConCh12"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh13 {
+            get {
+                return ((bool)(this["MidiConCh13"]));
+            }
+            set {
+                this["MidiConCh13"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh14 {
+            get {
+                return ((bool)(this["MidiConCh14"]));
+            }
+            set {
+                this["MidiConCh14"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh15 {
+            get {
+                return ((bool)(this["MidiConCh15"]));
+            }
+            set {
+                this["MidiConCh15"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MidiConCh16 {
+            get {
+                return ((bool)(this["MidiConCh16"]));
+            }
+            set {
+                this["MidiConCh16"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8192")]
+        public decimal MidiConPitch {
+            get {
+                return ((decimal)(this["MidiConPitch"]));
+            }
+            set {
+                this["MidiConPitch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public decimal MidiConPitchRange {
+            get {
+                return ((decimal)(this["MidiConPitchRange"]));
+            }
+            set {
+                this["MidiConPitchRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8192")]
+        public decimal MidiConFineTune {
+            get {
+                return ((decimal)(this["MidiConFineTune"]));
+            }
+            set {
+                this["MidiConFineTune"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConProgNo {
+            get {
+                return ((decimal)(this["MidiConProgNo"]));
+            }
+            set {
+                this["MidiConProgNo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127")]
+        public decimal MidiConVolume {
+            get {
+                return ((decimal)(this["MidiConVolume"]));
+            }
+            set {
+                this["MidiConVolume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127")]
+        public decimal MidiConExpression {
+            get {
+                return ((decimal)(this["MidiConExpression"]));
+            }
+            set {
+                this["MidiConExpression"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("64")]
+        public decimal MidiConPanpot {
+            get {
+                return ((decimal)(this["MidiConPanpot"]));
+            }
+            set {
+                this["MidiConPanpot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConModulation {
+            get {
+                return ((decimal)(this["MidiConModulation"]));
+            }
+            set {
+                this["MidiConModulation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("64")]
+        public decimal MidiConModRate {
+            get {
+                return ((decimal)(this["MidiConModRate"]));
+            }
+            set {
+                this["MidiConModRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("64")]
+        public decimal MidiConModDepth {
+            get {
+                return ((decimal)(this["MidiConModDepth"]));
+            }
+            set {
+                this["MidiConModDepth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("64")]
+        public decimal MidiConModDelay {
+            get {
+                return ((decimal)(this["MidiConModDelay"]));
+            }
+            set {
+                this["MidiConModDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConModDepthRangeNote {
+            get {
+                return ((decimal)(this["MidiConModDepthRangeNote"]));
+            }
+            set {
+                this["MidiConModDepthRangeNote"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("64")]
+        public decimal MidiConModDepthRangeCent {
+            get {
+                return ((decimal)(this["MidiConModDepthRangeCent"]));
+            }
+            set {
+                this["MidiConModDepthRangeCent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConHold {
+            get {
+                return ((decimal)(this["MidiConHold"]));
+            }
+            set {
+                this["MidiConHold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConPortament {
+            get {
+                return ((decimal)(this["MidiConPortament"]));
+            }
+            set {
+                this["MidiConPortament"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConPortamentTime {
+            get {
+                return ((decimal)(this["MidiConPortamentTime"]));
+            }
+            set {
+                this["MidiConPortamentTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConLegatoFootSw {
+            get {
+                return ((decimal)(this["MidiConLegatoFootSw"]));
+            }
+            set {
+                this["MidiConLegatoFootSw"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConMonoMode {
+            get {
+                return ((decimal)(this["MidiConMonoMode"]));
+            }
+            set {
+                this["MidiConMonoMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MidiConPolyMode {
+            get {
+                return ((decimal)(this["MidiConPolyMode"]));
+            }
+            set {
+                this["MidiConPolyMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal 設定 {
+            get {
+                return ((decimal)(this["設定"]));
+            }
+            set {
+                this["設定"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MidiConOutPort {
+            get {
+                return ((int)(this["MidiConOutPort"]));
+            }
+            set {
+                this["MidiConOutPort"] = value;
             }
         }
     }

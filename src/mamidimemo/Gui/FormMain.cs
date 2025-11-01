@@ -1707,7 +1707,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             this.BeginInvoke(new MethodInvoker(() =>
             {
-                if(labelStat.IsDisposed)
+                if (labelStat.IsDisposed)
                     return;
 
                 this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
@@ -2863,5 +2863,19 @@ namespace zanac.MAmidiMEmo.Gui
             timer1.Stop();
         }
 
+        FormMidiController _formMidiController;
+
+        private void mIDIControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(_formMidiController != null && !_formMidiController.IsDisposed)
+            {
+                _formMidiController.Focus();
+            }
+            else
+            {
+                _formMidiController = new FormMidiController();
+                _formMidiController.Show(this);
+            }
+        }
     }
 }

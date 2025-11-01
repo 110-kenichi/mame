@@ -84,8 +84,8 @@ namespace zanac.MAmidiMEmo.Gui
             // comboBoxOutPort
             // 
             this.comboBoxOutPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxOutPort.FormattingEnabled = true;
             resources.ApplyResources(this.comboBoxOutPort, "comboBoxOutPort");
+            this.comboBoxOutPort.FormattingEnabled = true;
             this.comboBoxOutPort.Name = "comboBoxOutPort";
             this.comboBoxOutPort.DropDown += new System.EventHandler(this.comboBoxOutPort_DropDown);
             // 

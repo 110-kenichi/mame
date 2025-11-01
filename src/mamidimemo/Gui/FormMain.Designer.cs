@@ -136,6 +136,7 @@
             this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyMAmiVSTiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mIDIDelayCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mIDIControllerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -191,6 +192,7 @@
             this.sP0256ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSP0256AL2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vLM5030ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dISCRETEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sN76477ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -208,7 +210,6 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.vLM5030ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1386,6 +1387,7 @@
             this.toolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyMAmiVSTiToolStripMenuItem,
             this.mIDIDelayCheckerToolStripMenuItem,
+            this.mIDIControllerToolStripMenuItem,
             this.toolStripSeparator6,
             this.settingsToolStripMenuItem});
             this.toolToolStripMenuItem.Name = "toolToolStripMenuItem";
@@ -1402,6 +1404,12 @@
             this.mIDIDelayCheckerToolStripMenuItem.Name = "mIDIDelayCheckerToolStripMenuItem";
             resources.ApplyResources(this.mIDIDelayCheckerToolStripMenuItem, "mIDIDelayCheckerToolStripMenuItem");
             this.mIDIDelayCheckerToolStripMenuItem.Click += new System.EventHandler(this.mIDIDelayCheckerToolStripMenuItem_Click);
+            // 
+            // mIDIControllerToolStripMenuItem
+            // 
+            this.mIDIControllerToolStripMenuItem.Name = "mIDIControllerToolStripMenuItem";
+            resources.ApplyResources(this.mIDIControllerToolStripMenuItem, "mIDIControllerToolStripMenuItem");
+            this.mIDIControllerToolStripMenuItem.Click += new System.EventHandler(this.mIDIControllerToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
@@ -1793,6 +1801,12 @@
             resources.ApplyResources(this.extendSAMToolStripMenuItem, "extendSAMToolStripMenuItem");
             this.extendSAMToolStripMenuItem.Click += new System.EventHandler(this.extendSAMToolStripMenuItem_Click);
             // 
+            // vLM5030ToolStripMenuItem
+            // 
+            this.vLM5030ToolStripMenuItem.Name = "vLM5030ToolStripMenuItem";
+            resources.ApplyResources(this.vLM5030ToolStripMenuItem, "vLM5030ToolStripMenuItem");
+            this.vLM5030ToolStripMenuItem.Click += new System.EventHandler(this.vLM5030ToolStripMenuItem_Click);
+            // 
             // dISCRETEToolStripMenuItem
             // 
             this.dISCRETEToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1886,12 +1900,6 @@
             // 
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
-            // vLM5030ToolStripMenuItem
-            // 
-            this.vLM5030ToolStripMenuItem.Name = "vLM5030ToolStripMenuItem";
-            resources.ApplyResources(this.vLM5030ToolStripMenuItem, "vLM5030ToolStripMenuItem");
-            this.vLM5030ToolStripMenuItem.Click += new System.EventHandler(this.vLM5030ToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -2111,6 +2119,7 @@
         private System.Windows.Forms.ToolStripMenuItem pAULA8364ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tIAToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vLM5030ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mIDIControllerToolStripMenuItem;
     }
 }
 

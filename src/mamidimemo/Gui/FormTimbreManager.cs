@@ -854,6 +854,11 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                     }
                     listViewFilesTimbres.Items.AddRange(items.ToArray());
+                    if (listViewFilesTimbres.Items.Count > 0)
+                    {
+                        listViewFilesTimbres.Items[0].Selected = true;
+                        lastFocusedListView = listViewFilesTimbres;
+                    }
                 }
                 finally
                 {
