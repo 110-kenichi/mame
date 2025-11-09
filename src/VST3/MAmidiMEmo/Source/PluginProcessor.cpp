@@ -82,7 +82,7 @@ int StartMAmi(LPCTSTR lpApplicationName, int sampleRate, int port)
 		&si,            // Pointer to STARTUPINFO structure
 		&pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
 	)) {
-		MessageBox(0, _T("MAmiVST: Failed to launch MAmi."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to launch MAmi."), 0, MB_ICONERROR);
 		return 0;
 	}
 
@@ -209,7 +209,7 @@ DWORD WINAPI closeRpcServer(LPVOID lpParam)
 		}
 		catch (...)
 		{
-			MessageBox(0, _T("MAmiVST: rpc error"), 0, 0);
+			MessageBox(0, _T("MAmiVST: rpc error"), 0, MB_ICONERROR);
 		}
 	}
 
@@ -232,7 +232,7 @@ bool MAmidiMEmoAudioProcessor::createSharedMemory()
 	);
 	if (NULL == m_hSharedMemory)
 	{
-		MessageBox(0, _T("MAmiVST: Failed to createSharedMemory(1)."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to createSharedMemory(1)."), 0, MB_ICONERROR);
 		return false;
 	}
 	// 共有メモリのマッピング
@@ -247,7 +247,7 @@ bool MAmidiMEmoAudioProcessor::createSharedMemory()
 	{
 		::CloseHandle(m_hSharedMemory);
 		m_hSharedMemory = NULL;
-		MessageBox(0, _T("MAmiVST: Failed to createSharedMemory(2)."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to createSharedMemory(2)."), 0, MB_ICONERROR);
 		return false;
 	}
 
@@ -303,7 +303,7 @@ MAmidiMEmoAudioProcessor::MAmidiMEmoAudioProcessor()
 	char mamiPath[MAX_PATH];
 	if (!GetPrivateProfileString("MAmi", "MAmiDir", ".\\", mamiPath, sizeof(mamiPath), iniPath))
 	{
-		MessageBox(0, _T("MAmiVST: Failed to load MAmiDir from MAmi ini file."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to load MAmiDir from MAmi ini file."), 0, MB_ICONERROR);
 		return;
 	}
 	PathCombineA(m_mamiPath, dllDir, mamiPath);
@@ -311,7 +311,7 @@ MAmidiMEmoAudioProcessor::MAmidiMEmoAudioProcessor()
 	char sampleRate[256];
 	if (!GetPrivateProfileString("MAmi", "MAmiSampleRate", ".\\", sampleRate, sizeof(sampleRate), iniPath))
 	{
-		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from MAmi ini file."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from the MAmi ini file."), 0, MB_ICONERROR);
 		return;
 	}
 	try {
@@ -320,11 +320,11 @@ MAmidiMEmoAudioProcessor::MAmidiMEmoAudioProcessor()
 	}
 	catch (const std::invalid_argument&) {
 		// 数字以外の文字が含まれていた場合
-		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from MAmi ini file."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from the MAmi ini file."), 0, MB_ICONERROR);
 	}
 	catch (const std::out_of_range&) {
 		// intの範囲を超えていた場合
-		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from MAmi ini file."), 0, 0);
+		MessageBox(0, _T("MAmiVST: Failed to load MAmiSampleRate from the MAmi ini file."), 0, MB_ICONERROR);
 	}
 	//resume() ==============================================================================
 
@@ -337,7 +337,7 @@ MAmidiMEmoAudioProcessor::MAmidiMEmoAudioProcessor()
 
 		if (!StartMAmi(m_mamiPath, (int)m_mami_sample_rate, m_vstPort))
 		{
-			MessageBox(0, _T("MAmiVST: Failed to launch MAmi.exe."), 0, 0);
+			MessageBox(0, _T("MAmiVST: Failed to launch MAmi.exe."), 0, MB_ICONERROR);
 			return;
 		}
 
@@ -481,6 +481,11 @@ void MAmidiMEmoAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 	{
 		m_lastSampleFrames = samplesPerBlock;
 		m_sampleFramesBlock = std::max(m_lastSampleFrames, (m_mami_sample_rate / 50)) * 2;
+	}
+
+	if (m_vst_sample_rate != m_mami_sample_rate)
+	{
+		MessageBox(0, _T("MAmiVST:There is a difference in sample rate between the DAW and MAmi.\r\nPlease check the MAmi ini file."), 0, MB_ICONWARNING);
 	}
 }
 
