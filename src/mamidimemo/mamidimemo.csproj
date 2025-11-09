@@ -845,6 +845,10 @@
       <Link>VSIF\AMIGA\VSIF_AMIGA.exe.info</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\VST3\MAmidiMEmo\Builds\VisualStudio2022\x64\Release\VST3\MAmidiMEmo_VST3.vst3\Contents\x86_64-win\MAmidiMEmo_VST3.vst3">
+      <Link>VST3\MAmidiMEmo_VST3.vst3</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\cm32p_user_internal_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1482,6 +1486,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\YMF262_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="VST3\MAmidiMEmo_VST3.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VST\MAmiVSTi.ini">

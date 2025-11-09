@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MAmidiMEmo_VST3", "MAmidiMEmo_VST3.vcxproj", "{21631DBB-7B13-4814-36CD-2A3B22C039B7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7} = {1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}
+		{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44} = {EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MAmidiMEmo_SharedCode", "MAmidiMEmo_SharedCode.vcxproj", "{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MAmidiMEmo_VST3ManifestHelper", "MAmidiMEmo_VST3ManifestHelper.vcxproj", "{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rpc", "..\..\..\..\rpclib\Build\rpc.vcxproj", "{DB4FAFB2-A570-3807-A3EA-CE43F3CC11CF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsoxr", "..\..\..\..\munt\mt32emu\soxr\msvc\libsoxr.vcxproj", "{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21631DBB-7B13-4814-36CD-2A3B22C039B7}.Debug|x64.ActiveCfg = Debug|x64
+		{21631DBB-7B13-4814-36CD-2A3B22C039B7}.Debug|x64.Build.0 = Debug|x64
+		{21631DBB-7B13-4814-36CD-2A3B22C039B7}.Release|x64.ActiveCfg = Release|x64
+		{21631DBB-7B13-4814-36CD-2A3B22C039B7}.Release|x64.Build.0 = Release|x64
+		{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}.Debug|x64.ActiveCfg = Debug|x64
+		{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}.Debug|x64.Build.0 = Debug|x64
+		{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}.Release|x64.ActiveCfg = Release|x64
+		{1A4E391A-EAF8-9DF4-CDD5-989E5BFB6CA7}.Release|x64.Build.0 = Release|x64
+		{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}.Debug|x64.ActiveCfg = Debug|x64
+		{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}.Debug|x64.Build.0 = Debug|x64
+		{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}.Release|x64.ActiveCfg = Release|x64
+		{EC17CAC7-F3E6-5A63-53FE-59F9CB883D44}.Release|x64.Build.0 = Release|x64
+		{DB4FAFB2-A570-3807-A3EA-CE43F3CC11CF}.Debug|x64.ActiveCfg = Debug|x64
+		{DB4FAFB2-A570-3807-A3EA-CE43F3CC11CF}.Debug|x64.Build.0 = Debug|x64
+		{DB4FAFB2-A570-3807-A3EA-CE43F3CC11CF}.Release|x64.ActiveCfg = Release|x64
+		{DB4FAFB2-A570-3807-A3EA-CE43F3CC11CF}.Release|x64.Build.0 = Release|x64
+		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Debug|x64.ActiveCfg = Debug|x64
+		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Debug|x64.Build.0 = Debug|x64
+		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Release|x64.ActiveCfg = Release|x64
+		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D366417-6BA8-4C81-95D7-7685DE4D84CE}
+	EndGlobalSection
+EndGlobal

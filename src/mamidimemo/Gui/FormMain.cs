@@ -2867,7 +2867,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void mIDIControllerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(_formMidiController != null && !_formMidiController.IsDisposed)
+            if (_formMidiController != null && !_formMidiController.IsDisposed)
             {
                 _formMidiController.Focus();
             }
@@ -2875,6 +2875,83 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 _formMidiController = new FormMidiController();
                 _formMidiController.Show(this);
+            }
+        }
+
+        private void copyMAmiVST3iToDAWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string lastDir = @"C:\Program Files\Common Files\VST3";
+            if (!string.IsNullOrWhiteSpace(Settings.Default.LastVSTiFolder))
+                lastDir = Settings.Default.LastVSTiFolder;
+
+            betterFolderBrowserVSTi.RootFolder = lastDir;
+            betterFolderBrowserVSTi.Title = Resources.SelectDAWFolder;
+            var result = betterFolderBrowserVSTi.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    string pluginDir = betterFolderBrowserVSTi.SelectedPath;
+
+                    //copy dll
+                    string dllFilePath = Path.Combine(Program.MAmiDir, @"VST3\MAmidiMEmo_VST3.vst3");
+                    //create ini
+                    string iniPath = Path.Combine(Path.GetTempPath(), "MAmidiMEmo_VST3.ini");
+                    using (var sw = File.CreateText(iniPath))
+                    {
+                        sw.WriteLine("[MAmi]");
+                        sw.WriteLine($"MAmiDir = {Path.Combine(Program.MAmiDir, @"MAmidiMEmo.exe")}");
+                        sw.WriteLine($"MAmiSampleRate = 44100");
+                    }
+                    bool succeed = RunCopyElevated(new string[] { dllFilePath, iniPath }, pluginDir);
+                    File.Delete(iniPath);
+
+                    Settings.Default.LastVSTiFolder = pluginDir;
+
+                    if(succeed)
+                        MessageBox.Show(Resources.CopiedVSTi);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show(ex.ToString());
+                }
+
+            }
+        }
+
+        private bool RunCopyElevated(string[] sourceFiles, string destDir, bool overwrite = true)
+        {
+            // xcopy コマンドの引数を組み立て（/Y で上書き確認を抑制）
+            IEnumerable<string> quotedItems = sourceFiles.Select(item => $"'{item}'");
+            string args = $"Copy-Item -Path {string.Join(", ", quotedItems)} -Destination '{destDir}' -Force";
+
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = @"powershell.exe",
+                    Arguments = $"-NoProfile -Command \"{args}\"",
+                    Verb = "runas",            // ここで UAC ダイアログを出す
+                };
+
+                using (var p = Process.Start(psi))
+                {
+                    if (p == null) return false;
+                    p.WaitForExit();
+                    // xcopy の戻り値チェック（0=成功とは限らないのでドキュメント確認）
+                    return p.ExitCode == 0;
+                }
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                // UAC キャンセルや起動失敗など
+                MessageBox.Show(ex.Message);
+                return false;
             }
         }
     }

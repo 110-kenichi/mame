@@ -693,28 +693,34 @@
     <value>ファイル(&amp;F)</value>
   </data>
   <data name="copyMAmiVSTiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 22</value>
+    <value>259, 22</value>
   </data>
   <data name="copyMAmiVSTiToolStripMenuItem.Text" xml:space="preserve">
-    <value>MAmi VSTi を DAW にコピーする(&amp;V)...</value>
+    <value>MAmi VST2i を DAW にコピーする(&amp;V)...</value>
+  </data>
+  <data name="copyMAmiVST3iToDAWToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>259, 22</value>
+  </data>
+  <data name="copyMAmiVST3iToDAWToolStripMenuItem.Text" xml:space="preserve">
+    <value>MAmi VST3i を DAW にコピーする(&amp;3)...</value>
   </data>
   <data name="mIDIDelayCheckerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 22</value>
+    <value>259, 22</value>
   </data>
   <data name="mIDIDelayCheckerToolStripMenuItem.Text" xml:space="preserve">
     <value>MIDI遅延テスト(&amp;D)...</value>
   </data>
   <data name="mIDIControllerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 22</value>
+    <value>259, 22</value>
   </data>
   <data name="mIDIControllerToolStripMenuItem.Text" xml:space="preserve">
     <value>MIDI コントローラー(&amp;C)...</value>
   </data>
   <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>250, 6</value>
+    <value>256, 6</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 22</value>
+    <value>259, 22</value>
   </data>
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>設定(&amp;S)...</value>

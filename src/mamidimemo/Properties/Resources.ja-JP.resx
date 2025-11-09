@@ -203,7 +203,7 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
     <value>{0} 個の Timbre を読み込みました。</value>
   </data>
   <data name="CopiedVSTi" xml:space="preserve">
-    <value>MAmi VSTi が DAW のプラグインフォルダにコピーされました。</value>
+    <value>MAmi VSTi が VST プラグインフォルダにコピーされました。</value>
   </data>
   <data name="SelectDAWFolder" xml:space="preserve">
     <value>DAW のプラグインフォルダを選択してください</value>
@@ -235,5 +235,8 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   </data>
   <data name="TimbreList" xml:space="preserve">
     <value>音色リスト(&amp;L)</value>
+  </data>
+  <data name="FailedCopyVSTi" xml:space="preserve">
+    <value>MAmi VSTi が VST プラグインフォルダにコピーされました。</value>
   </data>
 </root>

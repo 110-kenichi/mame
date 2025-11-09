@@ -212,7 +212,18 @@ namespace zanac.MAmidiMEmo.Midi
                 if (ea.Cancel)
                     return;
 
-                SendMidiEvent(port, me);
+                if (frameId != 0)
+                {
+                    HighPrecisionTimer.SetPeriodicCallback((o) =>
+                    {
+                        SendMidiEvent(port, me);
+                        return -1;
+                    }, (double)frameId / 1000d, null);
+                }
+                else
+                {
+                    SendMidiEvent(port, me);
+                }
             }
             catch (Exception ex)
             {
@@ -257,7 +268,18 @@ namespace zanac.MAmidiMEmo.Midi
                     }
                 }
 
-                SendMidiEvents(port, events.ToArray());
+                if (frameId != 0)
+                {
+                    HighPrecisionTimer.SetPeriodicCallback((o) =>
+                    {
+                        SendMidiEvents(port, events.ToArray());
+                        return -1;
+                    }, (double)frameId / 1000d, null);
+                }
+                else
+                {
+                    SendMidiEvents(port, events.ToArray());
+                }
             }
             catch (Exception ex)
             {
@@ -286,7 +308,18 @@ namespace zanac.MAmidiMEmo.Midi
                 if (ea.Cancel)
                     return;
 
-                SendMidiEvent(port, me);
+                if (frameId != 0)
+                {
+                    HighPrecisionTimer.SetPeriodicCallback((o) =>
+                    {
+                        SendMidiEvent(port, me);
+                        return -1;
+                    }, (double)frameId / 1000d, null);
+                }
+                else
+                {
+                    SendMidiEvent(port, me);
+                }
             }
             catch (Exception ex)
             {

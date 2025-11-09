@@ -1,0 +1,2889 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="button1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>607, 757</value>
+  </data>
+  <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="button1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="button1.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="&gt;&gt;button1.Name" xml:space="preserve">
+    <value>button1</value>
+  </data>
+  <data name="&gt;&gt;button1.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;button1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tableLayoutPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="tableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 34</value>
+  </data>
+  <data name="label2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 42</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>MIDI Out &amp;Ch:</value>
+  </data>
+  <data name="label2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="comboBoxOutPort.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="comboBoxOutPort.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="comboBoxOutPort.Items" xml:space="preserve">
+    <value>MIDI Port A</value>
+  </data>
+  <data name="comboBoxOutPort.Items1" xml:space="preserve">
+    <value>MIDI Port B</value>
+  </data>
+  <data name="comboBoxOutPort.Items2" xml:space="preserve">
+    <value>MIDI Port A, B</value>
+  </data>
+  <data name="comboBoxOutPort.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 3</value>
+  </data>
+  <data name="comboBoxOutPort.Size" type="System.Drawing.Size, System.Drawing">
+    <value>538, 28</value>
+  </data>
+  <data name="comboBoxOutPort.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;comboBoxOutPort.Name" xml:space="preserve">
+    <value>comboBoxOutPort</value>
+  </data>
+  <data name="&gt;&gt;comboBoxOutPort.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBoxOutPort.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;comboBoxOutPort.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="label1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 34</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>MIDI Out &amp;Port:</value>
+  </data>
+  <data name="label1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanelCh.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="tableLayoutPanelCh.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="tableLayoutPanelCh.ColumnCount" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroCheckBoxCh16.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh16.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh16.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh16.Location" type="System.Drawing.Point, System.Drawing">
+    <value>389, 24</value>
+  </data>
+  <data name="metroCheckBoxCh16.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh16.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="metroCheckBoxCh16.Text" xml:space="preserve">
+    <value>Ch16</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh16.Name" xml:space="preserve">
+    <value>metroCheckBoxCh16</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh16.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh16.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh16.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="metroCheckBoxCh15.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh15.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh15.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh15.Location" type="System.Drawing.Point, System.Drawing">
+    <value>333, 24</value>
+  </data>
+  <data name="metroCheckBoxCh15.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh15.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="metroCheckBoxCh15.Text" xml:space="preserve">
+    <value>Ch15</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh15.Name" xml:space="preserve">
+    <value>metroCheckBoxCh15</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh15.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh15.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh15.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="metroCheckBoxCh14.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh14.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh14.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh14.Location" type="System.Drawing.Point, System.Drawing">
+    <value>277, 24</value>
+  </data>
+  <data name="metroCheckBoxCh14.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh14.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="metroCheckBoxCh14.Text" xml:space="preserve">
+    <value>Ch14</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh14.Name" xml:space="preserve">
+    <value>metroCheckBoxCh14</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh14.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh14.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh14.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="metroCheckBoxCh13.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh13.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh13.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh13.Location" type="System.Drawing.Point, System.Drawing">
+    <value>221, 24</value>
+  </data>
+  <data name="metroCheckBoxCh13.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh13.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="metroCheckBoxCh13.Text" xml:space="preserve">
+    <value>Ch13</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh13.Name" xml:space="preserve">
+    <value>metroCheckBoxCh13</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh13.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh13.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh13.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="metroCheckBoxCh12.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh12.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh12.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh12.Location" type="System.Drawing.Point, System.Drawing">
+    <value>165, 24</value>
+  </data>
+  <data name="metroCheckBoxCh12.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh12.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="metroCheckBoxCh12.Text" xml:space="preserve">
+    <value>Ch12</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh12.Name" xml:space="preserve">
+    <value>metroCheckBoxCh12</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh12.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh12.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh12.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="metroCheckBoxCh11.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh11.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh11.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh11.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 24</value>
+  </data>
+  <data name="metroCheckBoxCh11.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh11.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="metroCheckBoxCh11.Text" xml:space="preserve">
+    <value>Ch11</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh11.Name" xml:space="preserve">
+    <value>metroCheckBoxCh11</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh11.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh11.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh11.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="metroCheckBoxCh10.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh10.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>53, 24</value>
+  </data>
+  <data name="metroCheckBoxCh10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 15</value>
+  </data>
+  <data name="metroCheckBoxCh10.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="metroCheckBoxCh10.Text" xml:space="preserve">
+    <value>Ch10</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh10.Name" xml:space="preserve">
+    <value>metroCheckBoxCh10</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh10.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh10.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh10.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="metroCheckBoxCh9.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh9.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh9.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh9.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 24</value>
+  </data>
+  <data name="metroCheckBoxCh9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh9.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroCheckBoxCh9.Text" xml:space="preserve">
+    <value>Ch9</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh9.Name" xml:space="preserve">
+    <value>metroCheckBoxCh9</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh9.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh9.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh9.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="metroCheckBoxCh8.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh8.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh8.Location" type="System.Drawing.Point, System.Drawing">
+    <value>389, 3</value>
+  </data>
+  <data name="metroCheckBoxCh8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh8.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="metroCheckBoxCh8.Text" xml:space="preserve">
+    <value>Ch8</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh8.Name" xml:space="preserve">
+    <value>metroCheckBoxCh8</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh8.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh8.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh8.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="metroCheckBoxCh7.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh7.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh7.Location" type="System.Drawing.Point, System.Drawing">
+    <value>333, 3</value>
+  </data>
+  <data name="metroCheckBoxCh7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh7.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="metroCheckBoxCh7.Text" xml:space="preserve">
+    <value>Ch7</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh7.Name" xml:space="preserve">
+    <value>metroCheckBoxCh7</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh7.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh7.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh7.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="metroCheckBoxCh6.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh6.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh6.Location" type="System.Drawing.Point, System.Drawing">
+    <value>277, 3</value>
+  </data>
+  <data name="metroCheckBoxCh6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh6.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="metroCheckBoxCh6.Text" xml:space="preserve">
+    <value>Ch6</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh6.Name" xml:space="preserve">
+    <value>metroCheckBoxCh6</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh6.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh6.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh6.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="metroCheckBoxCh5.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh5.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh5.Location" type="System.Drawing.Point, System.Drawing">
+    <value>221, 3</value>
+  </data>
+  <data name="metroCheckBoxCh5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh5.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroCheckBoxCh5.Text" xml:space="preserve">
+    <value>Ch5</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh5.Name" xml:space="preserve">
+    <value>metroCheckBoxCh5</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh5.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh5.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh5.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="metroCheckBoxCh4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh4.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>165, 3</value>
+  </data>
+  <data name="metroCheckBoxCh4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh4.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="metroCheckBoxCh4.Text" xml:space="preserve">
+    <value>Ch4</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh4.Name" xml:space="preserve">
+    <value>metroCheckBoxCh4</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh4.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh4.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh4.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="metroCheckBoxCh3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 3</value>
+  </data>
+  <data name="metroCheckBoxCh3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh3.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="metroCheckBoxCh3.Text" xml:space="preserve">
+    <value>Ch3</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh3.Name" xml:space="preserve">
+    <value>metroCheckBoxCh3</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh3.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh3.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh3.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="metroCheckBoxCh2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>53, 3</value>
+  </data>
+  <data name="metroCheckBoxCh2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh2.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="metroCheckBoxCh2.Text" xml:space="preserve">
+    <value>Ch2</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh2.Name" xml:space="preserve">
+    <value>metroCheckBoxCh2</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh2.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh2.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh2.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="metroCheckBoxCh1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="metroCheckBoxCh1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroCheckBoxCh1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="metroCheckBoxCh1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="metroCheckBoxCh1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 15</value>
+  </data>
+  <data name="metroCheckBoxCh1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="metroCheckBoxCh1.Text" xml:space="preserve">
+    <value>Ch1</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh1.Name" xml:space="preserve">
+    <value>metroCheckBoxCh1</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh1.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh1.Parent" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;metroCheckBoxCh1.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="tableLayoutPanelCh.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanelCh.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="tableLayoutPanelCh.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 34</value>
+  </data>
+  <data name="tableLayoutPanelCh.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="tableLayoutPanelCh.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanelCh.Size" type="System.Drawing.Size, System.Drawing">
+    <value>477, 42</value>
+  </data>
+  <data name="tableLayoutPanelCh.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelCh.Name" xml:space="preserve">
+    <value>tableLayoutPanelCh</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelCh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelCh.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanelCh.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="tableLayoutPanelCh.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroCheckBoxCh16" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh15" Row="1" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh14" Row="1" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh13" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh12" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh11" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh10" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh9" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh8" Row="0" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh7" Row="0" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh6" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh5" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh4" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh3" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh2" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroCheckBoxCh1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 96</value>
+  </data>
+  <data name="label3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Pitch:</value>
+  </data>
+  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="metroTrackBarPitch.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPitch.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPitch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 99</value>
+  </data>
+  <data name="metroTrackBarPitch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPitch.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="metroTrackBarPitch.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitch.Name" xml:space="preserve">
+    <value>metroTrackBarPitch</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitch.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitch.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitch.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="numericUpDownPitch.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPitch.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPitch.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPitch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 97</value>
+  </data>
+  <data name="numericUpDownPitch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPitch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPitch.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitch.Name" xml:space="preserve">
+    <value>numericUpDownPitch</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitch.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitch.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label4.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label4.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 125</value>
+  </data>
+  <data name="label4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Pitch Range:</value>
+  </data>
+  <data name="label4.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="metroTrackBarPitchRange.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPitchRange.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPitchRange.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 128</value>
+  </data>
+  <data name="metroTrackBarPitchRange.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPitchRange.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarPitchRange.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitchRange.Name" xml:space="preserve">
+    <value>metroTrackBarPitchRange</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitchRange.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitchRange.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPitchRange.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="numericUpDownPitchRange.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPitchRange.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPitchRange.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPitchRange.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 126</value>
+  </data>
+  <data name="numericUpDownPitchRange.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPitchRange.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPitchRange.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitchRange.Name" xml:space="preserve">
+    <value>numericUpDownPitchRange</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitchRange.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitchRange.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPitchRange.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="label5.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label5.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label5.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 154</value>
+  </data>
+  <data name="label5.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Fine Tune:</value>
+  </data>
+  <data name="label5.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+    <value>label5</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="metroTrackBarFineTune.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarFineTune.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarFineTune.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 157</value>
+  </data>
+  <data name="metroTrackBarFineTune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarFineTune.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="metroTrackBarFineTune.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarFineTune.Name" xml:space="preserve">
+    <value>metroTrackBarFineTune</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarFineTune.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarFineTune.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarFineTune.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="numericUpDownFineTune.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownFineTune.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownFineTune.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownFineTune.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 155</value>
+  </data>
+  <data name="numericUpDownFineTune.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownFineTune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownFineTune.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownFineTune.Name" xml:space="preserve">
+    <value>numericUpDownFineTune</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownFineTune.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownFineTune.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownFineTune.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label6.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label6.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 183</value>
+  </data>
+  <data name="label6.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label6.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Program #:</value>
+  </data>
+  <data name="label6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label6.Name" xml:space="preserve">
+    <value>label6</value>
+  </data>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="metroTrackBarProgNo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarProgNo.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarProgNo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 186</value>
+  </data>
+  <data name="metroTrackBarProgNo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarProgNo.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarProgNo.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarProgNo.Name" xml:space="preserve">
+    <value>metroTrackBarProgNo</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarProgNo.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarProgNo.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarProgNo.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="numericUpDownProgNo.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownProgNo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownProgNo.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownProgNo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 184</value>
+  </data>
+  <data name="numericUpDownProgNo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownProgNo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownProgNo.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownProgNo.Name" xml:space="preserve">
+    <value>numericUpDownProgNo</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownProgNo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownProgNo.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownProgNo.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label7.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label7.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 212</value>
+  </data>
+  <data name="label7.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label7.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Volume:</value>
+  </data>
+  <data name="label7.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+    <value>label7</value>
+  </data>
+  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="metroTrackBarVolume.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarVolume.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarVolume.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 215</value>
+  </data>
+  <data name="metroTrackBarVolume.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarVolume.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarVolume.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarVolume.Name" xml:space="preserve">
+    <value>metroTrackBarVolume</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarVolume.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarVolume.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarVolume.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="numericUpDownVolume.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownVolume.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownVolume.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownVolume.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 213</value>
+  </data>
+  <data name="numericUpDownVolume.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownVolume.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownVolume.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownVolume.Name" xml:space="preserve">
+    <value>numericUpDownVolume</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownVolume.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownVolume.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownVolume.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label8.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label8.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 241</value>
+  </data>
+  <data name="label8.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value>Expression:</value>
+  </data>
+  <data name="label8.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+    <value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="metroTrackBarExpression.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarExpression.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarExpression.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 244</value>
+  </data>
+  <data name="metroTrackBarExpression.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarExpression.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarExpression.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarExpression.Name" xml:space="preserve">
+    <value>metroTrackBarExpression</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarExpression.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarExpression.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarExpression.ZOrder" xml:space="preserve">
+    <value>20</value>
+  </data>
+  <data name="numericUpDownExpression.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownExpression.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownExpression.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownExpression.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 242</value>
+  </data>
+  <data name="numericUpDownExpression.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownExpression.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownExpression.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownExpression.Name" xml:space="preserve">
+    <value>numericUpDownExpression</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownExpression.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownExpression.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownExpression.ZOrder" xml:space="preserve">
+    <value>21</value>
+  </data>
+  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label9.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label9.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label9.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 270</value>
+  </data>
+  <data name="label9.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label9.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+    <value>Panpot:</value>
+  </data>
+  <data name="label9.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label9.Name" xml:space="preserve">
+    <value>label9</value>
+  </data>
+  <data name="&gt;&gt;label9.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
+    <value>22</value>
+  </data>
+  <data name="metroTrackBarPanpot.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPanpot.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPanpot.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 273</value>
+  </data>
+  <data name="metroTrackBarPanpot.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPanpot.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarPanpot.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPanpot.Name" xml:space="preserve">
+    <value>metroTrackBarPanpot</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPanpot.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPanpot.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPanpot.ZOrder" xml:space="preserve">
+    <value>23</value>
+  </data>
+  <data name="numericUpDownPanpot.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPanpot.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPanpot.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPanpot.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 271</value>
+  </data>
+  <data name="numericUpDownPanpot.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPanpot.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPanpot.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPanpot.Name" xml:space="preserve">
+    <value>numericUpDownPanpot</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPanpot.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPanpot.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPanpot.ZOrder" xml:space="preserve">
+    <value>24</value>
+  </data>
+  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label10.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label10.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 299</value>
+  </data>
+  <data name="label10.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label10.Text" xml:space="preserve">
+    <value>Modulation:</value>
+  </data>
+  <data name="label10.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+    <value>label10</value>
+  </data>
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+    <value>25</value>
+  </data>
+  <data name="metroTrackBarModulation.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModulation.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModulation.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 302</value>
+  </data>
+  <data name="metroTrackBarModulation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModulation.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModulation.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModulation.Name" xml:space="preserve">
+    <value>metroTrackBarModulation</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModulation.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModulation.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModulation.ZOrder" xml:space="preserve">
+    <value>26</value>
+  </data>
+  <data name="numericUpDownModulation.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModulation.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModulation.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModulation.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 300</value>
+  </data>
+  <data name="numericUpDownModulation.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModulation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModulation.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModulation.Name" xml:space="preserve">
+    <value>numericUpDownModulation</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModulation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModulation.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModulation.ZOrder" xml:space="preserve">
+    <value>27</value>
+  </data>
+  <data name="label11.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label11.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label11.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label11.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 328</value>
+  </data>
+  <data name="label11.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label11.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label11.Text" xml:space="preserve">
+    <value>Mod Rate:</value>
+  </data>
+  <data name="label11.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label11.Name" xml:space="preserve">
+    <value>label11</value>
+  </data>
+  <data name="&gt;&gt;label11.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
+    <value>28</value>
+  </data>
+  <data name="label12.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label12.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label12.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label12.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 357</value>
+  </data>
+  <data name="label12.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label12.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label12.Text" xml:space="preserve">
+    <value>Mod Depth:</value>
+  </data>
+  <data name="label12.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label12.Name" xml:space="preserve">
+    <value>label12</value>
+  </data>
+  <data name="&gt;&gt;label12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+    <value>29</value>
+  </data>
+  <data name="label13.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label13.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label13.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label13.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 386</value>
+  </data>
+  <data name="label13.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label13.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label13.Text" xml:space="preserve">
+    <value>Mod Delay:</value>
+  </data>
+  <data name="label13.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label13.Name" xml:space="preserve">
+    <value>label13</value>
+  </data>
+  <data name="&gt;&gt;label13.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label13.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
+    <value>30</value>
+  </data>
+  <data name="label14.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label14.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label14.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label14.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 415</value>
+  </data>
+  <data name="label14.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label14.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 21</value>
+  </data>
+  <data name="label14.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>Mod Depth Range Note:</value>
+  </data>
+  <data name="label14.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label14.Name" xml:space="preserve">
+    <value>label14</value>
+  </data>
+  <data name="&gt;&gt;label14.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label14.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label14.ZOrder" xml:space="preserve">
+    <value>31</value>
+  </data>
+  <data name="label15.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label15.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label15.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label15.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 444</value>
+  </data>
+  <data name="label15.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label15.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 21</value>
+  </data>
+  <data name="label15.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label15.Text" xml:space="preserve">
+    <value>Mod Depth Range Cent:</value>
+  </data>
+  <data name="label15.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label15.Name" xml:space="preserve">
+    <value>label15</value>
+  </data>
+  <data name="&gt;&gt;label15.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label15.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
+    <value>32</value>
+  </data>
+  <data name="metroTrackBarModRate.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModRate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModRate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 331</value>
+  </data>
+  <data name="metroTrackBarModRate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModRate.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModRate.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModRate.Name" xml:space="preserve">
+    <value>metroTrackBarModRate</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModRate.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModRate.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModRate.ZOrder" xml:space="preserve">
+    <value>33</value>
+  </data>
+  <data name="numericUpDownModRate.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModRate.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModRate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModRate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 329</value>
+  </data>
+  <data name="numericUpDownModRate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModRate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModRate.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModRate.Name" xml:space="preserve">
+    <value>numericUpDownModRate</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModRate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModRate.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModRate.ZOrder" xml:space="preserve">
+    <value>34</value>
+  </data>
+  <data name="metroTrackBarModDepth.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModDepth.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModDepth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 360</value>
+  </data>
+  <data name="metroTrackBarModDepth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModDepth.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModDepth.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepth.Name" xml:space="preserve">
+    <value>metroTrackBarModDepth</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepth.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepth.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepth.ZOrder" xml:space="preserve">
+    <value>35</value>
+  </data>
+  <data name="numericUpDownModDepth.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModDepth.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModDepth.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModDepth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 358</value>
+  </data>
+  <data name="numericUpDownModDepth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModDepth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModDepth.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepth.Name" xml:space="preserve">
+    <value>numericUpDownModDepth</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepth.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepth.ZOrder" xml:space="preserve">
+    <value>36</value>
+  </data>
+  <data name="metroTrackBarModDelay.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModDelay.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModDelay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 389</value>
+  </data>
+  <data name="metroTrackBarModDelay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModDelay.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModDelay.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDelay.Name" xml:space="preserve">
+    <value>metroTrackBarModDelay</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDelay.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDelay.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDelay.ZOrder" xml:space="preserve">
+    <value>37</value>
+  </data>
+  <data name="numericUpDownModDelay.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModDelay.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModDelay.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModDelay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 387</value>
+  </data>
+  <data name="numericUpDownModDelay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModDelay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModDelay.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDelay.Name" xml:space="preserve">
+    <value>numericUpDownModDelay</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDelay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDelay.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDelay.ZOrder" xml:space="preserve">
+    <value>38</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 416</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModDepthRangeNote.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeNote.Name" xml:space="preserve">
+    <value>numericUpDownModDepthRangeNote</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeNote.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeNote.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeNote.ZOrder" xml:space="preserve">
+    <value>39</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 418</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeNote.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeNote.Name" xml:space="preserve">
+    <value>metroTrackBarModDepthRangeNote</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeNote.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeNote.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeNote.ZOrder" xml:space="preserve">
+    <value>40</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 447</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarModDepthRangeCent.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeCent.Name" xml:space="preserve">
+    <value>metroTrackBarModDepthRangeCent</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeCent.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeCent.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarModDepthRangeCent.ZOrder" xml:space="preserve">
+    <value>41</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 445</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownModDepthRangeCent.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeCent.Name" xml:space="preserve">
+    <value>numericUpDownModDepthRangeCent</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeCent.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeCent.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownModDepthRangeCent.ZOrder" xml:space="preserve">
+    <value>42</value>
+  </data>
+  <data name="label16.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label16.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label16.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label16.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label16.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 473</value>
+  </data>
+  <data name="label16.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label16.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label16.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label16.Text" xml:space="preserve">
+    <value>Hold:</value>
+  </data>
+  <data name="label16.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label16.Name" xml:space="preserve">
+    <value>label16</value>
+  </data>
+  <data name="&gt;&gt;label16.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label16.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label16.ZOrder" xml:space="preserve">
+    <value>43</value>
+  </data>
+  <data name="metroTrackBarHold.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarHold.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarHold.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 476</value>
+  </data>
+  <data name="metroTrackBarHold.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarHold.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarHold.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarHold.Name" xml:space="preserve">
+    <value>metroTrackBarHold</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarHold.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarHold.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarHold.ZOrder" xml:space="preserve">
+    <value>44</value>
+  </data>
+  <data name="numericUpDown3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDown3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDown3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDown3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 474</value>
+  </data>
+  <data name="numericUpDown3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDown3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDown3.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDown3.Name" xml:space="preserve">
+    <value>numericUpDown3</value>
+  </data>
+  <data name="&gt;&gt;numericUpDown3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDown3.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDown3.ZOrder" xml:space="preserve">
+    <value>45</value>
+  </data>
+  <data name="label17.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label17.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label17.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label17.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label17.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 502</value>
+  </data>
+  <data name="label17.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label17.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label17.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label17.Text" xml:space="preserve">
+    <value>Portament:</value>
+  </data>
+  <data name="label17.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label17.Name" xml:space="preserve">
+    <value>label17</value>
+  </data>
+  <data name="&gt;&gt;label17.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label17.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label17.ZOrder" xml:space="preserve">
+    <value>46</value>
+  </data>
+  <data name="metroTrackBarPortament.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPortament.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPortament.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 505</value>
+  </data>
+  <data name="metroTrackBarPortament.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPortament.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarPortament.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortament.Name" xml:space="preserve">
+    <value>metroTrackBarPortament</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortament.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortament.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortament.ZOrder" xml:space="preserve">
+    <value>47</value>
+  </data>
+  <data name="numericUpDownPortament.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPortament.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPortament.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPortament.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 503</value>
+  </data>
+  <data name="numericUpDownPortament.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPortament.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPortament.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortament.Name" xml:space="preserve">
+    <value>numericUpDownPortament</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortament.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortament.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortament.ZOrder" xml:space="preserve">
+    <value>48</value>
+  </data>
+  <data name="label18.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label18.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label18.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label18.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label18.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 531</value>
+  </data>
+  <data name="label18.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label18.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label18.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label18.Text" xml:space="preserve">
+    <value>Portament Time:</value>
+  </data>
+  <data name="label18.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label18.Name" xml:space="preserve">
+    <value>label18</value>
+  </data>
+  <data name="&gt;&gt;label18.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label18.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label18.ZOrder" xml:space="preserve">
+    <value>49</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 534</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarPortamentTime.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortamentTime.Name" xml:space="preserve">
+    <value>metroTrackBarPortamentTime</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortamentTime.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortamentTime.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPortamentTime.ZOrder" xml:space="preserve">
+    <value>50</value>
+  </data>
+  <data name="numericUpDownPortamentTime.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPortamentTime.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPortamentTime.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPortamentTime.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 532</value>
+  </data>
+  <data name="numericUpDownPortamentTime.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPortamentTime.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPortamentTime.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortamentTime.Name" xml:space="preserve">
+    <value>numericUpDownPortamentTime</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortamentTime.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortamentTime.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPortamentTime.ZOrder" xml:space="preserve">
+    <value>51</value>
+  </data>
+  <data name="label19.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label19.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label19.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label19.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label19.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 560</value>
+  </data>
+  <data name="label19.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label19.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label19.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label19.Text" xml:space="preserve">
+    <value>Legato Foot Sw:</value>
+  </data>
+  <data name="label19.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label19.Name" xml:space="preserve">
+    <value>label19</value>
+  </data>
+  <data name="&gt;&gt;label19.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label19.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label19.ZOrder" xml:space="preserve">
+    <value>52</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 563</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarLegatoFootSw.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarLegatoFootSw.Name" xml:space="preserve">
+    <value>metroTrackBarLegatoFootSw</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarLegatoFootSw.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarLegatoFootSw.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarLegatoFootSw.ZOrder" xml:space="preserve">
+    <value>53</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 561</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownLegatoFootSw.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownLegatoFootSw.Name" xml:space="preserve">
+    <value>numericUpDownLegatoFootSw</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownLegatoFootSw.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownLegatoFootSw.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownLegatoFootSw.ZOrder" xml:space="preserve">
+    <value>54</value>
+  </data>
+  <data name="label20.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label20.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label20.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label20.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label20.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 589</value>
+  </data>
+  <data name="label20.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label20.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label20.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label20.Text" xml:space="preserve">
+    <value>Mono Mode:</value>
+  </data>
+  <data name="label20.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label20.Name" xml:space="preserve">
+    <value>label20</value>
+  </data>
+  <data name="&gt;&gt;label20.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label20.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label20.ZOrder" xml:space="preserve">
+    <value>55</value>
+  </data>
+  <data name="metroTrackBarMonoMode.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarMonoMode.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarMonoMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 592</value>
+  </data>
+  <data name="metroTrackBarMonoMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarMonoMode.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarMonoMode.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarMonoMode.Name" xml:space="preserve">
+    <value>metroTrackBarMonoMode</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarMonoMode.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarMonoMode.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarMonoMode.ZOrder" xml:space="preserve">
+    <value>56</value>
+  </data>
+  <data name="numericUpDownMonoMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownMonoMode.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownMonoMode.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownMonoMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 590</value>
+  </data>
+  <data name="numericUpDownMonoMode.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownMonoMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownMonoMode.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownMonoMode.Name" xml:space="preserve">
+    <value>numericUpDownMonoMode</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownMonoMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownMonoMode.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownMonoMode.ZOrder" xml:space="preserve">
+    <value>57</value>
+  </data>
+  <data name="label21.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label21.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="label21.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 9pt</value>
+  </data>
+  <data name="label21.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label21.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 618</value>
+  </data>
+  <data name="label21.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label21.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="label21.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label21.Text" xml:space="preserve">
+    <value>Poly Mode:</value>
+  </data>
+  <data name="label21.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label21.Name" xml:space="preserve">
+    <value>label21</value>
+  </data>
+  <data name="&gt;&gt;label21.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label21.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label21.ZOrder" xml:space="preserve">
+    <value>58</value>
+  </data>
+  <data name="metroTrackBarPolyMode.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="metroTrackBarPolyMode.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="metroTrackBarPolyMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 621</value>
+  </data>
+  <data name="metroTrackBarPolyMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>471, 23</value>
+  </data>
+  <data name="metroTrackBarPolyMode.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="metroTrackBarPolyMode.Text" xml:space="preserve">
+    <value>metroTrackBar1</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPolyMode.Name" xml:space="preserve">
+    <value>metroTrackBarPolyMode</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPolyMode.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTrackBar, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPolyMode.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;metroTrackBarPolyMode.ZOrder" xml:space="preserve">
+    <value>59</value>
+  </data>
+  <data name="numericUpDownPolyMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="numericUpDownPolyMode.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="numericUpDownPolyMode.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 11pt</value>
+  </data>
+  <data name="numericUpDownPolyMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>625, 619</value>
+  </data>
+  <data name="numericUpDownPolyMode.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 1, 1, 1</value>
+  </data>
+  <data name="numericUpDownPolyMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 27</value>
+  </data>
+  <data name="numericUpDownPolyMode.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPolyMode.Name" xml:space="preserve">
+    <value>numericUpDownPolyMode</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPolyMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPolyMode.Parent" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;numericUpDownPolyMode.ZOrder" xml:space="preserve">
+    <value>60</value>
+  </data>
+  <data name="tableLayoutPanel.Font" type="System.Drawing.Font, System.Drawing">
+    <value>MS UI Gothic, 9pt</value>
+  </data>
+  <data name="tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 63</value>
+  </data>
+  <data name="tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>699, 656</value>
+  </data>
+  <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Name" xml:space="preserve">
+    <value>tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxOutPort" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanelCh" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPitch" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPitch" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPitchRange" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPitchRange" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarFineTune" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownFineTune" Row="5" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label6" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarProgNo" Row="6" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownProgNo" Row="6" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label7" Row="7" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarVolume" Row="7" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownVolume" Row="7" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="8" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarExpression" Row="8" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownExpression" Row="8" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label9" Row="9" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPanpot" Row="9" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPanpot" Row="9" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="10" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModulation" Row="10" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModulation" Row="10" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="11" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label12" Row="12" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label13" Row="13" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label14" Row="14" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label15" Row="15" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModRate" Row="11" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModRate" Row="11" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModDepth" Row="12" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModDepth" Row="12" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModDelay" Row="13" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModDelay" Row="13" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModDepthRangeNote" Row="14" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModDepthRangeNote" Row="14" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarModDepthRangeCent" Row="15" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownModDepthRangeCent" Row="15" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label16" Row="16" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarHold" Row="16" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDown3" Row="16" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label17" Row="17" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPortament" Row="17" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPortament" Row="17" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label18" Row="18" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPortamentTime" Row="18" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPortamentTime" Row="18" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label19" Row="19" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarLegatoFootSw" Row="19" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownLegatoFootSw" Row="19" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label20" Row="20" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarMonoMode" Row="20" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownMonoMode" Row="20" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label21" Row="21" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroTrackBarPolyMode" Row="21" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="numericUpDownPolyMode" Row="21" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,100,Percent,50,AutoSize,20,Absolute,8,Absolute,20,Absolute,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Absolute,20,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20,Absolute,20,Absolute,20,Absolute,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>96, 96</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>715, 791</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>MIDI Controller</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FormMidiController</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.Gui.FormBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+</root>

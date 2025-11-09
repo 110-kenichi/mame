@@ -135,6 +135,7 @@
             this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyMAmiVSTiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyMAmiVST3iToDAWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mIDIDelayCheckerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mIDIControllerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -1386,6 +1387,7 @@
             // 
             this.toolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyMAmiVSTiToolStripMenuItem,
+            this.copyMAmiVST3iToDAWToolStripMenuItem,
             this.mIDIDelayCheckerToolStripMenuItem,
             this.mIDIControllerToolStripMenuItem,
             this.toolStripSeparator6,
@@ -1398,6 +1400,12 @@
             this.copyMAmiVSTiToolStripMenuItem.Name = "copyMAmiVSTiToolStripMenuItem";
             resources.ApplyResources(this.copyMAmiVSTiToolStripMenuItem, "copyMAmiVSTiToolStripMenuItem");
             this.copyMAmiVSTiToolStripMenuItem.Click += new System.EventHandler(this.copyMAmiVSTiToolStripMenuItem_Click);
+            // 
+            // copyMAmiVST3iToDAWToolStripMenuItem
+            // 
+            this.copyMAmiVST3iToDAWToolStripMenuItem.Name = "copyMAmiVST3iToDAWToolStripMenuItem";
+            resources.ApplyResources(this.copyMAmiVST3iToDAWToolStripMenuItem, "copyMAmiVST3iToDAWToolStripMenuItem");
+            this.copyMAmiVST3iToDAWToolStripMenuItem.Click += new System.EventHandler(this.copyMAmiVST3iToDAWToolStripMenuItem_Click);
             // 
             // mIDIDelayCheckerToolStripMenuItem
             // 
@@ -2120,6 +2128,7 @@
         private System.Windows.Forms.ToolStripMenuItem tIAToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vLM5030ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mIDIControllerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyMAmiVST3iToDAWToolStripMenuItem;
     }
 }
 

@@ -614,7 +614,7 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 				if (!(ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
 					eid = 0;
 				int frame = (int)(ti->samplePos / (ti->sampleRate / 60.0));
-
+				frame = 0;
 				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
 				for (int j = 0; j < midievent->dumpBytes; j++)
 					sysexEvent.push_back((unsigned char)midievent->sysexDump[j]);
@@ -638,6 +638,7 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 	if (count != 0)
 	{
 		int frame = (int)(ti->samplePos / (ti->sampleRate / 60.0));
+		frame = 0;
 		m_rpcClient->async_call("SendMidiEvents", eid, frame, midiEvents1, midiEvents2, midiEvents3, count);
 	}
 

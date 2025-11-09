@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="OArYmv" name="MAmidiMEmo" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="itoken"
+              companyWebsite="https://github.com/110-kenichi/mame" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginAUMainType="'aumu'">
+  <MAINGROUP id="Dz0kVW" name="MAmidiMEmo">
+    <GROUP id="{DDE8F637-E70C-7761-17EF-F0AF2AFDDB2B}" name="Source">
+      <FILE id="lcqHkT" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="TEBELj" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="zhqi91" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="Ctbmh7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="MAmidiMEmo_VST3"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="MAmidiMEmo_VST3"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="C:/App/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="C:/App/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
