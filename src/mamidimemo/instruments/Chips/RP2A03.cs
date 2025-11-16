@@ -2059,7 +2059,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var eng = (NesFxEngine)FxEngine;
                     if (eng.DmcValue != null)
                     {
-                        byte dmcVal = (byte)(eng.DmcValue.Value & 3);
+                        byte dmcVal = (byte)(eng.DmcValue.Value & 0x7f);
                         parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x11, dmcVal, false, false);
                     }
                 }
