@@ -2054,8 +2054,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateTriVolume()
             {
-                if (IsSoundOff)
-                    return;
+                if (FxEngine != null && FxEngine.Active)
+                {
+                    var eng = (NesFxEngine)FxEngine;
+                    if (eng.DmcValue != null)
+                    {
+                        byte dmcVal = (byte)(eng.DmcValue.Value & 3);
+                        parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x11, dmcVal, false, false);
+                    }
+                }
 
                 var fv = Math.Round(timbre.Volume * CalcCurrentVolume());
 
@@ -2079,6 +2086,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateNoiseVolume()
             {
+                if (FxEngine != null && FxEngine.Active)
+                {
+                    var eng = (NesFxEngine)FxEngine;
+                    if (eng.DmcValue != null)
+                    {
+                        byte dmcVal = (byte)(eng.DmcValue.Value & 3);
+                        parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x11, dmcVal, false, false);
+                    }
+                }
+
                 byte fv = (byte)((byte)Math.Round(timbre.Volume * CalcCurrentVolume()) & 0xf);
 
                 byte dd = timbre.DecayDisable;
@@ -2092,9 +2109,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateDpcmVolume()
             {
-                var vol = parentModule.Volumes[NoteOnEvent.Channel];
-
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x11), vol);
+                //var vol = parentModule.Volumes[NoteOnEvent.Channel];
+                //parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x11), vol);
             }
 
 
@@ -3379,6 +3395,100 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public int DutyEnvelopesReleasePoint { get; set; } = -1;
 
 
+            private string f_DmcEnvelopes;
+
+            [DataMember]
+            [Description("Set DMC envelop by text. Input DMC value and split it with space like the FamiTracker.\r\n" +
+                       "0-127 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 127)]
+            public string DmcEnvelopes
+            {
+                get
+                {
+                    return f_DmcEnvelopes;
+                }
+                set
+                {
+                    if (f_DmcEnvelopes != value)
+                    {
+                        DmcEnvelopesRepeatPoint = -1;
+                        DmcEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            DmcEnvelopesNums = new int[] { };
+                            f_DmcEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_DmcEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                DmcEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                DmcEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 127)
+                                        v = 127;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        DmcEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < DmcEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (DmcEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (DmcEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            if (i < DmcEnvelopesNums.Length)
+                                sb.Append(DmcEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_DmcEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeDmcEnvelopes()
+            {
+                return !string.IsNullOrEmpty(DmcEnvelopes);
+            }
+
+            public void ResetDmcEnvelopes()
+            {
+                DmcEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] DmcEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int DmcEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int DmcEnvelopesReleasePoint { get; set; } = -1;
+
             private string f_MorphEnvelopes;
 
             [DataMember]
@@ -3884,6 +3994,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
 
+            private uint f_dmcCounter;
+
+            public byte? DmcValue
+            {
+                get;
+                private set;
+            }
+
+
             private uint f_morphCounter;
 
             public byte? MorphValue
@@ -3960,6 +4079,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         int vol = settings.DutyEnvelopesNums[f_dutyCounter++];
 
                         DutyValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                DmcValue = null;
+                if (settings.DmcEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.DmcEnvelopesNums.Length;
+                        if (settings.DmcEnvelopesReleasePoint >= 0)
+                            vm = settings.DmcEnvelopesReleasePoint;
+                        if (f_dmcCounter >= vm)
+                        {
+                            if (settings.DmcEnvelopesRepeatPoint >= 0)
+                                f_dmcCounter = (uint)settings.DmcEnvelopesRepeatPoint;
+                            else
+                                f_dmcCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (f_dmcCounter < settings.DmcEnvelopesNums.Length)
+                        {
+                            if (settings.DmcEnvelopesReleasePoint >= 0 && f_dmcCounter <= (uint)settings.DmcEnvelopesReleasePoint)
+                                f_dmcCounter = (uint)settings.DmcEnvelopesReleasePoint;
+                            else if (settings.DmcEnvelopesReleasePoint < 0 && settings.KeyOffStop)
+                                f_dmcCounter = (uint)settings.DmcEnvelopesNums.Length;
+                        }
+                    }
+                    if (f_dmcCounter < settings.DmcEnvelopesNums.Length)
+                    {
+                        int vol = settings.DmcEnvelopesNums[f_dmcCounter++];
+
+                        DmcValue = (byte)vol;
                         process = true;
                     }
                 }
